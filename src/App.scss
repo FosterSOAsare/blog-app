@@ -1,0 +1,8 @@
+@import "./assets/scss/_globals";
+@import "./assets/scss/Header.scss";
+@import "./assets/scss/Auth.scss";
+body {
+	background-color: $white;
+	width: 100%;
+	min-height: 100vh;
+}

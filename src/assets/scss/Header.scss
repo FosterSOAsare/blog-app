@@ -1,0 +1,26 @@
+header {
+	width: 100%;
+	height: 70px;
+	.header__container {
+		height: 100%;
+		@include container;
+		@include flex(space-between, center);
+		.link {
+			color: $text1;
+		}
+
+		.register {
+			background-color: $text1;
+			.link {
+				color: $white;
+			}
+		}
+
+		nav {
+			width: 45%;
+			height: 40px;
+			background-color: green;
+			@include flex(space-between, center);
+		}
+	}
+}

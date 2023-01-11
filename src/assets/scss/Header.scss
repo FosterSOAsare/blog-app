@@ -8,14 +8,16 @@ header {
 		.left__side {
 			width: auto;
 			height: 40px;
+			// background-color: red;
 			@include flex(space-between, center);
 			.ctas,
 			.profile {
-				width: 80%;
+				width: 200px;
 				height: 100%;
 				@include flex(space-between, center);
 			}
 			.ctas {
+				margin-left: 20px;
 				button {
 					display: block;
 					margin: 0;
@@ -47,13 +49,40 @@ header {
 
 			.menu {
 				width: 150px;
-				height: 250px;
+				height: 230px;
 				// background-color: red;
 				border: 2px solid $text1;
 				top: 45px;
 				border-radius: 5px;
 				right: 0px;
 				position: absolute;
+				padding: 10px;
+				.menuItem {
+					width: 100%;
+					display: block;
+					height: 30px;
+					font-size: 14px;
+					font-weight: bold;
+					opacity: 0.6;
+					&:hover {
+						text-decoration: underline;
+						opacity: 1;
+					}
+				}
+				.active {
+					opacity: 1;
+				}
+				.logout {
+					color: red;
+				}
+				button {
+					width: 120px;
+					height: 30px;
+					// margin-top: 20px;
+					color: $text1;
+					background-color: transparent;
+					border: none;
+				}
 			}
 		}
 		.link {

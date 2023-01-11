@@ -32,8 +32,8 @@ export const AppProvider = ({ children }) => {
 				credentialsDispatchFunc({ type: "setUser", payload: userData });
 			});
 			//
-			localStorage.setItem("userId", JSON.stringify(credentials.userId));
 		}
+		localStorage.setItem("userId", JSON.stringify(credentials.userId));
 	}, [credentials.userId, firebase]);
 	return <AppContext.Provider value={{ firebase, credentials, credentialsDispatchFunc }}>{children}</AppContext.Provider>;
 };

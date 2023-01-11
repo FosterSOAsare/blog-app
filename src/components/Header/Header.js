@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useGlobalContext } from "../../context/AppContext";
 import Button2 from "../buttons/Button2";
+import DesktopMenu from "./DesktopMenu";
 
 const Header = () => {
 	const { credentials } = useGlobalContext();
@@ -48,7 +49,7 @@ const Header = () => {
 							<div className="profileImg" ref={user}>
 								{!credentials?.user?.imgSrc ? <i className="fa-solid fa-user"></i> : <img src={credentials.user.imgSrc} alt="User Profile"></img>}
 
-								{menuDisplay && <div className="menu"></div>}
+								{menuDisplay && <DesktopMenu profileLink={credentials?.user?.username} />}
 							</div>
 						</div>
 					)}

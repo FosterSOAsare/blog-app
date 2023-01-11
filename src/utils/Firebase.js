@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
@@ -83,5 +83,14 @@ export class Firebase {
 		} catch (e) {
 			callback({ error: "An error occurred" });
 		}
+	}
+	signOutUser(callback) {
+		signOut(this.auth)
+			.then(() => {
+				callback(true);
+			})
+			.catch((error) => {
+				callback({ error: "An error occurred" });
+			});
 	}
 }

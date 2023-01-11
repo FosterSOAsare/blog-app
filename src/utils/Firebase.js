@@ -21,13 +21,14 @@ export class Firebase {
 		this.db = getFirestore(this.app);
 	}
 
-	createAnAuth(email, password, callback) {
+	createAnAuth(email, password, username, callback) {
 		createUserWithEmailAndPassword(this.auth, email, password)
 			.then(async (userCredential) => {
 				await setDoc(doc(this.db, "users", userCredential.user.uid), {
 					email,
 					timeStamp: serverTimestamp(),
 					balance: 0.0,
+					username,
 				});
 				// Store Data in db collection
 				sendEmailVerification(userCredential.user);

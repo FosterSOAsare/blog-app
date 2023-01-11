@@ -1,15 +1,13 @@
 export class Verifications {
 	verifyEmail(email) {
-		if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-			return false;
-		}
-		return true;
+		return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email);
 	}
 
 	validatePassword(password) {
-		if (!/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(password)) {
-			return false;
-		}
-		return true;
+		return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(password);
+	}
+
+	validateUsername(username) {
+		return /^[a-zA-Z0-9._-]+$/.test(username);
 	}
 }

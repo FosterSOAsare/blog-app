@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState } from "react";
 
 import Input from "../components/form/Input";
 import PasswordInput from "../components/form/PasswordInput";
@@ -8,7 +8,7 @@ import Error from "../components/form/Error";
 import { useAuthContext } from "../context/AuthContext";
 const Login = () => {
 	const [loginData, setLoginData] = useState({ email: "", password: "" });
-	const [isRegistered, setIsRegistered] = useState(false);
+
 	let { error, errorFunc, verifications } = useAuthContext();
 	const { firebase, credentials, credentialsDispatchFunc } = useGlobalContext();
 

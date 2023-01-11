@@ -9,10 +9,10 @@ import Profile from "./Pages/Profile/Profile";
 import { useGlobalContext } from "./context/AppContext";
 import Search from "./Pages/Search/Search";
 
-function LoginRequired({ children }) {
-	const { credentials } = useGlobalContext();
-	return credentials.userId ? children : <Navigate to="/login"></Navigate>;
-}
+// function LoginRequired({ children }) {
+// 	const { credentials } = useGlobalContext();
+// 	return credentials.userId ? children : <Navigate to="/login"></Navigate>;
+// }
 
 function CheckLogged({ children }) {
 	const { credentials } = useGlobalContext();
@@ -25,40 +25,12 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Shared />}>
 					<Route index element={<HomePage />}></Route>
+					<Route path="/:username" element={<Profile />}></Route>
 					<Route path="search" element={<Search />}></Route>
-					<Route
-						path="register"
-						element={
-							<CheckLogged>
-								<Register />
-							</CheckLogged>
-						}
-					></Route>
-					<Route
-						path="login"
-						element={
-							<CheckLogged>
-								<Login />
-							</CheckLogged>
-						}
-					></Route>
-					<Route
-						path="/profile"
-						element={
-							<LoginRequired>
-								<Profile />
-							</LoginRequired>
-						}
-					></Route>
+					<Route path="register" element={<CheckLogged><Register /></CheckLogged>}></Route>
+					<Route path="login" element={<CheckLogged><Login /></CheckLogged>}></Route>
 				</Route>
-				<Route
-					path="/verifications"
-					element={
-						<CheckLogged>
-							<Verifications />
-						</CheckLogged>
-					}
-				></Route>
+				<Route path="/verifications" element={<CheckLogged><Verifications /></CheckLogged> }></Route>
 			</Routes>
 		</div>
 	);

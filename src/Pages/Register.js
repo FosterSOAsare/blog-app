@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import Input from "../components/form/Input";
 import PasswordInput from "../components/form/PasswordInput";
 import { Link, Navigate } from "react-router-dom";
@@ -7,7 +7,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { useGlobalContext } from "../context/AppContext";
 
 const Register = () => {
-	const [registerData, setRegistrationData] = useState({ email: "", password: "" });
+	const [registerData, setRegistrationData] = useState({ email: "", password: "", username: "" });
 	const [isRegistered, setIsRegistered] = useState(false);
 	let { error, errorFunc, verifications } = useAuthContext();
 	let { firebase } = useGlobalContext();
@@ -23,9 +23,14 @@ const Register = () => {
 			errorFunc({ type: "displayError", payload: "Password must contain at least eight characters, at least one number , both lower and uppercase letters and a special character" });
 			return;
 		}
+		// Validate username
+		if (!verifications.validateUsername(registerData.username)) {
+			errorFunc({ type: "displayError", payload: "Username must contain at least three characters , any of the symbols ( . - _) and alphanumerics " });
+			return;
+		}
 
 		// Create account
-		firebase.createAnAuth(registerData.email, registerData.password, (res) => {
+		firebase.createAnAuth(registerData.email, registerData.password, registerData.username, (res) => {
 			if (res.error) {
 				errorFunc({ type: "displayError", payload: res.error });
 				return;
@@ -52,6 +57,7 @@ const Register = () => {
 			<main>
 				<h3>Create An Acount</h3>
 				<form action="" onSubmit={handleSubmit}>
+					<Input name="username" placeholder="Please enter a username" handleChange={handleChange} value={registerData.username} handleFocus={handleFocus} />
 					<Input name="email" placeholder="Enter your email address" handleChange={handleChange} value={registerData.email} handleFocus={handleFocus} />
 					<PasswordInput type="password" placeholder="************" handleChange={handleChange} value={registerData.password} handleFocus={handleFocus} />
 					{error.display !== "none" && <Error text={error.text} />}

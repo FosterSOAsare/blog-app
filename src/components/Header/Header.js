@@ -1,11 +1,28 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { useGlobalContext } from "../../context/AppContext";
 import Button2 from "../buttons/Button2";
 
 const Header = () => {
 	const { credentials } = useGlobalContext();
-	// console.log(credentials);
+	const [menuDisplay, setMenuDisplay] = useState(false);
+	const user = useRef(null);
+
+	useEffect(() => {
+		let parent = user.current;
+		let current = undefined;
+		parent &&
+			document.addEventListener("mousemove", (e) => {
+				current = e.target;
+				if (parent.contains(e.target)) {
+					setMenuDisplay(true);
+				} else {
+					setTimeout(() => {
+						!parent.contains(current) && setMenuDisplay(false);
+					}, 200);
+				}
+			});
+	}, [menuDisplay]);
 	return (
 		<header>
 			<div className="header__container">
@@ -28,7 +45,11 @@ const Header = () => {
 					{credentials.userId && (
 						<div className="profile">
 							<p className="balance">$0.00</p>
-							<div className="profileImg">{!credentials?.user?.imgSrc ? <i className="fa-solid fa-user"></i> : <img src={credentials.user.imgSrc}></img>}</div>
+							<div className="profileImg" ref={user}>
+								{!credentials?.user?.imgSrc ? <i className="fa-solid fa-user"></i> : <img src={credentials.user.imgSrc} alt="User Profile"></img>}
+
+								{menuDisplay && <div className="menu"></div>}
+							</div>
 						</div>
 					)}
 				</div>

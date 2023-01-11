@@ -25,6 +25,7 @@ header {
 				min-width: 70px;
 				width: auto;
 				margin-left: 50px;
+				position: relative;
 				p {
 					font-weight: bold;
 					color: $text1;
@@ -42,6 +43,17 @@ header {
 				i {
 					color: $text1;
 				}
+			}
+
+			.menu {
+				width: 150px;
+				height: 250px;
+				// background-color: red;
+				border: 2px solid $text1;
+				top: 45px;
+				border-radius: 5px;
+				right: 0px;
+				position: absolute;
 			}
 		}
 		.link {

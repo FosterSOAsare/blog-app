@@ -1,6 +1,8 @@
 @import "./assets/scss/_globals";
-@import "./assets/scss/Header.scss";
+@import "./components/Header/Header.scss";
 @import "./assets/scss/Auth.scss";
+@import "./components/UserInfo/UserInfo.scss";
+@import "./Pages/Profile/Profile.scss";
 body {
 	background-color: $white;
 	width: 100%;

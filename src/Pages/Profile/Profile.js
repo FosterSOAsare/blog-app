@@ -8,7 +8,7 @@ const Profile = () => {
 	// Fetch blogs
 	// Fetch user data
 	// Fetch sponsors
-	return <div>Profile</div>;
+	return <main className="profile">Profile</main>;
 };
 
 export default Profile;

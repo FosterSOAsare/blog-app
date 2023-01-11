@@ -8,6 +8,7 @@
 $text1: #2e475d;
 $text2: #74c0fc;
 $white: #ffffff;
+$error: red;
 @mixin flex($justify, $align) {
 	display: flex;
 	align-items: $align;
@@ -101,4 +102,14 @@ button {
 			text-decoration: underline;
 		}
 	}
+}
+
+.error {
+	color: $error;
+	margin-top: -15px;
+	margin-bottom: 15px;
+	font-size: 13px;
+	font-weight: bold;
+	width: 400px;
+	height: auto;
 }

@@ -1,11 +1,38 @@
-import { useContext, createContext } from "react";
+import { useContext, createContext, useReducer, useEffect } from "react";
 import { Firebase } from "../utils/Firebase";
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
 	const firebase = new Firebase();
-	return <AppContext.Provider value={{ firebase }}>{children}</AppContext.Provider>;
+	const [credentials, credentialsDispatchFunc] = useReducer(reducerFunc, { userId: JSON.parse(localStorage.getItem("userId")) || null, user: null });
+
+	function reducerFunc(credentials, action) {
+		switch (action.type) {
+			case "login":
+				return { ...credentials, userId: action.payload };
+			case "logout":
+				return { ...credentials, userId: null };
+			case "setUser":
+				return { ...credentials, user: action.payload };
+		}
+	}
+
+	useEffect(() => {
+		if (credentials.userId) {
+			// Fetch credentials
+			firebase.fetchUserWithUid(credentials.userId, (userData) => {
+				if (userData.error || !userData) {
+					credentialsDispatchFunc({ type: "logout" });
+					return;
+				}
+				credentialsDispatchFunc({ type: "setUser", payload: userData });
+			});
+			//
+			localStorage.setItem("userId", JSON.stringify(credentials.userId));
+		}
+	}, [credentials.userId]);
+	return <AppContext.Provider value={{ firebase, credentials, credentialsDispatchFunc }}>{children}</AppContext.Provider>;
 };
 
 export const useGlobalContext = () => {

@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router";
+import UserInfo from "../../components/UserInfo/UserInfo";
 
 const Profile = () => {
 	const params = useParams();
@@ -8,7 +9,11 @@ const Profile = () => {
 	// Fetch blogs
 	// Fetch user data
 	// Fetch sponsors
-	return <main className="profile">Profile</main>;
+	return (
+		<main className="profile">
+			<UserInfo />
+		</main>
+	);
 };
 
 export default Profile;

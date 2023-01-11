@@ -8,6 +8,6 @@ export class Verifications {
 	}
 
 	validateUsername(username) {
-		return /^[a-zA-Z0-9._-]+$/.test(username);
+		return /^[a-zA-Z0-9._-]{3 , 15}$/.test(username);
 	}
 }

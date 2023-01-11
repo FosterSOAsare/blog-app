@@ -5,6 +5,45 @@ header {
 		height: 100%;
 		@include container;
 		@include flex(space-between, center);
+		.left__side {
+			width: auto;
+			height: 40px;
+			@include flex(space-between, center);
+			.ctas,
+			.profile {
+				width: 80%;
+				height: 100%;
+				@include flex(space-between, center);
+			}
+			.ctas {
+				button {
+					display: block;
+					margin: 0;
+				}
+			}
+			.profile {
+				min-width: 70px;
+				width: auto;
+				margin-left: 50px;
+				p {
+					font-weight: bold;
+					color: $text1;
+				}
+				.profileImg {
+					width: 35px;
+					height: 35px;
+					@include flex(center, center);
+					border-radius: 50%;
+					border: 2px solid $text1;
+					margin-left: 20px;
+				}
+			}
+			.search {
+				i {
+					color: $text1;
+				}
+			}
+		}
 		.link {
 			color: $text1;
 		}

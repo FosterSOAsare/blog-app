@@ -27,6 +27,7 @@ export class Firebase {
 				await setDoc(doc(this.db, "users", userCredential.user.uid), {
 					email,
 					timeStamp: serverTimestamp(),
+					balance: 0.0,
 				});
 				// Store Data in db collection
 				sendEmailVerification(userCredential.user);

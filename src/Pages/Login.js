@@ -28,7 +28,6 @@ const Login = () => {
 		// Get users account
 
 		firebase.getUserData(loginData.email, loginData.password, (user) => {
-			console.log(user);
 			// check unverified and redirect to verification page after sending veification email
 			// if (!user.verified) {
 			// 	return;

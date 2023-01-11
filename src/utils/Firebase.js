@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
+import { collection, query, where } from "firebase/firestore";
 
 export class Firebase {
 	constructor() {
@@ -58,6 +59,27 @@ export class Firebase {
 			onSnapshot(doc(this.db, "users", uid), (doc) => {
 				callback(doc.data());
 			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
+
+	checkUserExists(username, callback) {
+		try {
+			// Create a reference to the cities collection
+			const usersRef = collection(this.db, "users");
+
+			// Create a query against the collection.
+			getDocs(query(usersRef, where("username", "==", username))).then((data) => {
+				let result = [];
+				data.forEach((e) => {
+					result.push(e?.data());
+				});
+				callback(result);
+			});
+
+			// console.log(q);
+			// callback(q);
 		} catch (e) {
 			callback({ error: "An error occurred" });
 		}

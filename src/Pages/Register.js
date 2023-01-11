@@ -29,17 +29,23 @@ const Register = () => {
 			return;
 		}
 
-		// Create account
-		firebase.createAnAuth(registerData.email, registerData.password, registerData.username, (res) => {
-			if (res.error) {
-				errorFunc({ type: "displayError", payload: res.error });
+		// Check username exists. If no , create new user
+		firebase.checkUserExists(registerData.username, (res) => {
+			if (res?.length) {
+				// username exists
+				errorFunc({ type: "displayError", payload: "Username already exists. Choose a different one" });
 				return;
-			}
+			} else {
+				// Create account
+				firebase.createAnAuth(registerData.email, registerData.password, registerData.username, (res) => {
+					if (res.error) {
+						errorFunc({ type: "displayError", payload: res.error });
+						return;
+					}
 
-			setIsRegistered(true);
-			// save user session
-			// redirect to verifications page
-			// console.log("");
+					setIsRegistered(true);
+				});
+			}
 		});
 	}
 

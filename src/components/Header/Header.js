@@ -11,7 +11,7 @@ const Header = () => {
 	useEffect(() => {
 		let parent = user.current;
 		let current = undefined;
-		parent &&
+		credentials.user &&
 			document.addEventListener("mousemove", (e) => {
 				current = e.target;
 				if (parent.contains(e.target)) {
@@ -22,7 +22,7 @@ const Header = () => {
 					}, 200);
 				}
 			});
-	}, [menuDisplay]);
+	}, [credentials.user]);
 	return (
 		<header>
 			<div className="header__container">

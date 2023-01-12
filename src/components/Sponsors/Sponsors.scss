@@ -1,0 +1,24 @@
+#sponsors {
+	@include container;
+	margin-top: 40px;
+	min-height: 400px;
+	height: auto;
+	.sponsors__container {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+		margin-bottom: 30px;
+		.sponsor {
+			width: 100%;
+			height: 300px;
+			border: 2px solid $text1;
+			border-radius: 5px;
+		}
+	}
+	button {
+		display: block;
+		margin: 0 auto;
+		height: 50px;
+		width: 300px;
+	}
+}

@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
 
@@ -77,9 +77,6 @@ export class Firebase {
 				});
 				callback(result);
 			});
-
-			// console.log(q);
-			// callback(q);
 		} catch (e) {
 			callback({ error: "An error occurred" });
 		}
@@ -92,5 +89,27 @@ export class Firebase {
 			.catch((error) => {
 				callback({ error: "An error occurred" });
 			});
+	}
+	storeBio(bio, userId, callback) {
+		try {
+			updateDoc(doc(this.db, "users", userId), {
+				bio: bio,
+			});
+			callback("success");
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
+
+	fetchUserWithUsername(username, callback) {
+		try {
+			// Create a query against the collection.
+			let q = query(collection(this.db, "users"), where("username", "==", username));
+			onSnapshot(q, (querySnapshot) => {
+				callback({ ...querySnapshot.docs[0].data(), userId: querySnapshot.docs[0].id });
+			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
 	}
 }

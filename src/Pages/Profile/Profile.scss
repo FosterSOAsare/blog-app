@@ -1,8 +1,11 @@
 main.profile {
 	width: 100%;
 	min-height: 90vh;
-	// background-color: red;
 	display: block;
 	@include container;
+	margin-top: 30px;
+}
+
+#blogs {
 	margin-top: 30px;
 }

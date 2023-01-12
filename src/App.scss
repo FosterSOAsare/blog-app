@@ -2,9 +2,13 @@
 @import "./components/Header/Header.scss";
 @import "./assets/scss/Auth.scss";
 @import "./components/UserInfo/UserInfo.scss";
+@import "./components/Popups/Popup.scss";
+@import "./components/Sponsors/Sponsors.scss";
+@import "./components/BlogPreview/BlogPreview.scss";
 @import "./Pages/Profile/Profile.scss";
 body {
 	background-color: $white;
 	width: 100%;
 	min-height: 100vh;
+	overflow-x: hidden;
 }

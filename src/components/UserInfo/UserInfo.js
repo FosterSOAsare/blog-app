@@ -4,18 +4,23 @@ import { useGlobalContext } from "../../context/AppContext";
 const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 	const [profileImg, setProfileImage] = useState(null);
 	const { credentials } = useGlobalContext();
+	const { firebase } = useGlobalContext();
 	let { user } = credentials;
+
 	useEffect(() => {
 		setProfileImage(data?.imgSrc);
 	}, [data]);
+
 	function imageUpload(event) {
 		if (event.target.files && event.target.files[0]) {
 			let reader = new FileReader();
 			reader.onload = (e) => {
 				setProfileImage(e.target.result);
 
-				// const file = event.target.files[0];
-				// console.log(file);
+				const file = event.target.files[0];
+				firebase.updateProfileImage(file, data.userId, (res) => {
+					console.log(res);
+				});
 			};
 			reader.readAsDataURL(event.target.files[0]);
 		}

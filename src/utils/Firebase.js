@@ -3,6 +3,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export class Firebase {
 	constructor() {
@@ -20,6 +21,7 @@ export class Firebase {
 		this.app = initializeApp(this.firebaseConfig);
 		this.auth = getAuth();
 		this.db = getFirestore(this.app);
+		this.storage = getStorage(this.app);
 	}
 
 	createAnAuth(email, password, username, callback) {
@@ -109,6 +111,46 @@ export class Firebase {
 				callback({ ...querySnapshot.docs[0].data(), userId: querySnapshot.docs[0].id });
 			});
 		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
+	updateProfileImage(image, userId, callback) {
+		// Get ext
+		this.storeImg(image, userId, (res) => {
+			if (res.error) {
+				callback(res);
+				return;
+			}
+			// Update image link
+			try {
+				updateDoc(doc(this.db, "users", userId), {
+					imgSrc: res,
+				});
+				callback("success");
+			} catch (e) {
+				callback({ error: "An error occurred" });
+			}
+		});
+	}
+	storeImg(image, userId, callback) {
+		let ext = image.name.split(".");
+		ext = ext[ext.length - 1];
+		let path = `images/${userId}.${ext}`;
+		let storageRef = ref(this.storage, path);
+		try {
+			let uploadTask = uploadBytesResumable(storageRef, image);
+			uploadTask.on(
+				(error) => {
+					callback({ error: "An error occurred during upload" });
+				},
+				() => {
+					getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+						callback(downloadURL);
+					});
+				}
+			);
+		} catch (e) {
+			console.log(e);
 			callback({ error: "An error occurred" });
 		}
 	}

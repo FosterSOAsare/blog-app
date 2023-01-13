@@ -1,0 +1,58 @@
+section.createBlog {
+	@include container;
+	min-height: 30vh;
+	p {
+		color: $text1;
+		font-weight: bold;
+	}
+	.controls {
+		width: 100%;
+		height: 40px;
+		margin-bottom: 30px;
+		@include flex(space-between, center);
+		.actions {
+			width: 50%;
+			height: 100%;
+			margin: 0;
+			@include flex(space-between, center);
+			gap: 10px;
+			button {
+				margin: 0;
+			}
+			.discard {
+				background-color: red;
+				border: none;
+			}
+			.draft {
+				background-color: transparent;
+				color: $text2;
+				border: 2px solid $text2;
+			}
+		}
+	}
+	article.editor {
+		width: 100%;
+		height: 100%;
+		// background-color: red;
+		border-radius: 5px;
+		font-size: 14px;
+		color: $text1;
+		margin-bottom: 30px;
+	}
+	.ckeditor {
+		border: none;
+		outline: none;
+		background-color: red;
+		min-height: 200px;
+		&:focus {
+			outline: none;
+		}
+	}
+	.header {
+		font-size: 62px;
+		font-weight: bold;
+	}
+	.cke_panel_listItem {
+		font-size: 12px !important;
+	}
+}

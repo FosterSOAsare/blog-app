@@ -207,9 +207,9 @@ export class Firebase {
 		}
 	}
 
-	updateSubscription(field, data, docId, callback) {
+	updateSubscription(data, docId, callback) {
 		try {
-			updateDoc(doc(this.db, "subscriptions", docId), { [field]: data }).then((res) => {
+			updateDoc(doc(this.db, "subscriptions", docId), { followers: data }).then((res) => {
 				callback(res);
 			});
 		} catch (e) {
@@ -218,20 +218,9 @@ export class Firebase {
 		}
 	}
 
-	addSubscription(field, data, username, callback) {
-		let other = "";
-		if (field === "followers") {
-			other = "following";
-		} else {
-			other = "followers";
-		}
-		let obj = {
-			[field]: data,
-			[other]: "",
-			username,
-		};
+	addSubscription(data, username, callback) {
 		try {
-			addDoc(collection(this.db, "subscriptions"), obj).then((res) => {
+			addDoc(collection(this.db, "subscriptions"), { followers: data, username }).then((res) => {
 				callback(res);
 			});
 		} catch (e) {

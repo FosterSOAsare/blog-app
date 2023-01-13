@@ -6,8 +6,6 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 	const [profileImg, setProfileImage] = useState(null);
 	const [subs, subsDispatchFunc] = useReducer(reducerFunc, { subscribed: false, subscribers: [], data: {} });
 
-	const [credentialSubscriptions, setCredentialSubscriptions] = useState("");
-
 	const { firebase, credentials } = useGlobalContext();
 	let { user } = credentials;
 
@@ -16,9 +14,9 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 
 		// followers
 		if (!subs.data.empty) {
-			firebase.updateSubscription("followers", newData, subs?.data?.id, (res) => {});
+			firebase.updateSubscription(newData, subs?.data?.id, (res) => {});
 		} else {
-			firebase.addSubscription("followers", newData, data?.username, (res) => {
+			firebase.addSubscription(newData, data?.username, (res) => {
 				if (res.error) {
 					return;
 				}
@@ -48,8 +46,10 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 		if (data) {
 			//  Fetch subscription of profile account
 			firebase.fetchSubscribers(data.username, (res) => {
+				if (res.error) return;
 				// Document is available
 				if (!res.empty) {
+					console.log(res);
 					if (checkSubscribed(res.followers, credentials?.userId)) {
 						// User is subscribed
 						subsDispatchFunc({ type: "setSubscribed", payload: true });
@@ -60,12 +60,7 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 				}
 				subsDispatchFunc({ type: "setData", payload: res });
 			});
-			// Fetch subscription of logged in user
-			firebase.fetchSubscribers(credentials?.user?.username, (res) => {
-				setCredentialSubscriptions(res);
-			});
 		}
-		console.log("dead");
 	}, [data, credentials?.userId, firebase]);
 
 	function imageUpload(event) {
@@ -112,8 +107,9 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 						</div>
 						<p>{subs.subscribers.length}</p>
 					</div>
-					{data?.username !== user?.username && <button onClick={(e) => subscriptionToggle(e)}>{!subs.subscribed ? "Subscribe" : "Unsubscribe"}</button>}
-					{data?.username !== user?.username && (
+
+					{credentials?.userId && data?.username !== user?.username && <button onClick={(e) => subscriptionToggle(e)}>{!subs.subscribed ? "Subscribe" : "Unsubscribe"}</button>}
+					{credentials?.userId && data?.username !== user?.username && (
 						<button className="block delete" onClick={() => setBlockUserActive(true)}>
 							Block User
 						</button>

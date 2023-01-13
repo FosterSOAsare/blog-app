@@ -69,7 +69,7 @@ const Profile = () => {
 			<Sponsors data={profileData.user} />
 			<section id="blogs">
 				{/* Fetcgin blogs */}
-				{profileData?.blogs &&
+				{profileData.blogs?.length &&
 					profileData.blogs.map((e) => {
 						return <BlogPreview {...e} key={e.blog_id} />;
 					})}

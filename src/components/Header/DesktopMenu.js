@@ -25,7 +25,7 @@ const DesktopMenu = ({ profileLink }) => {
 			<NavLink to="/write" className="menuItem link">
 				Write
 			</NavLink>
-			<NavLink to={`/comunities`} className="menuItem link">
+			<NavLink to={`/communities`} className="menuItem link">
 				Communities
 			</NavLink>
 

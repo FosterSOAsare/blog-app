@@ -8,7 +8,7 @@ import { useGlobalContext } from "../../context/AppContext";
 import { useAuthContext } from "../../context/AuthContext";
 import { useParams } from "react-router";
 const Profile = () => {
-	const [profileData, setProfileData] = useReducer(reducerFunc, { user: null });
+	const [profileData, setProfileData] = useReducer(reducerFunc, { user: null, blogs: [] });
 	const { verifications } = useAuthContext();
 	let { firebase } = useGlobalContext();
 
@@ -19,6 +19,8 @@ const Profile = () => {
 		switch (action.type) {
 			case "storeUser":
 				return { ...data, user: action.payload };
+			case "storeBlogs":
+				return { ...data, blogs: action.payload };
 			default:
 				return data;
 		}
@@ -32,6 +34,9 @@ const Profile = () => {
 	useEffect(() => {
 		firebase.fetchUserWithUsername(username, (res) => {
 			setProfileData({ type: "storeUser", payload: res });
+		});
+		firebase.fetchBlogs(username, (res) => {
+			setProfileData({ type: "storeBlogs", payload: res });
 		});
 	}, [firebase, username]);
 	// Fetch blogs
@@ -61,16 +66,15 @@ const Profile = () => {
 			<UserInfo setShowEditForm={setShowEditForm} setBlockUserActive={setBlockUserActive} data={profileData.user} />
 			{showEditForm && <FormPopup desc="Edit your bio" placeholder="Enter your new bio here" type="textarea" setShowEditForm={setShowEditForm} proceed={saveBio} />}
 			{blockUserActive && <ConfirmPopup desc="Are you sure you want to block user userId?" opt1="Block" opt2="Cancel" setShow={setBlockUserActive} proceed={blockUser} />}
-			<Sponsors />
+			<Sponsors data={profileData.user} />
 			<section id="blogs">
-				<BlogPreview
-					title="Dangerous is back!!!"
-					previewText="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ea, alias! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ea, alias! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ea, alias! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ea, alias!"
-				/>
-				<BlogPreview
-					title="It is a beautiful brand new day"
-					previewText="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ea, alias! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ea, alias! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ea, alias! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ea, alias!"
-				/>
+				{/* Fetcgin blogs */}
+				{profileData?.blogs &&
+					profileData.blogs.map((e) => {
+						return <BlogPreview {...e} key={e.blog_id} />;
+					})}
+
+				{!profileData?.blogs?.length && <p className="noblogs">No blogs yet</p>}
 			</section>
 		</main>
 	);

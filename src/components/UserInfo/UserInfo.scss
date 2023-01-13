@@ -8,7 +8,7 @@
 		width: 100px;
 		height: 100px;
 		border-radius: 50%;
-		border: 2px solid $text1;
+		border: 1px solid $text1;
 		margin-right: 20px;
 		position: relative;
 		@include flex(center, center);
@@ -28,11 +28,16 @@
 			height: 30px;
 			border-radius: 50%;
 			display: block;
-			background-color: green;
+			background-color: $white;
 			position: absolute;
 			bottom: 10px;
 			right: -10px;
-			border: 2px solid $text1;
+			border: 1px solid $text1;
+			@include flex(center, center);
+			i {
+				font-size: 16px;
+				color: $text1;
+			}
 		}
 	}
 	.section__text {
@@ -51,9 +56,14 @@
 			.icon {
 				width: 30px;
 				height: 30px;
-				background-color: black;
+				background-color: $white;
+				border: 1px solid $text1;
 				border-radius: 50%;
 				margin-left: 10px;
+				@include flex(center, center);
+				i {
+					font-size: 14px;
+				}
 			}
 		}
 		p {
@@ -69,28 +79,35 @@
 			@include flex(flex-start, center);
 
 			.subCount {
-				min-width: 50px;
+				min-width: 30px;
 				width: auto;
-				height: 40px;
+				height: auto;
 				@include flex(flex-start, center);
 
 				.icon {
 					width: 50px;
-					height: 30px;
-					background-color: green;
+					height: auto;
+					opacity: 0.5;
 					margin-right: 10px;
+					@include flex(center, center);
+					i {
+						font-size: 14px;
+					}
 				}
 				p {
 					font-weight: bold;
-					font-size: 16px;
+					font-size: 14px;
+					@include flex(center, center);
+					margin: 0;
 				}
 			}
 			button {
 				margin: 0;
 				margin-left: 20px;
-				width: 100px;
+				min-width: 100px;
+				width: auto;
 				font-size: 12px;
-				padding: 0;
+				padding: 0px 10px;
 			}
 			.block {
 				background-color: transparent;

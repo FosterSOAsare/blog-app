@@ -2,6 +2,7 @@
 	@include container;
 	margin-top: 40px;
 	min-height: 400px;
+	max-width: 924px;
 	height: auto;
 	.sponsors__container {
 		display: grid;
@@ -13,6 +14,23 @@
 			height: 300px;
 			border: 2px solid $text1;
 			border-radius: 5px;
+			.image {
+				width: 100%;
+				height: 100%;
+				display: block;
+				border-radius: 5px;
+				img {
+					width: 100%;
+					height: 100%;
+					border-radius: 5px;
+				}
+			}
+			.empty {
+				width: 100%;
+				height: 100%;
+				@include flex(center, center);
+				font-size: 16px;
+			}
 		}
 	}
 	button {

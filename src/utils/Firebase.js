@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc, addDoc } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -151,6 +151,91 @@ export class Firebase {
 			);
 		} catch (e) {
 			console.log(e);
+			callback({ error: "An error occurred" });
+		}
+	}
+	fetchSponsors(username, callback) {
+		try {
+			// Create a query against the collection.
+			let q = query(collection(this.db, "sponsorships"), where("username", "==", username));
+
+			onSnapshot(q, (querySnapshot) => {
+				let sponsors = [];
+				querySnapshot.docs.forEach((doc) => {
+					sponsors.push({ ...doc.data(), sponsorship_id: doc?.id });
+				});
+				callback(sponsors);
+			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
+
+	fetchBlogs(username, callback) {
+		try {
+			// Create a query against the collection.
+			let q = query(collection(this.db, "blogs"), where("author", "==", username));
+
+			onSnapshot(q, (querySnapshot) => {
+				let blogs = [];
+				querySnapshot.docs.forEach((doc) => {
+					blogs.push({ ...doc.data(), blog_id: doc?.id });
+				});
+				callback(blogs);
+			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
+
+	fetchSubscribers(username, callback) {
+		try {
+			// Create a query against the collection.
+			let q = query(collection(this.db, "subscriptions"), where("username", "==", username));
+
+			onSnapshot(q, (querySnapshot) => {
+				if (querySnapshot.docs?.length) {
+					let doc = querySnapshot.docs[0];
+					let res = { ...doc?.data(), id: doc?.id };
+					callback(res);
+				} else {
+					callback({ empty: true });
+				}
+			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
+
+	updateSubscription(field, data, docId, callback) {
+		try {
+			updateDoc(doc(this.db, "subscriptions", docId), { [field]: data }).then((res) => {
+				callback(res);
+			});
+		} catch (e) {
+			callback(e);
+			callback({ error: "An error occurred" });
+		}
+	}
+
+	addSubscription(field, data, username, callback) {
+		let other = "";
+		if (field === "followers") {
+			other = "following";
+		} else {
+			other = "followers";
+		}
+		let obj = {
+			[field]: data,
+			[other]: "",
+			username,
+		};
+		try {
+			addDoc(collection(this.db, "subscriptions"), obj).then((res) => {
+				callback(res);
+			});
+		} catch (e) {
+			callback(e);
 			callback({ error: "An error occurred" });
 		}
 	}

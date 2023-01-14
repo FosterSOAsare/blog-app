@@ -2,7 +2,7 @@ import React from "react";
 
 const ConfirmPopup = ({ desc, opt1, opt2, setShow, proceed }) => {
 	return (
-		<section className="popup confirmPopUp">
+		<section className="confirmPopUp popup ">
 			<p>{desc}</p>
 			<div className="actions">
 				<button className="opt1" onClick={proceed}>

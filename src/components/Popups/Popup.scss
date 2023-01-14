@@ -3,20 +3,21 @@ section.popup {
 	height: 100vh;
 	position: fixed;
 	top: 0;
-	bottom: 0;
+	left: 0;
 	background: $white;
-	margin-left: -2%;
+	z-index: 5;
 	@include flex(center, center);
 	flex-direction: column;
 	opacity: 1;
 	z-index: 3;
+	// background-color: red;
 	p {
 		font-size: 15px;
 		font-weight: bold;
 		margin-bottom: 20px;
 	}
 	.actions {
-		width: 50%;
+		width: 40%;
 		// background-color: red;
 		@include flex(space-between, center);
 		gap: 20px;
@@ -32,7 +33,13 @@ section.popup {
 		margin-bottom: 20px;
 	}
 }
-.confirmPopUp {
+section.confirmPopUp {
+	.actions {
+		@include flex(center, center);
+	}
+	button {
+		height: 35px;
+	}
 	.opt1 {
 		background-color: red;
 		border: none;

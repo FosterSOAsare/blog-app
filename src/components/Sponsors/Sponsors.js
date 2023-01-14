@@ -16,6 +16,7 @@ const Sponsors = ({ data, loggedUser }) => {
 	}, [data, firebase]);
 	return (
 		<section id="sponsors">
+			<p className="sponsors_intro">Sponsors of {data?.username}</p>
 			<div className="sponsors__container">
 				{sponsors.map((e, index) => {
 					return (

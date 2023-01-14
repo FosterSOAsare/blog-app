@@ -69,7 +69,7 @@ const Profile = () => {
 		<main className="profile">
 			<UserInfo setShowEditForm={setShowEditForm} setBlockUserActive={setBlockUserActive} data={profileData.user} />
 			{showEditForm && <FormPopup desc="Edit your bio" placeholder="Enter your new bio here" type="textarea" setShowEditForm={setShowEditForm} proceed={saveBio} />}
-			{blockUserActive && <ConfirmPopup desc="Are you sure you want to block user userId?" opt1="Block" opt2="Cancel" setShow={setBlockUserActive} proceed={blockUser} />}
+			{blockUserActive && <ConfirmPopup desc={`Are you sure you want to block @${profileData?.user?.username}`} opt1="Block" opt2="Cancel" setShow={setBlockUserActive} proceed={blockUser} />}
 			<Sponsors data={profileData.user} />
 			<section id="blogs">
 				{/* Fetcgin blogs */}

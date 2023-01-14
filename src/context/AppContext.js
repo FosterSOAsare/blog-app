@@ -25,7 +25,7 @@ export const AppProvider = ({ children }) => {
 		if (credentials.userId) {
 			// Fetch credentials
 			firebase.fetchUserWithUid(credentials.userId, (userData) => {
-				if (userData.error || !userData) {
+				if (userData?.error || !userData) {
 					credentialsDispatchFunc({ type: "logout" });
 					return;
 				}

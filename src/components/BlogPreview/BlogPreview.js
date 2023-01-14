@@ -3,14 +3,15 @@ import { truncateText, removeSpaces } from "../../utils/Text";
 import { NavLink } from "react-router-dom";
 import { useGlobalContext } from "../../context/AppContext";
 
-const BlogPreview = ({ title, body }) => {
+const BlogPreview = ({ heading, message }) => {
 	const { credentials } = useGlobalContext();
+	// console.log(body);
 	return (
 		<article className="blogPreview">
-			<NavLink to={`/${credentials?.user?.username}/${removeSpaces(title)}`} className="link">
+			<NavLink to={`/${credentials?.user?.username}/${removeSpaces(heading)}`} className="link">
 				<div className="leadImage"></div>
-				<h3>{truncateText(body, 55)}</h3>
-				<p>{truncateText(body, 255)}</p>
+				<h3 dangerouslySetInnerHTML={{ __html: heading }}></h3>
+				<p dangerouslySetInnerHTML={{ __html: truncateText(message, 175) }}></p>
 				<div className="actions">
 					<div className="like action">
 						<div className="icon"></div>

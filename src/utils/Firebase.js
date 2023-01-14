@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc, addDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -174,6 +174,8 @@ export class Firebase {
 	fetchBlogs(username, callback) {
 		try {
 			// Create a query against the collection.
+			// let q = query(collection(this.db, "blogs"), where("author", "==", username), orderBy("timestamp", "desc"));
+
 			let q = query(collection(this.db, "blogs"), where("author", "==", username));
 
 			onSnapshot(q, (querySnapshot) => {
@@ -227,5 +229,17 @@ export class Firebase {
 			callback(e);
 			callback({ error: "An error occurred" });
 		}
+	}
+
+	storeBlog(data, callback) {
+		data = { ...data, timestamp: serverTimestamp(), likes: 1, comments: 0, upvotes: 0.0 };
+		addDoc(collection(this.db, "blogs"), data)
+			.then((res) => {
+				callback(res);
+			})
+			.catch((e) => {
+				callback({ error: e });
+			});
+		// callback(data);
 	}
 }

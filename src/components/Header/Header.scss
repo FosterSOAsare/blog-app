@@ -1,6 +1,13 @@
 header {
 	width: 100%;
 	height: 70px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	z-index: 4;
+	background-color: white;
 	.header__container {
 		height: 100%;
 		@include container;
@@ -23,39 +30,72 @@ header {
 					margin: 0;
 				}
 			}
-			.profile {
-				min-width: 70px;
+			.profile__menu {
 				width: auto;
 				margin-left: 50px;
 				position: relative;
-				p {
-					font-weight: bold;
+				margin-right: 10px;
+				height: auto;
+				@include flex(space-between, center);
+				p,
+				.link {
+					font-weight: bolder;
 					color: $text1;
-				}
-				.profileImg {
-					width: 35px;
-					height: 35px;
-					@include flex(center, center);
-					border-radius: 50%;
-					border: 2px solid $text1;
-					margin-left: 20px;
-					img {
-						width: 100%;
-						height: 100%;
-						border-radius: 50%;
+					font-size: 14px;
+					margin: 10px;
+					&:hover {
+						text-decoration: underline;
+						cursor: pointer;
 					}
 				}
 			}
+			.controls,
+			.user__notices {
+				width: auto;
+				padding: 0 10px;
+				height: 100%;
+				// background-color: green;
+				@include flex(space-between, center);
+				gap: 10px;
+
+				button {
+					background-color: transparent;
+					margin: 0;
+					border: none;
+					padding: 0;
+				}
+				i {
+					font-size: 12px;
+					color: $text1;
+					&:hover {
+						cursor: pointer;
+					}
+				}
+				p {
+					&:hover {
+						cursor: pointer;
+					}
+				}
+			}
+
 			.search {
 				i {
 					color: $text1;
+					font-size: 12px;
+					margin-right: 10px;
+					font-weight: bolder;
 				}
+			}
+			p.balance {
+				font-weight: bolder;
+				font-size: 12px;
+				margin-left: 5px;
 			}
 
 			.menu {
 				width: 150px;
 				height: 230px;
-				// background-color: red;
+				background-color: white;
 				border: 2px solid $text1;
 				top: 45px;
 				border-radius: 5px;
@@ -68,7 +108,7 @@ header {
 					height: 30px;
 					font-size: 14px;
 					font-weight: bold;
-					opacity: 0.6;
+					// opacity: 0.6;
 					&:hover {
 						text-decoration: underline;
 						opacity: 1;

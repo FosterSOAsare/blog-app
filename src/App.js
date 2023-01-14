@@ -11,10 +11,10 @@ import { useGlobalContext } from "./context/AppContext";
 import Search from "./Pages/Search/Search";
 import CreateBlog from "./Pages/CreateBlog/CreateBlog";
 
-// function LoginRequired({ children }) {
-// 	const { credentials } = useGlobalContext();
-// 	return credentials.userId ? children : <Navigate to="/login"></Navigate>;
-// }
+function LoginRequired({ children }) {
+	const { credentials } = useGlobalContext();
+	return credentials.userId ? children : <Navigate to="/login"></Navigate>;
+}
 
 function CheckLogged({ children }) {
 	const { credentials } = useGlobalContext();
@@ -27,7 +27,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Shared />}>
 					<Route index element={<HomePage />}></Route>
-					<Route path="write" element={<CreateBlog />}></Route>
+					<Route path="write" element={<LoginRequired><CreateBlog /></LoginRequired>}></Route>
 					<Route path="/:username">
 						<Route index  element={<Profile />}></Route>
 						<Route path=":blogTitle"  element={<Blog />} ></Route>

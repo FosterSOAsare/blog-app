@@ -8,21 +8,22 @@ const Header = () => {
 	const { credentials } = useGlobalContext();
 	const [menuDisplay, setMenuDisplay] = useState(false);
 	const user = useRef(null);
+	// console.log(credentials);
 
 	useEffect(() => {
 		let parent = user.current;
 		let current = undefined;
-		credentials.user &&
-			document.addEventListener("mousemove", (e) => {
-				current = e.target;
-				if (parent.contains(e.target)) {
-					setMenuDisplay(true);
-				} else {
-					setTimeout(() => {
-						!parent.contains(current) && setMenuDisplay(false);
-					}, 200);
-				}
-			});
+		// credentials.user &&
+		// 	document.addEventListener("mousemove", (e) => {
+		// 		current = e.target;
+		// 		if (parent.contains(e.target)) {
+		// 			setMenuDisplay(true);
+		// 		} else {
+		// 			setTimeout(() => {
+		// 				!parent.contains(current) && setMenuDisplay(false);
+		// 			}, 200);
+		// 		}
+		// 	});
 	}, [credentials.user]);
 	return (
 		<header>
@@ -34,24 +35,37 @@ const Header = () => {
 				</h3>
 
 				<div className="left__side">
-					<Link className="search" to="/search">
-						<i className="fa-solid fa-magnifying-glass"></i>
-					</Link>
 					{!credentials.userId && (
 						<div className="ctas">
 							<Button2 text="register" link="/register" />
 							<Button2 text="login" link="/login" />
 						</div>
 					)}
-					{credentials.userId && (
-						<div className="profile">
-							<p className="balance">$0.00</p>
-							<div className="profileImg" ref={user}>
-								{!credentials?.user?.imgSrc ? <i className="fa-solid fa-user"></i> : <img src={credentials.user.imgSrc} alt="User Profile"></img>}
 
-								{menuDisplay && <DesktopMenu profileLink={credentials?.user?.username} />}
-							</div>
+					{credentials.userId && (
+						<div className="profile__menu">
+							<p>Topics</p>
+							<Link to="/communities" className="link">
+								Communities
+							</Link>
+							<Link to="/write" className="link">
+								Write
+							</Link>
 						</div>
+					)}
+					<article className="controls">
+						<Link className="search" to="/search">
+							<i className="fa-solid fa-magnifying-glass"></i>
+						</Link>
+					</article>
+
+					{credentials.userId && (
+						<article className="user__notices">
+							<button className="notification">
+								<i className="fa-solid fa-bell"></i>
+							</button>
+							<p className="balance">{credentials?.user?.balance ? "$" + credentials?.user?.balance.toFixed(2) : "$0.00"}</p>
+						</article>
 					)}
 				</div>
 			</div>

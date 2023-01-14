@@ -1,7 +1,7 @@
 export function truncateText(text, limit) {
-	return `${text.substring(0, limit)}${text.length > limit ? "..." : ""}`;
+	return text && `${text.substring(0, limit)}${text.length > limit ? "..." : ""}`;
 }
 
 export function removeSpaces(text) {
-	return text.split(" ").join("-");
+	return text && text.split(" ").join("-");
 }

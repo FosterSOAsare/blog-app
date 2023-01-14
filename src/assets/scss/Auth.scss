@@ -12,5 +12,10 @@ main {
 		@include flex(center, center);
 		flex-direction: column;
 		height: auto;
+		input,
+		button {
+			width: 400px;
+			height: 40px;
+		}
 	}
 }

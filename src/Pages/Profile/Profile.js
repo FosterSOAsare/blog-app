@@ -33,6 +33,10 @@ const Profile = () => {
 	// Fetch data about user
 	useEffect(() => {
 		firebase.fetchUserWithUsername(username, (res) => {
+			if (res?.error) {
+				console.log(res);
+				return;
+			}
 			setProfileData({ type: "storeUser", payload: res });
 		});
 		firebase.fetchBlogs(username, (res) => {

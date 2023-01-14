@@ -29,7 +29,7 @@ export class Firebase {
 			.then(async (userCredential) => {
 				await setDoc(doc(this.db, "users", userCredential.user.uid), {
 					email,
-					timeStamp: serverTimestamp(),
+					timestamp: serverTimestamp(),
 					balance: 0.0,
 					username,
 				});
@@ -108,7 +108,11 @@ export class Firebase {
 			// Create a query against the collection.
 			let q = query(collection(this.db, "users"), where("username", "==", username));
 			onSnapshot(q, (querySnapshot) => {
-				callback({ ...querySnapshot.docs[0].data(), userId: querySnapshot.docs[0].id });
+				if (querySnapshot.docs[0]) {
+					callback({ ...querySnapshot.docs[0].data(), userId: querySnapshot.docs[0].id });
+					return;
+				}
+				callback({ error: "User does not exist" });
 			});
 		} catch (e) {
 			callback({ error: "An error occurred" });
@@ -124,7 +128,7 @@ export class Firebase {
 			// Update image link
 			try {
 				updateDoc(doc(this.db, "users", userId), {
-					imgSrc: res,
+					img_src: res,
 				});
 				callback("success");
 			} catch (e) {
@@ -174,9 +178,9 @@ export class Firebase {
 	fetchBlogs(username, callback) {
 		try {
 			// Create a query against the collection.
-			// let q = query(collection(this.db, "blogs"), where("author", "==", username), orderBy("timestamp", "desc"));
+			let q = query(collection(this.db, "blogs"), where("author", "==", username), orderBy("timestamp", "desc"));
 
-			let q = query(collection(this.db, "blogs"), where("author", "==", username));
+			// let q = query(collection(this.db, "blogs"), where("author", "==", username));
 
 			onSnapshot(q, (querySnapshot) => {
 				let blogs = [];

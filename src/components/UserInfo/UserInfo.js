@@ -38,7 +38,7 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 	}
 
 	useEffect(() => {
-		setProfileImage(data?.imgSrc);
+		setProfileImage(data?.img_src);
 	}, [data]);
 
 	useEffect(() => {

@@ -7,23 +7,23 @@ import DesktopMenu from "./DesktopMenu";
 const Header = () => {
 	const { credentials } = useGlobalContext();
 	const [menuDisplay, setMenuDisplay] = useState(false);
-	const user = useRef(null);
-	// console.log(credentials);
+	const menuBtn = useRef(null);
+	console.log(credentials);
 
 	useEffect(() => {
-		let parent = user.current;
+		let parent = menuBtn.current;
 		let current = undefined;
-		// credentials.user &&
-		// 	document.addEventListener("mousemove", (e) => {
-		// 		current = e.target;
-		// 		if (parent.contains(e.target)) {
-		// 			setMenuDisplay(true);
-		// 		} else {
-		// 			setTimeout(() => {
-		// 				!parent.contains(current) && setMenuDisplay(false);
-		// 			}, 200);
-		// 		}
-		// 	});
+		credentials.user &&
+			document.addEventListener("mousemove", (e) => {
+				current = e.target;
+				if (parent.contains(e.target)) {
+					setMenuDisplay(true);
+				} else {
+					setTimeout(() => {
+						!parent.contains(current) && setMenuDisplay(false);
+					}, 200);
+				}
+			});
 	}, [credentials.user]);
 	return (
 		<header>
@@ -64,7 +64,10 @@ const Header = () => {
 							<button className="notification">
 								<i className="fa-solid fa-bell"></i>
 							</button>
-							<p className="balance">{credentials?.user?.balance ? "$" + credentials?.user?.balance.toFixed(2) : "$0.00"}</p>
+							<article ref={menuBtn}>
+								<p className="balance">{credentials?.user?.balance ? "$" + credentials?.user?.balance.toFixed(2) : "$0.00"}</p>
+								{menuDisplay && <DesktopMenu {...credentials?.user} />}
+							</article>
 						</article>
 					)}
 				</div>

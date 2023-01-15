@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { truncateText } from "../../utils/Text";
 import { NavLink } from "react-router-dom";
 import { useGlobalContext } from "../../context/AppContext";
@@ -7,9 +7,28 @@ import Ratings from "../Ratings/Ratings";
 
 const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, likes, views, upvotes, comments }) => {
 	const { credentials } = useGlobalContext();
+	const [sub, showSub] = useState(false);
 	heading = removeHTML(heading);
+	const subButton = useRef(null);
 
 	let link = createLink(credentials?.user?.username, heading, blog_id).toLowerCase();
+	let editLink = `/@${credentials?.user?.username}/edit/${blog_id}`;
+	useEffect(() => {
+		let parent = subButton.current;
+
+		let current = undefined;
+		credentials.user &&
+			document.addEventListener("mousemove", (e) => {
+				current = e.target;
+				if (parent.contains(e.target)) {
+					showSub(true);
+				} else {
+					setTimeout(() => {
+						!parent.contains(current) && showSub(false);
+					}, 200);
+				}
+			});
+	}, [credentials.user]);
 
 	return (
 		<article className="blogPreview">
@@ -46,9 +65,20 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 
 				<p className="username">@scyre27</p>
 
-				<div className="blog_controls">
+				<article ref={subButton} className="blog_controls">
 					<i className="fa-solid fa-ellipsis-vertical"></i>
-				</div>
+					{sub && (
+						<div className="controls_sub">
+							<NavLink className="elem" to={editLink}>
+								Edit article
+							</NavLink>
+							<NavLink className="elem" to="/report">
+								Report this
+							</NavLink>
+							<p className="elem">Block this user</p>
+						</div>
+					)}
+				</article>
 			</div>
 		</article>
 	);

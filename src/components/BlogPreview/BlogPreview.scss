@@ -84,16 +84,44 @@
 			font-size: 15px;
 		}
 		.blog_controls {
-			background-color: #e5e7eb;
+			background-color: $grey;
 			@include flex(center, center);
 			width: 30px;
 			height: 20px;
 			margin-left: auto;
+			position: relative;
 			i {
 				font-size: 12px;
 			}
 			&:hover {
 				cursor: pointer;
+			}
+			.controls_sub {
+				width: 200px;
+				height: auto;
+				position: absolute;
+				top: 20px;
+				right: -100px;
+				background-color: $white;
+				border-radius: 5px;
+				border: 1px solid $grey;
+				.elem {
+					width: 100%;
+					height: 45px;
+					border-bottom: 1px solid $grey;
+					font-size: 14px;
+					font-weight: bold;
+					@include flex(center, center);
+					opacity: 0.8;
+					text-decoration: none;
+					color: $text1;
+					&:hover {
+						background-color: $grey;
+					}
+					&:last-child {
+						border: none;
+					}
+				}
 			}
 		}
 		.comments {

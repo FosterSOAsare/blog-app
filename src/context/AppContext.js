@@ -13,7 +13,7 @@ export const AppProvider = ({ children }) => {
 			case "login":
 				return { ...credentials, userId: action.payload };
 			case "logout":
-				return { ...credentials, userId: null };
+				return { ...credentials, userId: null, user: null };
 			case "setUser":
 				return { ...credentials, user: action.payload };
 			default:

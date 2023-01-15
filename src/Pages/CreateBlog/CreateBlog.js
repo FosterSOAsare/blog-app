@@ -4,10 +4,12 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import EditorBalloon from "@ckeditor/ckeditor5-build-balloon";
 import { useGlobalContext } from "../../context/AppContext";
 import { Navigate } from "react-router";
+import { removeHTML, removeSpaces, removeSpecialChars } from "../../utils/Text";
 const CreateBlog = () => {
 	let { credentials, firebase } = useGlobalContext();
 	const [stored, setStored] = useReducer(storedFunc, { stored: false, published: false });
 	let article = useRef(null);
+	let leadImage = useRef(null);
 	let header = useRef(null);
 
 	function storedFunc(stored, action) {
@@ -23,7 +25,14 @@ const CreateBlog = () => {
 	function publishArticle(e) {
 		let message = article.current.editor.getData();
 		let heading = header.current.editor.getData();
-		firebase.storeBlog({ type: "publish", heading, message, author: credentials?.user?.username }, (res) => {
+		let image = leadImage.current;
+		if (!image.files?.length) {
+			return;
+		}
+		let ext = image.files[0].name.split(".");
+		ext = ext[ext.length - 1];
+		let name = removeSpaces(removeSpecialChars(removeHTML(heading))).toLowerCase() + "-" + new Date().getTime() + "." + ext.toLowerCase();
+		firebase.storeBlog({ type: "publish", heading, message, author: credentials?.user?.username, name, file: image.files[0] }, (res) => {
 			if (res.error) return;
 			setStored({ type: "publish" });
 		});
@@ -44,7 +53,8 @@ const CreateBlog = () => {
 				<div className="adds">
 					<button>Add Topics</button>
 					<button>Submit to community</button>
-					<button>Add lead image</button>
+					<label htmlFor="lead__image">Add lead image</label>
+					<input type="file" accept="image/*" name="lead__image" id="lead__image" ref={leadImage} />
 				</div>
 				<article className="editor header">
 					<CKEditor

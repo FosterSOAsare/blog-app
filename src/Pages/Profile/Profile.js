@@ -21,6 +21,13 @@ const Profile = () => {
 				return { ...data, user: action.payload };
 			case "storeBlogs":
 				return { ...data, blogs: action.payload };
+			case "setComment":
+				return {
+					...data,
+					blogs: data.blogs.map((e) => {
+						return e.blog_id === action.id ? { ...data, comments: action.payload } : e;
+					}),
+				};
 			default:
 				return data;
 		}
@@ -34,18 +41,14 @@ const Profile = () => {
 	useEffect(() => {
 		firebase.fetchUserWithUsername(username, (res) => {
 			if (res?.error) {
-				console.log(res);
 				return;
 			}
 			setProfileData({ type: "storeUser", payload: res });
 		});
-		firebase.fetchBlogs(username, (res) => {
-			setProfileData({ type: "storeBlogs", payload: res });
+		firebase.fetchBlogs(username, (blogs) => {
+			setProfileData({ type: "storeBlogs", payload: blogs });
 		});
 	}, [firebase, username]);
-	// Fetch blogs
-	// Fetch user data
-	// Fetch sponsors
 
 	function blockUser(e) {
 		console.log(e);
@@ -79,7 +82,7 @@ const Profile = () => {
 				{/* Fetcgin blogs */}
 				{profileData.blogs.length > 0 &&
 					profileData.blogs.map((e) => {
-						return <BlogPreview {...e} key={e.blog_id} />;
+						return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
 					})}
 
 				{!profileData?.blogs?.length && <p className="noblogs">Nothing here...</p>}

@@ -5,6 +5,7 @@ import Shared from "./Pages/Shared";
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
 import Verifications from "./Pages/Verifications/Verifications";
+import Communities from "./Pages/Communities/Communities";
 import Profile from "./Pages/Profile/Profile";
 import Blog from "./Pages/Blog/Blog";
 import { useGlobalContext } from "./context/AppContext";
@@ -33,6 +34,8 @@ function App() {
 						<Route path=":blogTitle"  element={<Blog />} ></Route>
 					</Route>
 					<Route path="search" element={<Search />}></Route>
+					<Route path="communities" element={<Communities />}></Route>
+					<Route path="moderations" element={<Communities />}></Route>
 					<Route path="register" element={<CheckLogged><Register /></CheckLogged>}></Route>
 					<Route path="login" element={<CheckLogged><Login /></CheckLogged>}></Route>
 				</Route>

@@ -8,7 +8,6 @@ const Header = () => {
 	const { credentials } = useGlobalContext();
 	const [menuDisplay, setMenuDisplay] = useState(false);
 	const menuBtn = useRef(null);
-	console.log(credentials);
 
 	useEffect(() => {
 		let parent = menuBtn.current;

@@ -67,8 +67,11 @@ section.createBlog {
 		height: 40px;
 		margin-bottom: 30px;
 		@include flex(flex-start, center);
-		// background-color: red;
-		button {
+		input {
+			display: none;
+		}
+		button,
+		label {
 			background-color: transparent;
 			color: $text1;
 			width: auto;
@@ -77,6 +80,9 @@ section.createBlog {
 			text-decoration: underline;
 			font-size: 14px;
 			padding: 0 5px;
+			&:hover {
+				cursor: pointer;
+			}
 		}
 	}
 	article.editor {
@@ -88,15 +94,7 @@ section.createBlog {
 		color: $text1;
 		margin-bottom: 30px;
 	}
-	.ckeditor {
-		border: none;
-		outline: none;
-		background-color: red;
-		min-height: 200px;
-		&:focus {
-			outline: none;
-		}
-	}
+
 	.header {
 		font-size: 62px;
 		font-weight: bold;

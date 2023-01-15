@@ -120,7 +120,10 @@ export class Firebase {
 	}
 	updateProfileImage(image, userId, callback) {
 		// Get ext
-		this.storeImg(image, userId, (res) => {
+		let ext = image.name.split(".");
+		ext = ext[ext.length - 1];
+		let path = `profiles/${userId}.${ext}`;
+		this.storeImg(image, path, (res) => {
 			if (res.error) {
 				callback(res);
 				return;
@@ -136,10 +139,7 @@ export class Firebase {
 			}
 		});
 	}
-	storeImg(image, userId, callback) {
-		let ext = image.name.split(".");
-		ext = ext[ext.length - 1];
-		let path = `images/${userId}.${ext}`;
+	storeImg(image, path, callback) {
 		let storageRef = ref(this.storage, path);
 		try {
 			let uploadTask = uploadBytesResumable(storageRef, image);
@@ -154,7 +154,6 @@ export class Firebase {
 				}
 			);
 		} catch (e) {
-			console.log(e);
 			callback({ error: "An error occurred" });
 		}
 	}
@@ -176,22 +175,33 @@ export class Firebase {
 	}
 
 	fetchBlogs(username, callback) {
+		// 	Logic with sub-collections
+		// 	create a sub-collection in a document under a collection . Then use the line below to grab it
+		// 	getDocs(collection(this.db, `${blog.ref.path}/comments`)));
+
 		try {
 			// Create a query against the collection.
 			let q = query(collection(this.db, "blogs"), where("author", "==", username), orderBy("timestamp", "desc"));
-
-			// let q = query(collection(this.db, "blogs"), where("author", "==", username));
-
-			onSnapshot(q, (querySnapshot) => {
-				let blogs = [];
-				querySnapshot.docs.forEach((doc) => {
-					blogs.push({ ...doc.data(), blog_id: doc?.id });
+			let result = [];
+			const promises = [];
+			getDocs(q).then(async (res) => {
+				res.docs.forEach(async (blog) => {
+					result.push({ ...blog.data(), blog_id: blog.id });
+					// Comment.  This is the logic I was missing. Push the functions into an array and resolve below else the loop wouldn't wait
+					promises.push(getDocs(query(collection(this.db, "comments"), where("reply_to", "==", blog.id))));
 				});
-				callback(blogs);
+				// Resolving comments.
+				let comments = await Promise.all(promises);
+				result = result.map((e, index) => {
+					return { ...e, comments: comments[index].docs.map((e) => e.data()) };
+				});
+				callback(result);
 			});
 		} catch (e) {
+			console.log(e);
 			callback({ error: "An error occurred" });
 		}
+		// Using a different collection with relations
 	}
 
 	fetchSubscribers(username, callback) {
@@ -236,14 +246,29 @@ export class Firebase {
 	}
 
 	storeBlog(data, callback) {
-		data = { ...data, timestamp: serverTimestamp(), likes: 1, comments: 0, upvotes: 0.0 };
-		addDoc(collection(this.db, "blogs"), data)
-			.then((res) => {
+		// Store lead Image first
+		let path = "blogs/" + data.name;
+		data = { ...data, timestamp: serverTimestamp(), likes: data.author, dislikes: "", views: 0, upvotes: 0.0, upvoters: "" };
+
+		this.storeImg(data?.file, path, (res) => {
+			if (res.error) {
 				callback(res);
-			})
-			.catch((e) => {
-				callback({ error: e });
-			});
-		// callback(data);
+				return;
+			}
+			delete data.file;
+			delete data.name;
+			data.lead_image_src = res;
+			// Insert Blog
+			addDoc(collection(this.db, "blogs"), data)
+				.then((response) => {
+					callback(response);
+				})
+				.catch((e) => {
+					callback({ error: e });
+				});
+			callback(data);
+		});
 	}
+
+	// Comments
 }

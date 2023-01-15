@@ -182,10 +182,10 @@ export class Firebase {
 		try {
 			// Create a query against the collection.
 			let q = query(collection(this.db, "blogs"), where("author", "==", username), orderBy("timestamp", "desc"));
-			let result = [];
-			const promises = [];
-			getDocs(q).then(async (res) => {
-				res.docs.forEach(async (blog) => {
+			onSnapshot(q, async (res) => {
+				const promises = [];
+				let result = [];
+				res.docs.forEach((blog) => {
 					result.push({ ...blog.data(), blog_id: blog.id });
 					// Comment.  This is the logic I was missing. Push the functions into an array and resolve below else the loop wouldn't wait
 					promises.push(getDocs(query(collection(this.db, "comments"), where("reply_to", "==", blog.id))));

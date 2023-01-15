@@ -1,19 +1,12 @@
 section.createBlog {
 	@include container;
 	min-height: 30vh;
+	height: auto;
 	p {
 		color: $text1;
 		font-weight: bold;
 	}
-	.username {
-		text-align: right;
-		text-transform: capitalize;
-		font-family: "Merriweather", serif;
-		margin-top: -10px;
-		margin-bottom: 20px;
-		color: $text1;
-		opacity: 0.6;
-	}
+
 	.controls {
 		width: 100%;
 		max-width: 380px;
@@ -88,19 +81,19 @@ section.createBlog {
 	article.editor {
 		width: 100%;
 		height: 100%;
-		line-height: 30px;
-		font-weight: normal;
 		border-radius: 5px;
 		font-size: 14px;
 		color: $text1;
 		margin-bottom: 30px;
+		p {
+			font-weight: normal;
+			line-height: 30px;
+		}
 	}
 
-	.header {
-		font-size: 62px;
-		font-weight: bold;
-	}
-	.cke_panel_listItem {
-		font-size: 12px !important;
+	article.header {
+		p {
+			font-weight: bold;
+		}
 	}
 }

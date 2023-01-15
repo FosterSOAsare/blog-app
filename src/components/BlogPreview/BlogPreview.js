@@ -11,7 +11,7 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 	heading = removeHTML(heading);
 	const subButton = useRef(null);
 
-	let link = createLink(credentials?.user?.username, heading, blog_id).toLowerCase();
+	let link = createLink(credentials?.user?.username, heading, blog_id);
 	let editLink = `/@${credentials?.user?.username}/edit/${blog_id}`;
 	useEffect(() => {
 		let parent = subButton.current;

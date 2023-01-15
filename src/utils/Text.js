@@ -18,7 +18,7 @@ export function removeSpecialChars(str) {
 	return str.replace(/[^a-zA-Z0-9 ]/g, "");
 }
 export function createLink(username, str, id) {
-	return `/@${username}/${removeSpaces(removeSpecialChars(str))}-${id}`;
+	return `/@${username}/${removeSpaces(removeSpecialChars(str)).toLowerCase()}-${id}`;
 }
 
 export function countElements(text) {

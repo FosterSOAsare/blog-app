@@ -43,12 +43,12 @@ const Ratings = ({ likes, dislikes, blog_id }) => {
 		firebase.updateLikes(newLikesData, newDislikesData, blog_id);
 	}
 	return (
-		<div className="likes action">
-			<div className={`icon${rating === true ? " active" : ""}`} onClick={() => rateArticle("like", blog_id)}>
+		<div className="likes action rating">
+			<div className={`up icon${rating === true ? " active" : ""}`} onClick={() => rateArticle("like", blog_id)}>
 				<i className="fa-solid fa-thumbs-up"></i>
 			</div>
 			<p>{countElements(likes) - countElements(dislikes)}</p>
-			<div className={`icon${rating === false ? " dislike" : ""}`} onClick={() => rateArticle("dislike", blog_id)}>
+			<div className={`down icon${rating === false ? " dislike" : ""}`} onClick={() => rateArticle("dislike", blog_id)}>
 				<i className="fa-solid fa-thumbs-down"></i>
 			</div>
 		</div>

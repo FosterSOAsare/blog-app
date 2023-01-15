@@ -26,6 +26,7 @@ const CreateBlog = () => {
 		let message = article.current.editor.getData();
 		let heading = header.current.editor.getData();
 		let image = leadImage.current;
+
 		if (!image.files?.length) {
 			return;
 		}
@@ -68,7 +69,6 @@ const CreateBlog = () => {
 							editor.editing.view.change((writer) => {
 								writer.setStyle("min-height", "50px", editor.editing.view.document.getRoot());
 								writer.setStyle("font-size", "42px", editor.editing.view.document.getRoot());
-								writer.setStyle("font-weight", "bold", editor.editing.view.document.getRoot());
 							});
 						}}
 					/>

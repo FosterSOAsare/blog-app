@@ -25,53 +25,58 @@ const Header = () => {
 			});
 	}, [credentials.user]);
 	return (
-		<header>
-			<div className="header__container">
-				<h3 className="logo">
-					<Link className="link" to="/">
-						Blog
-					</Link>
-				</h3>
-
-				<div className="left__side">
-					{!credentials.userId && (
-						<div className="ctas">
-							<Button2 text="register" link="/register" />
-							<Button2 text="login" link="/login" />
-						</div>
-					)}
-
-					{credentials.userId && (
-						<div className="profile__menu">
-							<p>Topics</p>
-							<Link to="/communities" className="link">
-								Communities
-							</Link>
-							<Link to="/write" className="link">
-								Write
-							</Link>
-						</div>
-					)}
-					<article className="controls">
-						<Link className="search" to="/search">
-							<i className="fa-solid fa-magnifying-glass"></i>
+		<>
+			<header>
+				<div className="header__container">
+					<h3 className="logo">
+						<Link className="link" to="/">
+							Blog
 						</Link>
-					</article>
+					</h3>
 
-					{credentials.userId && (
-						<article className="user__notices">
-							<button className="notification">
-								<i className="fa-solid fa-bell"></i>
-							</button>
-							<article ref={menuBtn}>
-								<p className="balance">{credentials?.user?.balance ? "$" + credentials?.user?.balance.toFixed(2) : "$0.00"}</p>
-								{menuDisplay && <DesktopMenu {...credentials?.user} />}
+					<div className="left__side">
+						<div className="content">
+							{!credentials.userId && (
+								<div className="ctas">
+									<Button2 text="register" link="/register" />
+									<Button2 text="login" link="/login" />
+								</div>
+							)}
+
+							{credentials.userId && (
+								<div className="profile__menu">
+									<p>Topics</p>
+									<Link to="/communities" className="link">
+										Communities
+									</Link>
+									<Link to="/write" className="link">
+										Write
+									</Link>
+								</div>
+							)}
+							<article className="controls">
+								<Link className="search" to="/search">
+									<i className="fa-solid fa-magnifying-glass"></i>
+								</Link>
 							</article>
-						</article>
-					)}
+
+							{credentials.userId && (
+								<article className="user__notices">
+									<button className="notification">
+										<i className="fa-solid fa-bell"></i>
+									</button>
+									<article ref={menuBtn}>
+										<p className="balance">{credentials?.user?.balance ? "$" + credentials?.user?.balance.toFixed(2) : "$0.00"}</p>
+										{menuDisplay && <DesktopMenu {...credentials?.user} />}
+									</article>
+								</article>
+							)}
+						</div>
+						<p className="username">{credentials?.user?.username}</p>
+					</div>
 				</div>
-			</div>
-		</header>
+			</header>
+		</>
 	);
 };
 

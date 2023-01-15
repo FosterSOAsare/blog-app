@@ -274,7 +274,25 @@ export class Firebase {
 		try {
 			updateDoc(doc(this.db, "blogs", blog_id), { likes, dislikes }).then((res) => {});
 		} catch (e) {
-			console.log("e");
+			console.log(e);
+		}
+	}
+
+	fetchBlog(blog_id, callback) {
+		try {
+			// Create a query against the collection.
+			let q = doc(this.db, "blogs", blog_id);
+
+			onSnapshot(q, (res) => {
+				if (res.exists()) {
+					callback({ ...res.data(), blog_id: res.id });
+				} else {
+					callback({ empty: true });
+				}
+			});
+		} catch (e) {
+			console.log(e);
+			callback({ error: "An error occurred" });
 		}
 	}
 

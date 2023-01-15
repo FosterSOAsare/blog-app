@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useEffect } from "react";
-import UserInfo from "../../components/UserInfo/UserInfo";
+import UserInfo from "./UserInfo/UserInfo";
 import FormPopup from "../../components/Popups/FormPopup";
 import ConfirmPopup from "../../components/Popups/ConfirmPopup";
 import Sponsors from "../../components/Sponsors/Sponsors";

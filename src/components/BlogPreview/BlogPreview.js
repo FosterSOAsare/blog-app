@@ -5,14 +5,14 @@ import { useGlobalContext } from "../../context/AppContext";
 import { removeHTML, createLink } from "../../utils/Text";
 import Ratings from "../Ratings/Ratings";
 
-const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, likes, views, upvotes, comments }) => {
+const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, likes, views, upvotes, comments, author }) => {
 	const { credentials } = useGlobalContext();
 	const [sub, showSub] = useState(false);
 	heading = removeHTML(heading);
 	const subButton = useRef(null);
 
-	let link = createLink(credentials?.user?.username, heading, blog_id);
-	let editLink = `/@${credentials?.user?.username}/edit/${blog_id}`;
+	let link = createLink(author, heading, blog_id);
+	let editLink = `/@${author}/edit/${blog_id}`;
 	useEffect(() => {
 		let parent = subButton.current;
 

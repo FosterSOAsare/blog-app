@@ -21,6 +21,30 @@ export const AppProvider = ({ children }) => {
 		}
 	}
 
+	function calculateTime(timestamp) {
+		let currentTime = Date.now(),
+			timeDiff = currentTime / 1000 - timestamp,
+			seconds = Math.floor(timeDiff),
+			minutes = Math.floor(seconds / 60),
+			hours = Math.floor(minutes / 60),
+			days = Math.floor(hours / 24),
+			years = Math.floor(days / 365);
+
+		if (years > 0) {
+			return years + (years === 1 ? " year " : " years ") + "ago";
+		}
+		if (days > 0) {
+			return days + (days === 1 ? " day " : " days ") + "ago";
+		}
+		if (hours > 0) {
+			return hours + (hours === 1 ? " hour " : " hours ") + "ago";
+		}
+		if (minutes > 0) {
+			return minutes + (minutes === 1 ? " minute " : " minutes ") + "ago";
+		}
+		return seconds + (seconds === 1 ? " second " : " seconds ") + "ago";
+	}
+
 	useEffect(() => {
 		if (credentials.userId) {
 			// Fetch credentials
@@ -35,7 +59,7 @@ export const AppProvider = ({ children }) => {
 		}
 		localStorage.setItem("userId", JSON.stringify(credentials.userId));
 	}, [credentials.userId, firebase]);
-	return <AppContext.Provider value={{ firebase, credentials, credentialsDispatchFunc }}>{children}</AppContext.Provider>;
+	return <AppContext.Provider value={{ firebase, credentials, credentialsDispatchFunc, calculateTime }}>{children}</AppContext.Provider>;
 };
 
 export const useGlobalContext = () => {

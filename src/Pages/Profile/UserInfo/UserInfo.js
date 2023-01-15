@@ -1,27 +1,13 @@
-import React, { useEffect, useReducer, useState } from "react";
-import { useGlobalContext } from "../../context/AppContext";
-import { checkSubscribed, addSubscription, removeSubscription } from "../../utils/Subscriptions.util";
+import React, { useEffect, useReducer } from "react";
+import { useGlobalContext } from "../../../context/AppContext";
+import { checkSubscribed } from "../../../utils/Subscriptions.util";
+import { useSubscriptionContext } from "../../../context/SubscriptionContext";
 
 const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
-	const [profileImg, setProfileImage] = useState(null);
+	const { subscriptionToggle, imageUpload } = useSubscriptionContext();
 	const [subs, subsDispatchFunc] = useReducer(reducerFunc, { subscribed: false, subscribers: [], data: {} });
 
 	const { firebase, credentials } = useGlobalContext();
-
-	function subscriptionToggle(e) {
-		let newData = subs.subscribed ? removeSubscription(subs.subscribers, credentials?.userId) : addSubscription(subs.subscribers, credentials?.userId);
-
-		// followers
-		if (!subs.data.empty) {
-			firebase.updateSubscription(newData, subs?.data?.id, (res) => {});
-		} else {
-			firebase.addSubscription(newData, data?.username, (res) => {
-				if (res.error) {
-					return;
-				}
-			});
-		}
-	}
 
 	function reducerFunc(subs, action) {
 		switch (action.type) {
@@ -37,10 +23,6 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 	}
 
 	useEffect(() => {
-		setProfileImage(data?.img_src);
-	}, [data]);
-
-	useEffect(() => {
 		// Fetching subscribers
 		if (data) {
 			//  Fetch subscription of profile account
@@ -48,7 +30,6 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 				if (res.error) return;
 				// Document is available
 				if (!res.empty) {
-					console.log(res);
 					if (checkSubscribed(res.followers, credentials?.userId)) {
 						// User is subscribed
 						subsDispatchFunc({ type: "setSubscribed", payload: true });
@@ -62,32 +43,17 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 		}
 	}, [data, credentials?.userId, firebase]);
 
-	function imageUpload(event) {
-		if (event.target.files && event.target.files[0]) {
-			let reader = new FileReader();
-			reader.onload = (e) => {
-				setProfileImage(e.target.result);
-
-				const file = event.target.files[0];
-				firebase.updateProfileImage(file, data.userId, (res) => {
-					console.log(res);
-				});
-			};
-			reader.readAsDataURL(event.target.files[0]);
-		}
-	}
-
 	return (
 		<section className="userInfo">
 			<div className="section__image">
-				{profileImg ? <img src={profileImg} alt="Profile" /> : <i className="fa-solid fa-user"></i>}
+				{data?.img_src ? <img src={data?.img_src} alt="Profile" /> : <i className="fa-solid fa-user"></i>}
 
 				{data?.username === credentials.user?.username && (
 					<label htmlFor="profileImg">
 						<i className="fa-solid fa-camera"></i>
 					</label>
 				)}
-				{data?.username === credentials.user?.username && <input type="file" accept="image/*" onChange={imageUpload} id="profileImg" />}
+				{data?.username === credentials.user?.username && <input type="file" accept="image/*" onChange={(e) => imageUpload(e, data, () => {})} id="profileImg" />}
 			</div>
 			<div className="section__text">
 				<h3>{data?.username}</h3>
@@ -107,7 +73,11 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 						<p>{subs.subscribers.length}</p>
 					</div>
 
-					{credentials?.userId && data?.username !== credentials.user?.username && <button onClick={(e) => subscriptionToggle(e)}>{!subs.subscribed ? "Subscribe" : "Unsubscribe"}</button>}
+					{credentials?.userId && data?.username !== credentials.user?.username && (
+						<button onClick={() => subscriptionToggle(subs.subscribed, subs.subscribers, subs?.data, { username: data?.username, id: credentials?.userId })}>
+							{!subs.subscribed ? "Subscribe" : "Unsubscribe"}
+						</button>
+					)}
 					{credentials?.userId && data?.username !== credentials.user?.username && (
 						<button className="block delete" onClick={() => setBlockUserActive(true)}>
 							Block User

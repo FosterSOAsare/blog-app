@@ -240,7 +240,7 @@ export class Firebase {
 				callback(res);
 			});
 		} catch (e) {
-			callback(e);
+			console.log(e);
 			callback({ error: "An error occurred" });
 		}
 	}

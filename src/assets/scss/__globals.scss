@@ -12,6 +12,7 @@ $text2: #74c0fc;
 $white: #ffffff;
 $error: red;
 $background2: #f3f4f6;
+$liked: #4063eb;
 @mixin flex($justify, $align) {
 	display: flex;
 	align-items: $align;

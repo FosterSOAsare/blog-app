@@ -270,5 +270,13 @@ export class Firebase {
 		});
 	}
 
+	updateLikes(likes, dislikes, blog_id) {
+		try {
+			updateDoc(doc(this.db, "blogs", blog_id), { likes, dislikes }).then((res) => {});
+		} catch (e) {
+			console.log("e");
+		}
+	}
+
 	// Comments
 }

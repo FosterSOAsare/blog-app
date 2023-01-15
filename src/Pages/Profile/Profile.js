@@ -58,7 +58,6 @@ const Profile = () => {
 		e.preventDefault();
 		if (!verifications.checkLength(value, 255)) {
 			// Display error
-			console.log("Dead");
 			return;
 		}
 		// Save bio

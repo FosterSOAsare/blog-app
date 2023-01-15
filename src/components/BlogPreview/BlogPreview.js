@@ -67,11 +67,11 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 
 			<div className="actions">
 				<div className="likes action">
-					<div className={`icon${rating ? " active" : ""}`} onClick={() => rateArticle("like", blog_id)}>
+					<div className={`icon${rating === true ? " active" : ""}`} onClick={() => rateArticle("like", blog_id)}>
 						<i className="fa-solid fa-thumbs-up"></i>
 					</div>
 					<p>{countElements(likes) - countElements(dislikes)}</p>
-					<div className={`icon${!rating ? " dislike" : ""}`} onClick={() => rateArticle("dislike", blog_id)}>
+					<div className={`icon${rating === false ? " dislike" : ""}`} onClick={() => rateArticle("dislike", blog_id)}>
 						<i className="fa-solid fa-thumbs-down"></i>
 					</div>
 				</div>

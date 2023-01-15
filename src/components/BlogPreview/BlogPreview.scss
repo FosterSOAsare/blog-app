@@ -60,10 +60,16 @@
 					cursor: pointer;
 				}
 			}
-			.active {
+			.active,
+			.dislike {
 				opacity: 0.9;
 				i {
 					color: $liked;
+				}
+			}
+			.dislike {
+				i {
+					color: red;
 				}
 			}
 		}

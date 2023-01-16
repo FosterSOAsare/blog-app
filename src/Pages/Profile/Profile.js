@@ -10,6 +10,7 @@ import { useParams } from "react-router";
 import Loading from "../../components/Loading/Loading";
 const Profile = () => {
 	const [profileData, setProfileData] = useReducer(reducerFunc, { user: null, blogs: null });
+	const [blogLoadError, setBlogLoadErr] = useState();
 	const { verifications } = useAuthContext();
 	let { firebase } = useGlobalContext();
 
@@ -47,6 +48,10 @@ const Profile = () => {
 			setProfileData({ type: "storeUser", payload: res });
 		});
 		firebase.fetchBlogs(username, (blogs) => {
+			if (blogs.error) {
+				//
+				console.log(blogs.error);
+			}
 			setProfileData({ type: "storeBlogs", payload: blogs });
 		});
 	}, [firebase, username]);
@@ -77,7 +82,7 @@ const Profile = () => {
 				<Sponsors data={profileData.user} />
 			</main>
 
-			{!profileData?.blogs && <Loading className="profileLoading" />}
+			{!profileData?.blogs && <Loading className="profileLoading" errorStatus={false} />}
 			{profileData?.blogs && profileData?.blogs.length > 0 && (
 				<section id="blogs">
 					{profileData.blogs.length > 0 &&

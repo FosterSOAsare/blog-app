@@ -50,7 +50,7 @@ export const AppProvider = ({ children }) => {
 			// Fetch credentials
 			firebase.fetchUserWithUid(credentials.userId, (userData) => {
 				if (userData?.error || !userData) {
-					credentialsDispatchFunc({ type: "logout" });
+					// credentialsDispatchFunc({ type: "logout" });
 					return;
 				}
 				credentialsDispatchFunc({ type: "setUser", payload: userData });

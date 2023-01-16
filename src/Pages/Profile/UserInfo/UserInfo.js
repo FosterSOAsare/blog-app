@@ -52,18 +52,18 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 					<div className="section__image">
 						{data?.img_src ? <img src={data?.img_src} alt="Profile" /> : <i className="fa-solid fa-user"></i>}
 
-						{data?.username === credentials.user.username && (
+						{data?.username === credentials?.user?.username && (
 							<label htmlFor="profileImg">
 								<i className="fa-solid fa-camera"></i>
 							</label>
 						)}
-						{data?.username === credentials.user.username && <input type="file" accept="image/*" onChange={(e) => imageUpload(e, data, () => {})} id="profileImg" />}
+						{data?.username === credentials?.user?.username && <input type="file" accept="image/*" onChange={(e) => imageUpload(e, data, () => {})} id="profileImg" />}
 					</div>
 					<div className="section__text">
 						<h3>{data?.username}</h3>
 						<div className="bio">
 							<p>{data?.bio || "User has no bio at the moment "}</p>
-							{data?.username === credentials.user.username && (
+							{data?.username === credentials?.user?.username && (
 								<div className="icon" onClick={() => setShowEditForm(true)}>
 									<i className="fa-solid fa-pencil"></i>
 								</div>

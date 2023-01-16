@@ -198,7 +198,7 @@ export class Firebase {
 				callback(result);
 			});
 		} catch (e) {
-			console.log(e);
+			// console.log(e);
 			callback({ error: "An error occurred" });
 		}
 		// Using a different collection with relations

@@ -5,6 +5,7 @@ import { removeHTML } from "../../utils/Text";
 import Ratings from "../../components/Ratings/Ratings";
 import Upvotes from "../../components/Upvotes/Upvotes";
 import AuthorInfo from "./AuthorInfo/AuthorInfo";
+import Loading from "../../components/Loading/Loading";
 const Blog = () => {
 	const [profileData, setProfileDispatchFunc] = useReducer(reducerFunc, { author: null, blog: {} });
 	const { firebase } = useGlobalContext();
@@ -49,15 +50,20 @@ const Blog = () => {
 		});
 	}, [firebase, blogTitle, username]);
 	return (
-		<main className="blog">
-			<div className="article__image" data-heading={removeHTML(profileData?.blog?.heading)}>
-				<img src={profileData?.blog?.lead_image_src} alt="Lead" />
-			</div>
-			<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} />
-			<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
-			<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} blog_id={profileData?.blog?.blog_id} />
-			<Upvotes blog_id={profileData?.blog?.blog_id} upvotes={profileData?.blog?.upvotes} author_id={profileData?.author?.userId} />
-		</main>
+		<>
+			{!profileData?.blog?.blog_id && <Loading />}
+			{profileData?.blog?.blog_id && (
+				<main className="blog">
+					<div className="article__image" data-heading={removeHTML(profileData?.blog?.heading)}>
+						<img src={profileData?.blog?.lead_image_src} alt="Lead" />
+					</div>
+					<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} />
+					<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
+					<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} blog_id={profileData?.blog?.blog_id} />
+					<Upvotes blog_id={profileData?.blog?.blog_id} upvotes={profileData?.blog?.upvotes} author_id={profileData?.author?.userId} />
+				</main>
+			)}
+		</>
 	);
 };
 

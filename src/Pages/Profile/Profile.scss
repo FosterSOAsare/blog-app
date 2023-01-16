@@ -4,6 +4,7 @@ main.profile {
 	display: block;
 	@include container;
 	margin-top: 30px;
+	margin-bottom: 30px;
 }
 
 #blogs {
@@ -14,6 +15,9 @@ main.profile {
 	height: auto;
 	background-color: $background2;
 	padding: 20px 0;
+}
+.profileLoading {
+	background-color: $background2;
 }
 .noblogs {
 	text-align: center;

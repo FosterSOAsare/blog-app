@@ -2,6 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import { useGlobalContext } from "../../../context/AppContext";
 import { checkSubscribed } from "../../../utils/Subscriptions.util";
 import { useSubscriptionContext } from "../../../context/SubscriptionContext";
+import Loading from "../../../components/Loading/Loading";
 
 const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 	const { subscriptionToggle, imageUpload } = useSubscriptionContext();
@@ -44,49 +45,50 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 	}, [data, credentials?.userId, firebase]);
 
 	return (
-		<section className="userInfo">
-			<div className="section__image">
-				{data?.img_src ? <img src={data?.img_src} alt="Profile" /> : <i className="fa-solid fa-user"></i>}
+		<>
+			{!data?.username && <Loading />}
+			{data?.username && (
+				<section className="userInfo">
+					<div className="section__image">
+						{data?.img_src ? <img src={data?.img_src} alt="Profile" /> : <i className="fa-solid fa-user"></i>}
 
-				{data?.username === credentials.user?.username && (
-					<label htmlFor="profileImg">
-						<i className="fa-solid fa-camera"></i>
-					</label>
-				)}
-				{data?.username === credentials.user?.username && <input type="file" accept="image/*" onChange={(e) => imageUpload(e, data, () => {})} id="profileImg" />}
-			</div>
-			<div className="section__text">
-				<h3>{data?.username}</h3>
-				<div className="bio">
-					<p>{data?.bio || "User has no bio at the moment "}</p>
-					{data?.username === credentials.user?.username && (
-						<div className="icon" onClick={() => setShowEditForm(true)}>
-							<i className="fa-solid fa-pencil"></i>
-						</div>
-					)}
-				</div>
-				<div className="subs">
-					<div className="subCount">
-						<div className="icon">
-							<i className="fa-solid fa-users"></i>
-						</div>
-						<p>{subs.subscribers.length}</p>
+						{data?.username === credentials?.user?.username && (
+							<label htmlFor="profileImg">
+								<i className="fa-solid fa-camera"></i>
+							</label>
+						)}
+						{data?.username === credentials?.user?.username && <input type="file" accept="image/*" onChange={(e) => imageUpload(e, data, () => {})} id="profileImg" />}
 					</div>
+					<div className="section__text">
+						<h3>{data?.username}</h3>
+						<div className="bio">
+							<p>{data?.bio || "User has no bio at the moment "}</p>
+							{data?.username === credentials?.user?.username && (
+								<div className="icon" onClick={() => setShowEditForm(true)}>
+									<i className="fa-solid fa-pencil"></i>
+								</div>
+							)}
+						</div>
+						<div className="subs">
+							<div className="subCount">
+								<div className="icon">
+									<i className="fa-solid fa-users"></i>
+								</div>
+								<p>{subs.subscribers.length}</p>
+							</div>
 
-					{credentials?.userId && data?.username !== credentials.user?.username && (
-						<button onClick={() => subscriptionToggle(subs.subscribed, subs.subscribers, subs?.data, { username: data?.username, id: credentials?.userId })}>
-							{!subs.subscribed ? "Subscribe" : "Unsubscribe"}
-						</button>
-					)}
-					{credentials?.userId && data?.username !== credentials.user?.username && (
-						<button className="block delete" onClick={() => setBlockUserActive(true)}>
-							Block User
-						</button>
-					)}
-					{data?.username === credentials.user?.username && <button className="block">Delete Account</button>}
-				</div>
-			</div>
-		</section>
+							{credentials?.userId && data.username !== credentials.user.username && <button onClick={() => subscriptionToggle(subs.subscribed, subs.subscribers, subs?.data, { username: data?.username, id: credentials?.userId })}>{!subs.subscribed ? "Subscribe" : "Unsubscribe"}</button>}
+							{credentials?.userId && data.username !== credentials.user.username && (
+								<button className="block delete" onClick={() => setBlockUserActive(true)}>
+									Block User
+								</button>
+							)}
+							{data?.username === credentials.user?.username && <button className="block">Delete Account</button>}
+						</div>
+					</div>
+				</section>
+			)}
+		</>
 	);
 };
 

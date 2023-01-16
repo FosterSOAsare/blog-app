@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../../context/AppContext";
 import { arrangeSponsorships } from "../../utils/Sponsorship.js/Sponsorship.util";
+import Loading from "../Loading/Loading";
 
 const Sponsors = ({ data, loggedUser }) => {
-	const [sponsors, setSponsors] = useState([{}, {}, {}]);
+	const [sponsors, setSponsors] = useState([]);
 	const { firebase, credentials } = useGlobalContext();
 
 	// Fetch Sponsors and set the first 3 (In terms of money);
@@ -16,8 +17,9 @@ const Sponsors = ({ data, loggedUser }) => {
 	}, [data, firebase]);
 	return (
 		<section id="sponsors">
-			<p className="sponsors_intro">Sponsors of {data?.username}</p>
+			{data?.username && <p className="sponsors_intro">Sponsors of {data?.username}</p>}
 			<div className="sponsors__container">
+				{!sponsors?.length && <Loading />}
 				{sponsors.map((e, index) => {
 					return (
 						<div className="sponsor" key={e?.sponsorship_id || index}>

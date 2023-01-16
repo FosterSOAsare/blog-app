@@ -11,6 +11,14 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 	heading = removeHTML(heading);
 	const subButton = useRef(null);
 
+	let tips = JSON.parse(upvotes);
+
+	let total = 0;
+	if (tips?.length) {
+		tips.forEach((e) => (total += parseFloat(e.amount)));
+	}
+	total = total.toFixed(2);
+
 	let link = createLink(author, heading, blog_id);
 	let editLink = `/@${author}/edit/${blog_id}`;
 	useEffect(() => {
@@ -61,7 +69,7 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 					<p>{views}</p>
 				</div>
 
-				<p>${upvotes.toFixed(2)}</p>
+				<p>${total}</p>
 
 				<p className="username">@scyre27</p>
 

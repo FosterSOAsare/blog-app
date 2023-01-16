@@ -1,0 +1,95 @@
+.upvotes {
+	@include container;
+	// background-color: red;
+	height: 200px;
+	padding: 0;
+	margin-top: 30px;
+	.tips {
+		width: 100%;
+		height: 50px;
+		// background-color: green;
+		@include flex(flex-start, center);
+		.upvote {
+			min-width: 120px;
+			width: auto;
+			height: 100%;
+			border-radius: 3px;
+			border: 2px solid $grey;
+			@include flex(flex-start, center);
+			padding: 0 10px;
+			i {
+				margin-right: 10px;
+				font-size: 20px;
+				font-weight: bold;
+			}
+			p {
+				font-size: 16px;
+				font-weight: bold;
+			}
+		}
+		.tippers {
+			width: 200px;
+			height: 100%;
+			// background-color: green;
+			margin-left: 20px;
+			@include flex(flex-start, center);
+			padding-left: 40px;
+			.tipper {
+				width: 45px;
+				height: 45px;
+				@include flex(center, center);
+				border: 1px solid $grey;
+				border-radius: 50%;
+				background-color: $white;
+				&:nth-child(n + 1) {
+					margin-left: -20px;
+				}
+				&:hover {
+					border: 2px solid $liked;
+					cursor: pointer;
+				}
+				img {
+					width: 100%;
+					height: 100%;
+					border-radius: 50%;
+				}
+				i {
+					font-size: 20px;
+				}
+			}
+		}
+	}
+	.image {
+		width: auto;
+		height: 50px;
+		margin-top: 20px;
+		margin-left: 30px;
+		img {
+			width: 160px;
+			height: 100%;
+		}
+	}
+}
+
+.tipForm {
+	width: 100%;
+	@include container;
+	@include flex(flex-start, flex-start);
+	// flex-direction: row;
+	label {
+		margin-bottom: 20px;
+		span {
+			font-weight: bold;
+			opacity: 0.7;
+		}
+	}
+	.actions {
+		@include flex(flex-start, center);
+		button {
+			width: 150px;
+		}
+		.cancel {
+			margin-left: 20px;
+		}
+	}
+}

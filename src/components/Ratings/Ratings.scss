@@ -1,5 +1,4 @@
 .likes {
-	// background-color: red;
 	@include flex(center, center);
 
 	.active,
@@ -34,8 +33,5 @@
 		&:hover {
 			color: red;
 		}
-	}
-	p {
-		margin: 0 15px;
 	}
 }

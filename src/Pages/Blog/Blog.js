@@ -56,7 +56,7 @@ const Blog = () => {
 			<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} />
 			<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
 			<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} blog_id={profileData?.blog?.blog_id} />
-			<Upvotes blogId={profileData?.blog?.blog_id} />
+			<Upvotes blog_id={profileData?.blog?.blog_id} upvotes={profileData?.blog?.upvotes} author_id={profileData?.author?.userId} />
 		</main>
 	);
 };

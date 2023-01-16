@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy } from "firebase/firestore";
+import { getFirestore, runTransaction, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -248,7 +248,7 @@ export class Firebase {
 	storeBlog(data, callback) {
 		// Store lead Image first
 		let path = "blogs/" + data.name;
-		data = { ...data, timestamp: serverTimestamp(), likes: data.author, dislikes: "", views: 0, upvotes: 0.0, upvoters: "" };
+		data = { ...data, timestamp: serverTimestamp(), likes: data.author, dislikes: "", views: 0, upvotes: JSON.stringify([]) };
 
 		this.storeImg(data?.file, path, (res) => {
 			if (res.error) {
@@ -293,6 +293,30 @@ export class Firebase {
 		} catch (e) {
 			console.log(e);
 			callback({ error: "An error occurred" });
+		}
+	}
+	async storeUpvote(blog_id, upvotes, receiver_id, sender_id, value, callback) {
+		// Transaction
+		// Store new upvotes data
+		// Subtract amount from sender
+		// Add amount to receiver
+		try {
+			await runTransaction(this.db, async (transaction) => {
+				const receiverDoc = await transaction.get(doc(this.db, "users", receiver_id));
+				const senderDoc = await transaction.get(doc(this.db, "users", sender_id));
+
+				if (!receiverDoc.exists() || !senderDoc.exists()) {
+					console.log("A document does not exist");
+				}
+				const newReceiverBalance = parseFloat(receiverDoc.data().balance) + parseFloat(value);
+				const newSenderBalance = parseFloat(senderDoc.data().balance) - parseFloat(value);
+				transaction.update(doc(this.db, "blogs", blog_id), { upvotes });
+				transaction.update(doc(this.db, "users", receiver_id), { balance: newReceiverBalance });
+				transaction.update(doc(this.db, "users", sender_id), { balance: newSenderBalance });
+			});
+			callback("success");
+		} catch (e) {
+			console.log("Transaction failed: ", e);
 		}
 	}
 

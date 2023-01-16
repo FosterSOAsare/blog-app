@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useGlobalContext } from "../../../context/AppContext";
 import { useReducer, useEffect } from "react";
@@ -7,8 +7,10 @@ import { useSubscriptionContext } from "../../../context/SubscriptionContext";
 
 const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp }) => {
 	const [subs, subsDispatchFunc] = useReducer(reducerFunc, { subscribed: false, subscribers: [], data: {} });
+	const [showDrop, setShowDrop] = useState(false);
 	let { credentials, firebase, calculateTime } = useGlobalContext();
 	let { subscriptionToggle } = useSubscriptionContext();
+	const complain = useRef(null);
 	let editLink = `/@${username}/edit/${blog_id}`;
 	let time = blog_timestamp?.seconds && calculateTime(blog_timestamp?.seconds);
 
@@ -26,6 +28,21 @@ const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp }) => {
 		}
 	}
 
+	useEffect(() => {
+		let parent = complain.current;
+		let current = undefined;
+		credentials.user &&
+			document.addEventListener("mousemove", (e) => {
+				current = e.target;
+				if (parent.contains(e.target)) {
+					setShowDrop(true);
+				} else {
+					setTimeout(() => {
+						!parent.contains(current) && setShowDrop(false);
+					}, 200);
+				}
+			});
+	}, [credentials.user]);
 	useEffect(() => {
 		// Fetching subscribers
 		if (username) {
@@ -81,7 +98,15 @@ const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp }) => {
 				<div className="bio">{bio}</div>
 				<div className="userTime">
 					<p>{time}</p>
-					<div className="complain"></div>
+					<div className="complain" ref={complain}>
+						<i className="fa-solid fa-ellipsis-vertical"></i>
+						{showDrop && (
+							<div className="drop">
+								<div className="drop_elem">Report this</div>
+								<div className="drop_elem">Block this user</div>
+							</div>
+						)}
+					</div>
 				</div>
 				<div className="communities"></div>
 			</div>

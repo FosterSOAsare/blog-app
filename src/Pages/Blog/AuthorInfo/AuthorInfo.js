@@ -67,9 +67,7 @@ const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp }) => {
 
 	return (
 		<section className="author_info">
-			<div className="image">
-				<img src={img_src} alt="Author's Profile " />
-			</div>
+			<div className={`image${img_src ? "" : " icon"}`}>{img_src ? <img src={img_src} alt="Author's Profile " /> : <i className="fa-user fa-solid"></i>}</div>
 			<div className="desc">
 				<div className="actions">
 					<p>
@@ -95,7 +93,7 @@ const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp }) => {
 						</button>
 					)}
 				</div>
-				<div className="bio">{bio}</div>
+				<div className="bio">{bio ? bio : "User has no bio at the moment"}</div>
 				<div className="userTime">
 					<p>{time}</p>
 					<div className="complain" ref={complain}>

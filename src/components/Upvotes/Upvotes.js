@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import Encourage from "../../assets/images/svgs/encourage.svg";
 import Error from "../../components/form/Error";
 import { useAuthContext } from "../../context/AuthContext";
@@ -9,6 +9,13 @@ import Tipper from "../Tipper/Tipper";
 const Upvotes = ({ blog_id, upvotes, author_id }) => {
 	const [showForm, setShowForm] = useState(false);
 	const [blogTips, setBlogTips] = useState([]);
+	const totalTips = useMemo(() => {
+		if (blogTips) {
+			return blogTips.reduce((total, tip) => total + parseFloat(tip.amount), 0);
+		}
+		return 0;
+	}, [blogTips]);
+
 	const { credentials, firebase } = useGlobalContext();
 	let tippers = upvotes && JSON.parse(upvotes);
 
@@ -66,7 +73,7 @@ const Upvotes = ({ blog_id, upvotes, author_id }) => {
 						}}
 					>
 						<i className="fa-solid fa-arrow-up"></i>
-						<p>$ 0.00</p>
+						<p>{totalTips.toFixed(2)}</p>
 					</div>
 					<div className="tippers">
 						{tippers &&

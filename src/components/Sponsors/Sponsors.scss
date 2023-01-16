@@ -19,6 +19,10 @@
 		gap: 20px;
 		height: auto;
 		margin-bottom: 20px;
+		.loading {
+			grid-column: 2/3;
+			height: 170px;
+		}
 		.sponsor {
 			width: 100%;
 			height: 100px;

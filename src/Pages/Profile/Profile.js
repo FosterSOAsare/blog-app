@@ -7,8 +7,9 @@ import BlogPreview from "../../components/BlogPreview/BlogPreview";
 import { useGlobalContext } from "../../context/AppContext";
 import { useAuthContext } from "../../context/AuthContext";
 import { useParams } from "react-router";
+import Loading from "../../components/Loading/Loading";
 const Profile = () => {
-	const [profileData, setProfileData] = useReducer(reducerFunc, { user: null, blogs: [] });
+	const [profileData, setProfileData] = useReducer(reducerFunc, { user: null, blogs: null });
 	const { verifications } = useAuthContext();
 	let { firebase } = useGlobalContext();
 
@@ -72,20 +73,20 @@ const Profile = () => {
 			<main className="profile">
 				<UserInfo setShowEditForm={setShowEditForm} setBlockUserActive={setBlockUserActive} data={profileData.user} />
 				{showEditForm && <FormPopup desc="Edit your bio" placeholder="Enter your new bio here" type="textarea" setShowEditForm={setShowEditForm} proceed={saveBio} />}
-				{blockUserActive && (
-					<ConfirmPopup desc={`Are you sure you want to block @${profileData?.user?.username}`} opt1="Block" opt2="Cancel" setShow={setBlockUserActive} proceed={blockUser} />
-				)}
+				{blockUserActive && <ConfirmPopup desc={`Are you sure you want to block @${profileData?.user?.username}`} opt1="Block" opt2="Cancel" setShow={setBlockUserActive} proceed={blockUser} />}
 				<Sponsors data={profileData.user} />
 			</main>
-			<section id="blogs">
-				{/* Fetcgin blogs */}
-				{profileData.blogs.length > 0 &&
-					profileData.blogs.map((e) => {
-						return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
-					})}
 
-				{!profileData?.blogs?.length && <p className="noblogs">Nothing here...</p>}
-			</section>
+			{!profileData?.blogs && <Loading className="profileLoading" />}
+			{profileData?.blogs && profileData?.blogs.length > 0 && (
+				<section id="blogs">
+					{profileData.blogs.length > 0 &&
+						profileData.blogs.map((e) => {
+							return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
+						})}
+				</section>
+			)}
+			{profileData?.blogs && profileData?.blogs.length === 0 && <p className="noblogs">Nothing here...</p>}
 		</>
 	);
 };

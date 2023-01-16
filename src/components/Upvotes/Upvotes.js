@@ -3,7 +3,8 @@ import Encourage from "../../assets/images/svgs/encourage.svg";
 import Error from "../../components/form/Error";
 import { useAuthContext } from "../../context/AuthContext";
 import { useGlobalContext } from "../../context/AppContext";
-import { NavLink } from "react-router-dom";
+
+import Tipper from "../Tipper/Tipper";
 
 const Upvotes = ({ blog_id, upvotes, author_id }) => {
 	const [showForm, setShowForm] = useState(false);
@@ -62,19 +63,15 @@ const Upvotes = ({ blog_id, upvotes, author_id }) => {
 						onClick={() => {
 							if (credentials?.userId === author_id) return;
 							setShowForm(true);
-						}}>
+						}}
+					>
 						<i className="fa-solid fa-arrow-up"></i>
 						<p>$ 0.00</p>
 					</div>
 					<div className="tippers">
 						{tippers &&
 							tippers.map((e, index) => {
-								console.log(e);
-								return (
-									<NavLink className="tipper" key={index} to={`/@${e.username}`}>
-										{e.profile_img !== "" ? <img src={e.profile_img} alt="Tipper" /> : <i className="fa-solid fa-user"></i>}
-									</NavLink>
-								);
+								return <Tipper {...e} key={index} />;
 							})}
 					</div>
 				</div>
@@ -96,7 +93,8 @@ const Upvotes = ({ blog_id, upvotes, author_id }) => {
 							onClick={(e) => {
 								e.preventDefault(e);
 								setShowForm(false);
-							}}>
+							}}
+						>
 							Cancel
 						</button>
 					</div>

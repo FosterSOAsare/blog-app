@@ -9,24 +9,8 @@
 		height: 50px;
 		// background-color: green;
 		@include flex(flex-start, center);
-		.upvote {
-			min-width: 120px;
-			width: auto;
-			height: 100%;
-			border-radius: 3px;
-			border: 2px solid $grey;
-			@include flex(flex-start, center);
-			padding: 0 10px;
-			i {
-				margin-right: 10px;
-				font-size: 20px;
-				font-weight: bold;
-			}
-			p {
-				font-size: 16px;
-				font-weight: bold;
-			}
-		}
+		position: relative;
+
 		.tippers {
 			width: 200px;
 			height: 100%;
@@ -44,29 +28,6 @@
 		img {
 			width: 160px;
 			height: 100%;
-		}
-	}
-}
-
-.tipForm {
-	width: 100%;
-	@include container;
-	@include flex(flex-start, flex-start);
-	// flex-direction: row;
-	label {
-		margin-bottom: 20px;
-		span {
-			font-weight: bold;
-			opacity: 0.7;
-		}
-	}
-	.actions {
-		@include flex(flex-start, center);
-		button {
-			width: 150px;
-		}
-		.cancel {
-			margin-left: 20px;
 		}
 	}
 }

@@ -1,0 +1,48 @@
+.upvote {
+	min-width: 120px;
+	width: auto;
+	height: 100%;
+	border-radius: 3px;
+	border: 2px solid $grey;
+	@include flex(flex-start, center);
+	padding: 0 10px;
+	i {
+		margin-right: 10px;
+		font-size: 20px;
+		font-weight: bold;
+	}
+	p {
+		font-size: 16px;
+		font-weight: bold;
+	}
+}
+
+.tipForm {
+	@include container;
+
+	// flex-direction: row;
+	position: absolute;
+	background-color: $white;
+	z-index: 2;
+	top: -5px;
+	.container {
+		@include flex(flex-start, flex-start);
+		flex-direction: column;
+		label {
+			margin-bottom: 20px;
+			span {
+				font-weight: bold;
+				opacity: 0.7;
+			}
+		}
+		.actions {
+			@include flex(flex-start, center);
+			button {
+				width: 150px;
+			}
+			.cancel {
+				margin-left: 20px;
+			}
+		}
+	}
+}

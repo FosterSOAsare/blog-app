@@ -23,13 +23,6 @@ const Profile = () => {
 				return { ...data, user: action.payload };
 			case "storeBlogs":
 				return { ...data, blogs: action.payload };
-			case "setComment":
-				return {
-					...data,
-					blogs: data.blogs.map((e) => {
-						return e.blog_id === action.id ? { ...data, comments: action.payload } : e;
-					}),
-				};
 			default:
 				return data;
 		}

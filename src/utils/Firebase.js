@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, runTransaction, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy } from "firebase/firestore";
+import { getFirestore, runTransaction, doc, setDoc, getDocs, getDoc, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -319,6 +319,51 @@ export class Firebase {
 			console.log("Transaction failed: ", e);
 		}
 	}
+	storeComment(data, callback) {
+		data = { ...data, timestamp: serverTimestamp(), likes: "", dislikes: "", upvotes: JSON.stringify([]) };
+		addDoc(collection(this.db, "comments"), data)
+			.then((response) => {
+				callback(response);
+			})
+			.catch((e) => {
+				callback({ error: e });
+			});
+		callback(data);
+	}
+	fetchComments(blog_id, callback) {
+		// Fetch comment
+		// Fetch comment author
+		//  Fetch length of comment replies
+		try {
+			// Create a query against the collection.
+			let q = query(collection(this.db, "comments"), where("blog_id", "==", blog_id));
+			onSnapshot(q, async (querySnapshot) => {
+				if (querySnapshot.docs?.length) {
+					let comment_authors = [];
+					let totalReplies = [];
+					let comments = querySnapshot.docs.map((e) => {
+						comment_authors.push(getDoc(doc(this.db, "users", e.data().author_id)));
+						totalReplies.push(getDocs(query(collection(this.db, "replies"), where("base_comment", "==", e.id))));
+						return { ...e.data(), id: e.id };
+					});
+					comment_authors = await Promise.all(comment_authors);
+					totalReplies = await Promise.all(totalReplies);
+					comments = comments.map((e, index) => {
+						return {
+							...e,
+							commentOrReplyAuthor: comment_authors[index].data(),
+							totalReplies: totalReplies[index]?.docs.length,
+						};
+					});
 
+					callback(comments);
+					return;
+				}
+				callback({ empty: true });
+			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
 	// Comments
 }

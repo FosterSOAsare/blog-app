@@ -3,7 +3,7 @@ import { useGlobalContext } from "../../context/AppContext";
 import { arrangeSponsorships } from "../../utils/Sponsorship.js/Sponsorship.util";
 import Loading from "../Loading/Loading";
 
-const Sponsors = ({ data, loggedUser }) => {
+const Sponsors = ({ data }) => {
 	const [sponsors, setSponsors] = useState([]);
 	const { firebase, credentials } = useGlobalContext();
 

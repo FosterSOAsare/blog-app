@@ -1,0 +1,26 @@
+.comment {
+	width: 100%;
+	min-height: 50px;
+	background-color: green;
+	position: relative;
+	margin-bottom: 30px;
+	border-left: 2px solid $text1;
+	display: block;
+	.actions {
+		width: 30px;
+		height: 25px;
+		float: right;
+		background-color: $grey;
+		@include flex(center, center);
+		i {
+			color: $white;
+		}
+	}
+	.interactions {
+		background-color: red;
+		@include flex(flex-start, center);
+		.rating {
+			background-color: yellow;
+		}
+	}
+}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useGlobalContext } from "../../context/AppContext";
 import { countElements } from "../../utils/Text";
 
-const Ratings = ({ likes, dislikes, blog_id }) => {
+const Ratings = ({ likes, dislikes, blog_id, id, replyId }) => {
 	const [rating, setRating] = useState("");
 	const { credentials, firebase } = useGlobalContext();
 	function removeRating(str) {
@@ -42,13 +42,17 @@ const Ratings = ({ likes, dislikes, blog_id }) => {
 
 		firebase.updateLikes(newLikesData, newDislikesData, blog_id);
 	}
+
+	function rateComment() {}
+
+	function rateReply() {}
 	return (
 		<div className="likes action rating">
-			<div className={`up icon${rating === true ? " active" : ""}`} onClick={() => rateArticle("like", blog_id)}>
+			<div className={`up icon${rating === true ? " active" : ""}`} onClick={() => (blog_id ? rateArticle("like", blog_id) : id ? rateComment("like", id) : rateReply("like", replyId))}>
 				<i className="fa-solid fa-thumbs-up"></i>
 			</div>
 			<p>{countElements(likes) - countElements(dislikes)}</p>
-			<div className={`down icon${rating === false ? " dislike" : ""}`} onClick={() => rateArticle("dislike", blog_id)}>
+			<div className={`down icon${rating === false ? " dislike" : ""}`} onClick={() => (blog_id ? rateArticle("dislike", blog_id) : id ? rateComment("dislike", id) : rateReply("dislike", replyId))}>
 				<i className="fa-solid fa-thumbs-down"></i>
 			</div>
 		</div>

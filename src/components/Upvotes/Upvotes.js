@@ -11,7 +11,7 @@ const Upvotes = ({ blog_id, upvotes, author_id }) => {
 		<>
 			<section className="upvotes">
 				<div className="tips">
-					<TipBox {...{ upvotes, author_id, blog_id }} />
+					<TipBox {...{ upvotes, author_id, id: blog_id, type: "blogs" }} />
 					<div className="tippers">
 						{tippers &&
 							tippers.map((e, index) => {

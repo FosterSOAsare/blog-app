@@ -41,7 +41,7 @@ const Blog = () => {
 			setProfileDispatchFunc({ type: "storeBlog", payload: res });
 		});
 
-		firebase.fetchComments(blogId, (res) => {
+		firebase.fetchCommentsOrReplies("comments", blogId, "desc", (res) => {
 			if (res.error) return;
 			if (res.empty) return;
 			setProfileDispatchFunc({ type: "storeComments", payload: res });
@@ -71,7 +71,7 @@ const Blog = () => {
 
 	function addComment(comment, author_id, blog_id) {
 		if (comment === "") return;
-		firebase.storeComment({ comment, author_id, blog_id }, (res) => {
+		firebase.storeCommentOrReply("comments", { comment, author_id, blog_id }, (res) => {
 			if (res.error) return;
 			setShowAddComment(false);
 			commentRef.current.value = "";
@@ -88,7 +88,7 @@ const Blog = () => {
 						</div>
 						<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} />
 						<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
-						<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} blog_id={profileData?.blog?.blog_id} />
+						<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} id={profileData?.blog?.blog_id} type="blogs" />
 						<Upvotes blog_id={profileData?.blog?.blog_id} upvotes={profileData?.blog?.upvotes} author_id={profileData?.author?.userId} />
 						<Sponsors data={profileData?.author} />
 						<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} />
@@ -101,8 +101,7 @@ const Blog = () => {
 								<button
 									onClick={(e) => {
 										addComment(commentRef.current.value, credentials?.userId, profileData?.blog?.blog_id);
-									}}
-								>
+									}}>
 									Add comment
 								</button>
 							)}
@@ -110,9 +109,11 @@ const Blog = () => {
 							<div className="content">
 								{!profileData?.comments && <Loading />}
 								{profileData?.comments &&
-									profileData?.comments?.map((e) => {
-										console.log(e);
-										return <Comment key={e.id} {...e} />;
+									profileData?.comments?.map((e, index) => {
+										if (index === 0) {
+											console.log(e.totalReplies);
+										}
+										return <Comment key={e.id} {...e} blog_id={profileData?.blog?.blog_id} />;
 									})}
 							</div>
 						</div>

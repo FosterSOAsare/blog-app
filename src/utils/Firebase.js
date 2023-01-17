@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, runTransaction, doc, setDoc, getDocs, getDoc, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy } from "firebase/firestore";
+import { getFirestore, runTransaction, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -118,6 +118,11 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	fetchUserWithId(user_id, callback) {
+		onSnapshot(doc(this.db, "users", user_id), (res) => {
+			callback({ ...res.data(), user_id: res.id });
+		});
+	}
 	updateProfileImage(image, userId, callback) {
 		// Get ext
 		let ext = image.name.split(".");
@@ -188,7 +193,7 @@ export class Firebase {
 				res.docs.forEach((blog) => {
 					result.push({ ...blog.data(), blog_id: blog.id });
 					// Comment.  This is the logic I was missing. Push the functions into an array and resolve below else the loop wouldn't wait
-					promises.push(getDocs(query(collection(this.db, "comments"), where("reply_to", "==", blog.id))));
+					promises.push(getDocs(query(collection(this.db, "comments"), where("blog_id", "==", blog.id))));
 				});
 				// Resolving comments.
 				let comments = await Promise.all(promises);
@@ -248,7 +253,7 @@ export class Firebase {
 	storeBlog(data, callback) {
 		// Store lead Image first
 		let path = "blogs/" + data.name;
-		data = { ...data, timestamp: serverTimestamp(), likes: data.author, dislikes: "", views: 0, upvotes: JSON.stringify([]) };
+		data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", views: 0, upvotes: JSON.stringify([]) };
 
 		this.storeImg(data?.file, path, (res) => {
 			if (res.error) {
@@ -257,6 +262,7 @@ export class Firebase {
 			}
 			delete data.file;
 			delete data.name;
+			delete data.author_id;
 			data.lead_image_src = res;
 			// Insert Blog
 			addDoc(collection(this.db, "blogs"), data)
@@ -270,9 +276,9 @@ export class Firebase {
 		});
 	}
 
-	updateLikes(likes, dislikes, blog_id) {
+	updateRatings(type, likes, dislikes, id) {
 		try {
-			updateDoc(doc(this.db, "blogs", blog_id), { likes, dislikes }).then((res) => {});
+			updateDoc(doc(this.db, type, id), { likes, dislikes }).then((res) => {});
 		} catch (e) {
 			console.log(e);
 		}
@@ -291,11 +297,10 @@ export class Firebase {
 				}
 			});
 		} catch (e) {
-			console.log(e);
 			callback({ error: "An error occurred" });
 		}
 	}
-	async storeUpvote(blog_id, upvotes, receiver_id, sender_id, value, callback) {
+	async storeUpvote(type, id, upvotes, receiver_id, sender_id, value, callback) {
 		// Transaction
 		// Store new upvotes data
 		// Subtract amount from sender
@@ -304,13 +309,12 @@ export class Firebase {
 			await runTransaction(this.db, async (transaction) => {
 				const receiverDoc = await transaction.get(doc(this.db, "users", receiver_id));
 				const senderDoc = await transaction.get(doc(this.db, "users", sender_id));
-
 				if (!receiverDoc.exists() || !senderDoc.exists()) {
 					console.log("A document does not exist");
 				}
 				const newReceiverBalance = parseFloat(receiverDoc.data().balance) + parseFloat(value);
 				const newSenderBalance = parseFloat(senderDoc.data().balance) - parseFloat(value);
-				transaction.update(doc(this.db, "blogs", blog_id), { upvotes });
+				transaction.update(doc(this.db, type, id), { upvotes });
 				transaction.update(doc(this.db, "users", receiver_id), { balance: newReceiverBalance });
 				transaction.update(doc(this.db, "users", sender_id), { balance: newSenderBalance });
 			});
@@ -319,9 +323,9 @@ export class Firebase {
 			console.log("Transaction failed: ", e);
 		}
 	}
-	storeComment(data, callback) {
+	storeCommentOrReply(type, data, callback) {
 		data = { ...data, timestamp: serverTimestamp(), likes: "", dislikes: "", upvotes: JSON.stringify([]) };
-		addDoc(collection(this.db, "comments"), data)
+		addDoc(collection(this.db, type), data)
 			.then((response) => {
 				callback(response);
 			})
@@ -330,33 +334,22 @@ export class Firebase {
 			});
 		callback(data);
 	}
-	fetchComments(blog_id, callback) {
-		// Fetch comment
-		// Fetch comment author
-		//  Fetch length of comment replies
+
+	async fetchCommentsOrReplies(type, base_id, sort, callback) {
+		let field = type === "comments" ? "blog_id" : "base_comment_id";
+		// // Fetch comment
+		// // Fetch comment author
+		// //  Fetch length of comment replies
+		// // Using getDocs
 		try {
 			// Create a query against the collection.
-			let q = query(collection(this.db, "comments"), where("blog_id", "==", blog_id));
+			let q = query(collection(this.db, type), where(field, "==", base_id), orderBy("timestamp", sort));
 			onSnapshot(q, async (querySnapshot) => {
 				if (querySnapshot.docs?.length) {
-					let comment_authors = [];
-					let totalReplies = [];
-					let comments = querySnapshot.docs.map((e) => {
-						comment_authors.push(getDoc(doc(this.db, "users", e.data().author_id)));
-						totalReplies.push(getDocs(query(collection(this.db, "replies"), where("base_comment", "==", e.id))));
+					let commentsOrReplies = querySnapshot.docs.map((e) => {
 						return { ...e.data(), id: e.id };
 					});
-					comment_authors = await Promise.all(comment_authors);
-					totalReplies = await Promise.all(totalReplies);
-					comments = comments.map((e, index) => {
-						return {
-							...e,
-							commentOrReplyAuthor: comment_authors[index].data(),
-							totalReplies: totalReplies[index]?.docs.length,
-						};
-					});
-
-					callback(comments);
+					callback(commentsOrReplies);
 					return;
 				}
 				callback({ empty: true });
@@ -365,5 +358,4 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
-	// Comments
 }

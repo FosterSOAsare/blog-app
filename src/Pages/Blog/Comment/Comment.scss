@@ -1,11 +1,18 @@
 .comment {
-	width: 100%;
-	min-height: 50px;
-	background-color: green;
+	width: 98%;
+	min-height: 90px;
+	// background-color: green;
 	position: relative;
 	margin-bottom: 30px;
 	border-left: 2px solid $text1;
 	display: block;
+	padding-left: 20px;
+	position: relative;
+	.reply_info {
+		font-size: 13px;
+		margin-bottom: 10px;
+		color: $text1;
+	}
 	.actions {
 		width: 30px;
 		height: 25px;
@@ -17,10 +24,118 @@
 		}
 	}
 	.interactions {
-		background-color: red;
+		// background-color: red;
 		@include flex(flex-start, center);
+		margin-top: 10px;
 		.rating {
-			background-color: yellow;
+			// background-color: red;
+			gap: 10px;
+			.icon {
+				margin: 0;
+				@include flex(center, center);
+			}
+		}
+		img {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			margin-left: 10px;
+		}
+		.link {
+			margin-left: 10px;
+			color: $text1;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		.time {
+			opacity: 0.7;
+			margin-left: 10px;
+		}
+		.reply {
+			opacity: 1;
+			margin-left: 20px;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		.tipForm {
+			height: auto;
+			min-height: 120px;
+			width: 100%;
+			left: 0px;
+			background-color: $background2;
+			.container {
+				width: 50%;
+				height: auto;
+				margin: 0 auto;
+				label {
+					margin-bottom: 5px;
+				}
+				input {
+					height: 40px;
+					width: 350px;
+				}
+				.actions {
+					height: auto;
+					background-color: transparent;
+					align-items: center;
+					margin-top: -14px;
+					padding: 0;
+					width: 100%;
+					gap: 10px;
+					button {
+						margin: 0;
+						width: 140px;
+					}
+				}
+			}
+		}
+	}
+	.interactions > div {
+		// background-color: yellow;
+		width: 120px;
+		height: 40px;
+		margin-right: 15px;
+		border: 1px solid $grey;
+	}
+	.showReplies {
+		margin-top: 10px;
+		text-decoration: underline;
+		color: blue;
+	}
+}
+.replies {
+	width: 95%;
+	margin-left: 5%;
+}
+.replyForm {
+	height: auto;
+	background-color: $background2;
+	position: absolute;
+	left: -4px;
+	top: 10px;
+	z-index: 2;
+	@include container;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+
+	width: 200%;
+	@include flex(center, flex-start);
+	.container {
+		width: 100%;
+		height: auto;
+		min-height: 200px;
+		margin-top: 150px;
+		textarea {
+			width: 100%;
+		}
+		button {
+			min-width: 170px;
+		}
+		.cancel {
+			margin-left: 20px;
 		}
 	}
 }

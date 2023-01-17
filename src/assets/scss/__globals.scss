@@ -7,6 +7,9 @@
 	box-sizing: border-box;
 	font-family: "Merriweather", serif;
 }
+html {
+	scroll-behavior: smooth;
+}
 $text1: #2e475d;
 $text2: #74c0fc;
 $white: #ffffff;

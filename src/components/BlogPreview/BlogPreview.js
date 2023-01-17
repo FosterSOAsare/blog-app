@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { truncateText } from "../../utils/Text";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { useGlobalContext } from "../../context/AppContext";
 import { removeHTML, createLink } from "../../utils/Text";
 import Ratings from "../Ratings/Ratings";
@@ -55,7 +55,7 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 			</div>
 
 			<div className="actions">
-				<Ratings likes={likes} dislikes={dislikes} blog_id={blog_id} />
+				<Ratings likes={likes} dislikes={dislikes} id={blog_id} type="blogs" />
 				<NavLink className="comments action" to={`${link}#comments`}>
 					<div className="icon">
 						<i className="fa-solid fa-comments"></i>
@@ -71,7 +71,9 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 
 				<p>${total}</p>
 
-				<p className="username">@scyre27</p>
+				<Link className="username link" to={`/@${author}`}>
+					@{author}
+				</Link>
 
 				<article ref={subButton} className="blog_controls">
 					<i className="fa-solid fa-ellipsis-vertical"></i>

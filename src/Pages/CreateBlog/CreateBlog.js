@@ -33,7 +33,7 @@ const CreateBlog = () => {
 		let ext = image.files[0].name.split(".");
 		ext = ext[ext.length - 1];
 		let name = removeSpaces(removeSpecialChars(removeHTML(heading))).toLowerCase() + "-" + new Date().getTime() + "." + ext.toLowerCase();
-		firebase.storeBlog({ type: "publish", heading, message, author: credentials?.user?.username, name, file: image.files[0] }, (res) => {
+		firebase.storeBlog({ type: "publish", heading, message, author_id: credentials?.userId, author: credentials?.user?.username, name, file: image.files[0] }, (res) => {
 			if (res.error) return;
 			setStored({ type: "publish" });
 		});

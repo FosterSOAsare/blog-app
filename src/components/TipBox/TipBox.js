@@ -3,19 +3,19 @@ import { useGlobalContext } from "../../context/AppContext";
 import { useAuthContext } from "../../context/AuthContext";
 import Error from "../form/Error";
 
-const TipBox = ({ upvotes, author_id, blog_id }) => {
+const TipBox = ({ type, upvotes, author_id, id }) => {
 	const { credentials, firebase } = useGlobalContext();
 	const [showForm, setShowForm] = useState(false);
 	let { error, errorFunc } = useAuthContext();
-	const [blogTips, setBlogTips] = useState([]);
+	const [tips, setTips] = useState([]);
 	let amountInput = useRef(null);
 
 	const totalTips = useMemo(() => {
-		if (blogTips) {
-			return blogTips.reduce((total, tip) => total + parseFloat(tip.amount), 0);
+		if (tips) {
+			return tips.reduce((total, tip) => total + parseFloat(tip.amount), 0);
 		}
 		return 0;
-	}, [blogTips]);
+	}, [tips]);
 
 	useEffect(() => {
 		// Amount , username , profile picture
@@ -24,34 +24,34 @@ const TipBox = ({ upvotes, author_id, blog_id }) => {
 		if (tips.length) {
 			tips = tips.sort((a, b) => b.amount - a.amount);
 		}
-		setBlogTips(tips);
+		setTips(tips);
 	}, [upvotes]);
 
 	function sendTip(e) {
 		e.preventDefault();
-		let value = parseFloat(amountInput.current.value);
-		if (value.length < 1) {
+		let value = amountInput.current && parseFloat(amountInput.current.value);
+		if (amountInput?.current?.value.length < 1) {
 			errorFunc({ type: "displayError", payload: "Please enter an amount to tip" });
 			return;
 		}
 		// Check if user has more sufficient funds
-		if (credentials?.user?.balance <= value && value < 0) {
-			errorFunc({ type: "displayError", payload: "Insufficient funds" });
+		if (credentials?.user?.balance <= value || value < 0) {
+			errorFunc({ type: "displayError", payload: "Insufficient funds to complete transaction" });
 			return;
 		}
 
 		// Check if user has already upvoted and update
-		let newData = blogTips.find((e) => e.username === credentials?.user?.username);
+		let newData = tips.find((e) => e.username === credentials?.user?.username);
 
 		if (newData) {
-			newData = blogTips.map((e) => {
+			newData = tips.map((e) => {
 				return e.username === credentials?.user?.username ? { ...e, amount: (parseFloat(e.amount) + parseFloat(value)).toFixed(2) } : e;
 			});
 		} else {
 			newData = [{ amount: parseFloat(value).toFixed(2), username: credentials?.user?.username, profile_img: credentials?.user?.img_src || "" }];
 		}
 
-		firebase.storeUpvote(blog_id, JSON.stringify(newData), author_id, credentials?.userId, parseFloat(value).toFixed(2), (res) => {
+		firebase.storeUpvote(type, id, JSON.stringify(newData), author_id, credentials?.userId, parseFloat(value).toFixed(2), (res) => {
 			if (res.error) return;
 			setShowForm(false);
 		});
@@ -62,6 +62,7 @@ const TipBox = ({ upvotes, author_id, blog_id }) => {
 				className="upvote"
 				onClick={() => {
 					if (credentials?.userId === author_id) return;
+					console.log("clicked");
 					setShowForm(true);
 				}}>
 				<i className="fa-solid fa-arrow-up"></i>

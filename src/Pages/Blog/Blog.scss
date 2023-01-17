@@ -80,6 +80,7 @@ main.blog {
 	background-color: $background2;
 	border-top: 1px solid $grey;
 	margin-top: 10px;
+	position: relative;
 	.comments__container {
 		@include container;
 		padding: 50px 0;
@@ -90,11 +91,13 @@ main.blog {
 			margin-bottom: 20px;
 		}
 		textarea {
-			width: 100%;
+			width: 98%;
 			border-radius: 0;
 			border: 1px solid $text1;
 			font-size: 16px;
 			min-height: 100px;
+			margin: 0 auto;
+			display: block;
 			&::-webkit-scrollbar {
 				display: none;
 			}
@@ -111,7 +114,6 @@ main.blog {
 		}
 		.content {
 			margin-top: 30px;
-			@include container;
 			min-height: 200px;
 			padding: 0;
 		}

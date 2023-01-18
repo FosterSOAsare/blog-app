@@ -35,7 +35,7 @@ function App() {
 					<Route path="saved" element={<LoginRequired><Saved /></LoginRequired>}></Route>
 					<Route path="/:username">
 						<Route index  element={<Profile />}></Route>
-						<Route path="edit/:blogTitle"  element={<Blog />} ></Route>
+						<Route path="edit/:blogId"  element={<LoginRequired><CreateBlog /></LoginRequired>} ></Route>
 						<Route path=":blogTitle"  element={<Blog />} ></Route>
 					</Route>
 					<Route path="search" element={<Search />}></Route>

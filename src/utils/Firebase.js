@@ -275,6 +275,36 @@ export class Firebase {
 		});
 	}
 
+	updateBlog(data, callback) {
+		try {
+			data.editTime = serverTimestamp();
+			if (data.file) {
+				let path = "blogs/" + data.name;
+				// Store file in case the lead image changes
+				this.storeImg(data?.file, path, (res) => {
+					if (res.error) {
+						callback(res);
+						return;
+					}
+					delete data.file;
+					delete data.name;
+					data.lead_image_src = res;
+					// Insert Blog
+					updateDoc(doc(this.db, "blogs", data?.blog_id), data);
+					callback(data);
+				});
+				callback("success");
+				return;
+			}
+
+			updateDoc(doc(this.db, "blogs", data.blog_id), data).then(() => {});
+			callback("success");
+		} catch (error) {
+			console.log(error);
+			callback({ error: "An error occurred " });
+		}
+	}
+
 	updateRatings(type, likes, dislikes, id) {
 		try {
 			updateDoc(doc(this.db, type, id), { likes, dislikes }).then((res) => {});

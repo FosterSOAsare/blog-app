@@ -6,7 +6,7 @@
 	margin-bottom: 30px;
 	border-left: 2px solid $text1;
 	display: block;
-	padding-left: 20px;
+	padding: 10px 0px 10px 20px;
 	position: relative;
 	.reply_info {
 		font-size: 13px;
@@ -138,4 +138,8 @@
 			margin-left: 20px;
 		}
 	}
+}
+
+.activeReply {
+	background-color: #9c27b0;
 }

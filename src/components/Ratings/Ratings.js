@@ -39,7 +39,6 @@ const Ratings = ({ type, likes, dislikes, id }) => {
 		// Also check if user has already done that action , toggle it off or on
 		newDislikesData = rate_type === "like" ? removeRating(dislikes) : toggleRating(dislikes);
 		newLikesData = rate_type === "like" ? toggleRating(likes) : removeRating(likes);
-
 		firebase.updateRatings(type, newLikesData, newDislikesData, id);
 	}
 

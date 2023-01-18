@@ -361,6 +361,7 @@ export class Firebase {
 	}
 	storeCommentOrReply(type, data, callback) {
 		data = { ...data, timestamp: serverTimestamp(), likes: "", dislikes: "", upvotes: JSON.stringify([]) };
+		console.log(type, data);
 		addDoc(collection(this.db, type), data)
 			.then((response) => {
 				callback(response);

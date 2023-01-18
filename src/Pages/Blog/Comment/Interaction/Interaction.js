@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
-import TipBox from "../../../components/TipBox/TipBox";
-import Ratings from "../../../components/Ratings/Ratings";
+import TipBox from "../../../../components/TipBox/TipBox";
+import Ratings from "../../../../components/Ratings/Ratings";
 import { NavLink } from "react-router-dom";
-import { useGlobalContext } from "../../../context/AppContext";
+import { useGlobalContext } from "../../../../context/AppContext";
 const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, author_id, base_id, reply_to, setRepliesInfo, repliesInfo, activeReply, setActiveReply }) => {
 	const { calculateTime, firebase, credentials } = useGlobalContext();
 	const [author, setAuthor] = useState("");

@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { useGlobalContext } from "../../../context/AppContext";
-import Interaction from "../Interaction/Interaction";
+import Interaction from "./Interaction/Interaction";
 
 const Comment = ({ comment, likes, dislikes, timestamp, id, upvotes, author_id }) => {
 	const { firebase } = useGlobalContext();

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import { getFirestore, runTransaction, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
@@ -357,5 +357,37 @@ export class Firebase {
 		} catch (e) {
 			callback({ error: "An error occurred" });
 		}
+	}
+
+	getUserObject(callback) {
+		if (this.auth) {
+			callback(this.auth?.currentUser);
+			return;
+		}
+		callback({ error: true });
+	}
+
+	sendVerification(user, callback) {
+		callback(sendEmailVerification(user));
+	}
+
+	validatePassword(user, password, callback) {
+		const credential = EmailAuthProvider.credential(user?.email, password);
+		reauthenticateWithCredential(user, credential)
+			.then(() => {
+				callback("success");
+			})
+			.catch((error) => {
+				callback({ error: true });
+			});
+	}
+	updateUsersPassword(user, newPassword, callback) {
+		updatePassword(user, newPassword)
+			.then(() => {
+				callback("success");
+			})
+			.catch((error) => {
+				callback({ error: true });
+			});
 	}
 }

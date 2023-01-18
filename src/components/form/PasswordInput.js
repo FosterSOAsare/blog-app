@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 
-const PasswordInput = ({ text, placeholder, handleChange, value, handleFocus }) => {
-	const [type, setType] = useState("password");
+const PasswordInput = ({ text, placeholder, handleChange, value, handleFocus, name = "password" }) => {
+	const [type, setType] = useState(name);
 	const input = useRef(null);
 
 	function toggleType() {

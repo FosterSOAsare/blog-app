@@ -1,0 +1,111 @@
+.account {
+	@include container;
+	// background-color: red;
+	height: auto;
+	h3 {
+		font-size: 18px;
+		font-family: "Lato", sans-serif;
+	}
+	.details {
+		margin-top: 20px;
+		@include flex(space-between, flex-start);
+		height: auto;
+		width: 100%;
+		gap: 20px;
+
+		h3 {
+			text-align: center;
+			height: 40px;
+			border-bottom: 1px solid $grey;
+			margin-bottom: 20px;
+		}
+
+		.email,
+		.password {
+			width: 50%;
+			border: 1px solid $grey;
+			height: auto;
+			background-color: $background2;
+			border-radius: 3px;
+			padding: 30px 20px;
+			padding-bottom: 50px;
+			button {
+				height: 40px;
+				border-radius: 0;
+			}
+		}
+		.email {
+			p {
+				font-family: "Lato", sans-serif;
+				font-weight: bold;
+				font-size: 14px;
+			}
+			.email__address {
+				width: 100%;
+				border: 1px solid $grey;
+				margin-top: 10px;
+				height: 40px;
+				border-radius: 3px;
+				opacity: 0.5;
+				@include flex(flex-start, center);
+				padding: 0 10px;
+				font-size: 14px;
+				font-family: "Lato", sans-serif;
+			}
+			.warning {
+				margin-top: 20px;
+				font-weight: normal;
+				color: red;
+				margin-bottom: 5px;
+			}
+			.desc {
+				margin-top: 10px;
+				font-weight: normal;
+				font-size: 13px;
+				opacity: 0.5;
+			}
+		}
+		.password {
+			button {
+				margin: 0 auto;
+				display: block;
+				padding: 0 40px;
+				font-family: "Lato", sans-serif;
+			}
+			form {
+				label,
+				input {
+					display: block;
+				}
+				label {
+					margin-bottom: 10px;
+					font-size: 14px;
+					font-weight: bold;
+					font-family: "Lato", sans-serif;
+				}
+				input {
+					height: 40px;
+					width: 100%;
+					border-radius: 3px;
+					font-family: "Lato", sans-serif;
+				}
+				p.error {
+					font-family: "Lato", sans-serif;
+					margin-top: 5px;
+					width: 100%;
+				}
+				.controls {
+					width: 100%;
+					@include flex(center, center);
+					margin-top: 20px;
+					#cancel {
+						background-color: transparent;
+						border: none;
+						text-decoration: underline;
+						color: $text1;
+					}
+				}
+			}
+		}
+	}
+}

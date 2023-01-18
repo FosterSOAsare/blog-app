@@ -26,7 +26,7 @@ const DesktopMenu = ({ username, img_src, balance }) => {
 			<NavLink to="/account" className="menuItem link">
 				My account
 			</NavLink>
-			<NavLink to={`/@${username}`} className="menuItem link">
+			<NavLink to={`/@${username}#articles`} className="menuItem link">
 				My articles
 			</NavLink>
 			<NavLink to="/saved" className="menuItem link">

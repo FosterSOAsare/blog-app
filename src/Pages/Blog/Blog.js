@@ -8,10 +8,12 @@ import AuthorInfo from "./AuthorInfo/AuthorInfo";
 import Loading from "../../components/Loading/Loading";
 import Sponsors from "../../components/Sponsors/Sponsors";
 import Comment from "./Comment/Comment";
+import BlogControls from "./BlogControls/BlogControls";
 const Blog = () => {
 	const [profileData, setProfileDispatchFunc] = useReducer(reducerFunc, { author: null, blog: {}, comments: [] });
 	const { firebase, credentials } = useGlobalContext();
 	const [showAddComment, setShowAddComment] = useState(false);
+
 	let { blogTitle } = useParams();
 	const commentRef = useRef(null);
 	let username = useParams().username;
@@ -86,6 +88,7 @@ const Blog = () => {
 						<div className="article__image" data-heading={removeHTML(profileData?.blog?.heading)}>
 							<img src={profileData?.blog?.lead_image_src} alt="Lead" />
 						</div>
+						<BlogControls commentsLen={profileData?.comments.length} />
 						<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} />
 						<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
 						<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} id={profileData?.blog?.blog_id} type="blogs" />

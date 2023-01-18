@@ -79,9 +79,11 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 					<i className="fa-solid fa-ellipsis-vertical"></i>
 					{sub && (
 						<div className="controls_sub">
-							<NavLink className="elem" to={editLink}>
-								Edit article
-							</NavLink>
+							{credentials?.user?.username === author && (
+								<NavLink className="elem" to={editLink}>
+									Edit article
+								</NavLink>
+							)}
 							<NavLink className="elem" to="/report">
 								Report this
 							</NavLink>

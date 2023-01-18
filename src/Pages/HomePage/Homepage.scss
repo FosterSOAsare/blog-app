@@ -1,0 +1,14 @@
+.homepage {
+	background-color: $background2;
+	height: auto;
+	min-height: 400px;
+	padding: 20px 0 50px 0;
+	.container {
+		@include container;
+
+		.blogs {
+			width: 100%;
+			height: auto;
+		}
+	}
+}

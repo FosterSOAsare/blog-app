@@ -78,7 +78,7 @@ const Profile = () => {
 
 			{!profileData?.blogs && <Loading className="profileLoading" errorStatus={false} />}
 			{profileData?.blogs && profileData?.blogs.length > 0 && (
-				<section id="blogs">
+				<section id="articles">
 					{profileData.blogs.length > 0 &&
 						profileData.blogs.map((e) => {
 							return e ? <BlogPreview {...e} key={e.blog_id} /> : "";

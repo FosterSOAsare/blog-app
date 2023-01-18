@@ -1,0 +1,31 @@
+.blogControls {
+	width: 100%;
+	@include container;
+	height: 40px;
+	margin-top: 10px;
+	@include flex(flex-start, center);
+	gap: 30px;
+	.control {
+		width: auto;
+		height: auto;
+		color: $text1;
+		@include flex(space-between, center);
+		gap: 15px;
+		i {
+			font-size: 14px;
+		}
+		&:hover {
+			color: red;
+			cursor: pointer;
+		}
+		p {
+			font-size: 16px;
+			font-family: "Cabin", sans-serif;
+		}
+	}
+	.views {
+		&:hover {
+			color: $text1;
+		}
+	}
+}

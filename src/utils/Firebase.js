@@ -186,7 +186,8 @@ export class Firebase {
 
 		try {
 			// Create a query against the collection.
-			let q = query(collection(this.db, "blogs"), where("author", "==", username), orderBy("timestamp", "desc"));
+			// If username is set, query with username else fetch all
+			let q = username ? query(collection(this.db, "blogs"), where("author", "==", username), orderBy("timestamp", "desc")) : query(collection(this.db, "blogs"), orderBy("timestamp", "desc"));
 			onSnapshot(q, async (res) => {
 				const promises = [];
 				let result = [];

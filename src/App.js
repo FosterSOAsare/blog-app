@@ -38,6 +38,7 @@ function App() {
 					</Route>
 					<Route path="search" element={<Search />}></Route>
 					<Route path="communities" element={<Communities />}></Route>
+					<Route path="report" element={<Communities />}></Route>
 					<Route path="moderations" element={<Communities />}></Route>
 					<Route path="register" element={<CheckLogged><Register /></CheckLogged>}></Route>
 					<Route path="login" element={<CheckLogged><Login /></CheckLogged>}></Route>

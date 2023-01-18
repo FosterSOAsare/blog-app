@@ -396,4 +396,30 @@ export class Firebase {
 				callback({ error: true });
 			});
 	}
+
+	fetchBookMarks(user_id, callback) {
+		// Create a query against the collection.
+		try {
+			let q = query(collection(this.db, "blogs"), where("bookmarks", "array-contains", user_id), orderBy("timestamp", "desc"));
+			onSnapshot(q, async (querySnapshot) => {
+				const promises = [];
+				let bookmarks = [];
+				if (querySnapshot.docs?.length) {
+					bookmarks = querySnapshot.docs.map((blog) => {
+						promises.push(getDocs(query(collection(this.db, "comments"), where("blog_id", "==", blog.id))));
+						return { ...blog.data(), blog_id: blog.id };
+					});
+					let comments = await Promise.all(promises);
+					bookmarks = bookmarks.map((e, index) => {
+						return { ...e, comments: comments[index].docs.map((e) => e.data()) };
+					});
+					callback(bookmarks);
+					return;
+				}
+				callback({ empty: true });
+			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
 }

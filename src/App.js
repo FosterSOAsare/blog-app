@@ -12,6 +12,7 @@ import { useGlobalContext } from "./context/AppContext";
 import Search from "./Pages/Search/Search";
 import CreateBlog from "./Pages/CreateBlog/CreateBlog";
 import Account from "./Pages/Account/Account";
+import Saved from "./Pages/Saved/Saved";
 
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
@@ -31,6 +32,7 @@ function App() {
 					<Route index element={<HomePage />}></Route>
 					<Route path="write" element={<LoginRequired><CreateBlog /></LoginRequired>}></Route>
 					<Route path="account" element={<LoginRequired><Account /></LoginRequired>}></Route>
+					<Route path="saved" element={<LoginRequired><Saved /></LoginRequired>}></Route>
 					<Route path="/:username">
 						<Route index  element={<Profile />}></Route>
 						<Route path="edit/:blogTitle"  element={<Blog />} ></Route>

@@ -5,7 +5,6 @@ import Loading from "../../components/Loading/Loading";
 const HomePage = () => {
 	const [blogs, setBlogs] = useState([]);
 	const { firebase } = useGlobalContext();
-	console.log(blogs);
 
 	useEffect(() => {
 		// Fetch all blogs
@@ -18,7 +17,7 @@ const HomePage = () => {
 			<div className="container">
 				{blogs.length > 0 && (
 					<div className="blogs">
-						{blogs?.map((e, index) => {
+						{blogs?.map((e) => {
 							return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
 						})}
 					</div>

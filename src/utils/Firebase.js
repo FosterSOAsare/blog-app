@@ -204,7 +204,6 @@ export class Firebase {
 				callback(result);
 			});
 		} catch (e) {
-			// console.log(e);
 			callback({ error: "An error occurred" });
 		}
 		// Using a different collection with relations
@@ -246,7 +245,6 @@ export class Firebase {
 				callback(res);
 			});
 		} catch (e) {
-			console.log(e);
 			callback({ error: "An error occurred" });
 		}
 	}
@@ -254,7 +252,7 @@ export class Firebase {
 	storeBlog(data, callback) {
 		// Store lead Image first
 		let path = "blogs/" + data.name;
-		data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", views: 0, upvotes: JSON.stringify([]) };
+		data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", views: 0, savedCount: 0, upvotes: JSON.stringify([]) };
 
 		this.storeImg(data?.file, path, (res) => {
 			if (res.error) {
@@ -280,8 +278,14 @@ export class Firebase {
 	updateRatings(type, likes, dislikes, id) {
 		try {
 			updateDoc(doc(this.db, type, id), { likes, dislikes }).then((res) => {});
+		} catch (e) {}
+	}
+
+	updateBookmarks(blog_id, bookmarks, callback) {
+		try {
+			updateDoc(doc(this.db, "blogs", blog_id), { bookmarks }).then((res) => {});
 		} catch (e) {
-			console.log(e);
+			callback(e);
 		}
 	}
 
@@ -311,7 +315,8 @@ export class Firebase {
 				const receiverDoc = await transaction.get(doc(this.db, "users", receiver_id));
 				const senderDoc = await transaction.get(doc(this.db, "users", sender_id));
 				if (!receiverDoc.exists() || !senderDoc.exists()) {
-					console.log("A document does not exist");
+					callback("A document does not exist");
+					return;
 				}
 				const newReceiverBalance = parseFloat(receiverDoc.data().balance) + parseFloat(value);
 				const newSenderBalance = parseFloat(senderDoc.data().balance) - parseFloat(value);
@@ -321,7 +326,7 @@ export class Firebase {
 			});
 			callback("success");
 		} catch (e) {
-			console.log("Transaction failed: ", e);
+			callback("Transaction failed: ", e);
 		}
 	}
 	storeCommentOrReply(type, data, callback) {

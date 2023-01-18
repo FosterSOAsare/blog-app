@@ -88,7 +88,7 @@ const Blog = () => {
 						<div className="article__image" data-heading={removeHTML(profileData?.blog?.heading)}>
 							<img src={profileData?.blog?.lead_image_src} alt="Lead" />
 						</div>
-						<BlogControls commentsLen={profileData?.comments.length} />
+						<BlogControls commentsLen={profileData?.comments.length} bookmarks={profileData?.blog?.bookmarks ? profileData?.blog?.bookmarks : []} blog_id={profileData?.blog?.blog_id} />
 						<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} />
 						<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
 						<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} id={profileData?.blog?.blog_id} type="blogs" />

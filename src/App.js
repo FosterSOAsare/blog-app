@@ -40,6 +40,7 @@ function App() {
 					<Route path="communities" element={<Communities />}></Route>
 					<Route path="report" element={<Communities />}></Route>
 					<Route path="moderations" element={<Communities />}></Route>
+					<Route path="sponsorships" element={<Communities />}></Route>
 					<Route path="register" element={<CheckLogged><Register /></CheckLogged>}></Route>
 					<Route path="login" element={<CheckLogged><Login /></CheckLogged>}></Route>
 				</Route>

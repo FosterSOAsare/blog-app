@@ -43,6 +43,7 @@ const Profile = () => {
 			if (blogs.error) {
 				//
 				console.log(blogs.error);
+				return;
 			}
 			setProfileData({ type: "storeBlogs", payload: blogs });
 		});

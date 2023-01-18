@@ -1,6 +1,21 @@
 import React from "react";
+import { useGlobalContext } from "../../../context/AppContext";
 
-const BlogControls = ({ commentsLen, views, saved }) => {
+const BlogControls = ({ commentsLen, views = 0, bookmarks = [], blog_id }) => {
+	const { firebase, credentials } = useGlobalContext();
+
+	function toggleBookmarks() {
+		if (bookmarks.includes(credentials?.userId)) {
+			bookmarks = bookmarks.filter((e) => e !== credentials?.userId);
+		} else {
+			bookmarks.push(credentials?.userId);
+		}
+		// Update bookmarks
+		firebase.updateBookmarks(blog_id, bookmarks, (res) => {
+			if (res.error) return;
+			console.log(res);
+		});
+	}
 	return (
 		<div className="blogControls">
 			<div className="control">
@@ -11,9 +26,9 @@ const BlogControls = ({ commentsLen, views, saved }) => {
 				<i className="fa-solid fa-eye"></i>
 				<p>{views}</p>
 			</div>
-			<div className="control">
+			<div onClick={toggleBookmarks} className={`control${bookmarks.includes(credentials?.userId) ? " booked" : ""}`}>
 				<i className="fa-solid fa-bookmark"></i>
-				<p>0</p>
+				<p>{bookmarks.length}</p>
 			</div>
 		</div>
 	);

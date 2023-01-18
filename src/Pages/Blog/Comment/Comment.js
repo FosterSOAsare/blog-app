@@ -72,7 +72,7 @@ const Comment = ({ comment, likes, dislikes, timestamp, id, upvotes, author_id }
 								Add Reply
 							</p>
 						</div>
-						{commentInfo?.replies?.length > 0 && (
+						{commentInfo?.replies?.length > 0 && !commentInfo?.showReplies && (
 							<div
 								className="showReplies"
 								onClick={() => {

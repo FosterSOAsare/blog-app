@@ -106,16 +106,15 @@ const Blog = () => {
 								</button>
 							)}
 
-							<div className="content">
-								{!profileData?.comments && <Loading />}
-								{profileData?.comments &&
-									profileData?.comments?.map((e, index) => {
-										if (index === 0) {
-											console.log(e.totalReplies);
-										}
-										return <Comment key={e.id} {...e} blog_id={profileData?.blog?.blog_id} />;
-									})}
-							</div>
+							{!showAddComment && (
+								<div className="content">
+									{!profileData?.comments && <Loading />}
+									{profileData?.comments &&
+										profileData?.comments?.map((e) => {
+											return <Comment key={e.id} {...e} blog_id={profileData?.blog?.blog_id} />;
+										})}
+								</div>
+							)}
 						</div>
 					</section>
 				</>

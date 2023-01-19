@@ -13,7 +13,10 @@ import Search from "./Pages/Search/Search";
 import CreateBlog from "./Pages/CreateBlog/CreateBlog";
 import Account from "./Pages/Account/Account";
 import Saved from "./Pages/Saved/Saved";
-
+import Sponsorships from "./Pages/Sponsorships/Sponsorships";
+import NewSponsorship from "./Pages/Sponsorships/NewSponsorship/NewSponsorship";
+import Requests from "./Pages/Sponsorships/Requests/Requests";
+import Request from "./Pages/Sponsorships/Requests/Request/Request";
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
 	return credentials.userId ? children : <Navigate to="/login"></Navigate>;
@@ -42,7 +45,14 @@ function App() {
 					<Route path="communities" element={<Communities />}></Route>
 					<Route path="report" element={<Communities />}></Route>
 					<Route path="moderations" element={<Communities />}></Route>
-					<Route path="sponsorships" element={<Communities />}></Route>
+					<Route path="sponsorships" >
+						<Route index element={<LoginRequired><Sponsorships /></LoginRequired>}></Route>
+						<Route path="new/:userId" element={<LoginRequired><NewSponsorship /></LoginRequired>}></Route>
+						<Route path="requests">
+							<Route index element={<LoginRequired><Requests /></LoginRequired>}></Route>
+							<Route path=":request_id" element={<LoginRequired><Request /></LoginRequired>}></Route>
+						</Route>
+					</Route>
 					<Route path="register" element={<CheckLogged><Register /></CheckLogged>}></Route>
 					<Route path="login" element={<CheckLogged><Login /></CheckLogged>}></Route>
 				</Route>

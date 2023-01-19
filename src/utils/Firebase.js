@@ -162,12 +162,38 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
-	fetchSponsors(username, callback) {
+	storeSponsorship(data, callback) {
+		let ext = data.image.name.split(".");
+		let name = ext[0] + new Date().getTime();
+		ext = ext[ext.length - 1];
+		name = name + "." + ext;
+
+		try {
+			this.storeImg(data.image, `sponsorships/${name}`, (res) => {
+				if (res.error) return;
+				delete data.image;
+				data = { ...data, promo_image: res, status: "pending", settled: false };
+				// Store data
+				addDoc(collection(this.db, "sponsorships"), data);
+				addDoc(collection(this.db, "notifications"), { type: "newSponsorshipRequest", sponsor_id: data?.sponsor_id, author_id: data?.author_id });
+
+				callback("success");
+				return;
+			});
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
+	fetchSponsors(userId, callback) {
 		try {
 			// Create a query against the collection.
-			let q = query(collection(this.db, "sponsorships"), where("username", "==", username));
+			let q = query(collection(this.db, "sponsorships"), where("author_id", "==", userId), where("status", "==", "approved"));
 
 			onSnapshot(q, (querySnapshot) => {
+				if (querySnapshot.empty) {
+					callback({ empty: true });
+					return;
+				}
 				let sponsors = [];
 				querySnapshot.docs.forEach((doc) => {
 					sponsors.push({ ...doc.data(), sponsorship_id: doc?.id });
@@ -179,6 +205,47 @@ export class Firebase {
 		}
 	}
 
+	fetchAllRequests(author_id, callback) {
+		try {
+			let q = query(collection(this.db, "sponsorships"), where("author_id", "==", author_id), where("status", "==", "pending"));
+			onSnapshot(q, (querySnapshot) => {
+				if (querySnapshot.empty) {
+					callback({ empty: true });
+					return;
+				}
+				let requests = querySnapshot.docs.map((doc) => {
+					return { ...doc.data(), request_id: doc?.id };
+				});
+				callback(requests);
+			});
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
+	fetchRequest(request_id, callback) {
+		try {
+			let q = doc(this.db, "sponsorships", request_id);
+			onSnapshot(q, (querySnapshot) => {
+				if (querySnapshot.empty) {
+					callback({ empty: true });
+					return;
+				}
+				let request = { ...querySnapshot.data(), request_id: querySnapshot.id };
+				callback(request);
+			});
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
+	moderateRequest(status, receiver_id, author_id, request_id, callback) {
+		try {
+			updateDoc(doc(this.db, "sponsorships", request_id), { status });
+			addDoc(addDoc(collection(this.db, "notifications"), { type: "requestApproved", author_id, request_id, receiver_id }));
+			callback("success");
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
 	fetchBlogs(username, callback) {
 		// 	Logic with sub-collections
 		// 	create a sub-collection in a document under a collection . Then use the line below to grab it

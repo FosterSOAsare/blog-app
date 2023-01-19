@@ -1,0 +1,27 @@
+.requestSponsorship {
+	@include container;
+	height: auto;
+	margin-top: 20px;
+
+	img {
+		width: 40%;
+		height: 250px;
+	}
+	a {
+		display: block;
+		margin-bottom: 20px;
+		text-decoration: none;
+		font-weight: bold;
+	}
+	p {
+		margin-bottom: 30px;
+		margin-top: 30px;
+		color: $text1;
+	}
+	button {
+		height: 40px;
+		display: block;
+		width: 120px;
+		font-size: 14px;
+	}
+}

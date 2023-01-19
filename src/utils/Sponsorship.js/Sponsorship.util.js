@@ -1,13 +1,10 @@
 export function arrangeSponsorships(sponsorships) {
-	let res = [];
-	if (sponsorships?.length) {
-		res = sponsorships.sort((a, b) => b.amount - a.amount);
-	}
-	if (res.length < 3) {
-		let max = 3 - res.length;
+	sponsorships = sponsorships.empty ? [] : sponsorships;
+	if (sponsorships.length < 3) {
+		let max = 3 - sponsorships.length;
 		for (let i = 0; i < max; i++) {
-			res.push({});
+			sponsorships.push({});
 		}
 	}
-	return res;
+	return sponsorships;
 }

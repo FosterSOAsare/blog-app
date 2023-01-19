@@ -53,12 +53,19 @@
 			}
 		}
 	}
-	button {
+	.button {
 		display: block;
 		margin: 0 auto;
-		height: 30px;
-		width: auto;
+		height: 40px;
+		width: 150px;
+		background-color: $text1;
+		@include flex(center, center);
+		border-radius: 3px;
 		font-size: 13px;
 		font-family: "Cabin", sans-serif;
+		margin: 0 auto;
+		text-align: center;
+		color: $white;
+		text-decoration: none;
 	}
 }

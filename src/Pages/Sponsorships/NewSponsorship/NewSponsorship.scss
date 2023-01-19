@@ -1,0 +1,87 @@
+.newSponsorship,
+.newSponsorshipForm {
+	@include container;
+	height: auto;
+}
+.newSponsorship {
+	h3 {
+		margin-bottom: 20px;
+		font-family: "Lato", sans-serif;
+		font-size: 25px;
+	}
+	p {
+		line-height: 30px;
+	}
+	p.notice {
+		opacity: 0.8;
+		margin-bottom: 50px;
+	}
+	button {
+		height: 40px;
+		margin-top: 10px;
+		border-radius: 0;
+	}
+	.limitExceeded {
+		opacity: 0.5;
+	}
+}
+.newSponsorshipForm {
+	// background-color: red;
+	label,
+	input {
+		display: block;
+	}
+	input {
+		height: 40px;
+		width: 80%;
+		border-radius: 0;
+		border: 1px solid $text1;
+	}
+	label {
+		margin-bottom: 10px;
+	}
+	button {
+		height: 40px;
+		border-radius: 0;
+	}
+	#promo_image {
+		display: none;
+	}
+	label.adImage {
+		border: 1px solid $grey;
+		position: relative;
+		width: 100px;
+		height: 100px;
+		p {
+			@include flex(center, center);
+			width: 100%;
+			height: 100%;
+		}
+		border-radius: 50%;
+		img {
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+			background-color: green;
+		}
+		span {
+			width: 30px;
+			height: 30px;
+			background-color: $white;
+			border: 1px solid $grey;
+			border-radius: 50%;
+			@include flex(center, center);
+			font-size: 20px;
+
+			position: absolute;
+			right: 0;
+			bottom: 0;
+		}
+	}
+	.error {
+		margin-top: 25px;
+		font-size: 14px;
+		font-weight: bold;
+		font-family: "Lato", sans-serif;
+	}
+}

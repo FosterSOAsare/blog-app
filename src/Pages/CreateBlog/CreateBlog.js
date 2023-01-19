@@ -25,9 +25,10 @@ const CreateBlog = () => {
 
 	useEffect(() => {
 		// Fetch blog data
-		firebase.fetchBlog(blogId, (res) => {
-			setEdit({ type: "setData", payload: res });
-		});
+		blogId &&
+			firebase.fetchBlog(blogId, (res) => {
+				setEdit({ type: "setData", payload: res });
+			});
 		// blogId && "";
 	}, [blogId, firebase]);
 

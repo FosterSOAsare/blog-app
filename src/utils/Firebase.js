@@ -523,17 +523,47 @@ export class Firebase {
 			callback("Transaction failed: ", e);
 		}
 	}
-	storeCommentOrReply(type, data, callback) {
-		data = { ...data, timestamp: serverTimestamp(), likes: "", dislikes: "", upvotes: JSON.stringify([]) };
-		console.log(type, data);
-		addDoc(collection(this.db, type), data)
-			.then((response) => {
-				callback(response);
-			})
-			.catch((e) => {
-				callback({ error: e });
+	async storeCommentOrReply(type, data, callback) {
+		try {
+			await runTransaction(this.db, async (transaction) => {
+				let notif = {};
+				let author = await transaction.get(doc(this.db, "users", data?.author_id));
+				let document = await transaction.get(doc(this.db, "blogs", data?.blog_id));
+				if (type === "comments") {
+					notif = {
+						desc: `@${author.data().username} commented on your post, "${removeHTML(document.data().heading)}"`,
+						link: createLink(author.data().username, removeHTML(document.data()?.heading), data?.blog_id) + "#comments",
+						message: data?.comment,
+					};
+				}
+				if (type === "replies") {
+					let reply_to = {};
+					if (data?.reply_to) {
+						reply_to = await transaction.get(doc(this.db, "replies", data?.reply_to));
+						notif = {
+							desc: `@${author.data().username} replied to your reply, "${truncateText(reply_to?.data().message)}"`,
+						};
+					} else {
+						reply_to = await transaction.get(doc(this.db, "comments", data?.base_comment_id));
+						notif = {
+							desc: `@${author.data().username} replied to your comment, "${truncateText(reply_to?.data().comment)}"`,
+						};
+					}
+					notif = {
+						...notif,
+						link: createLink(author.data().username, removeHTML(document.data()?.heading), data?.blog_id) + "#comments",
+						message: data?.message,
+					};
+				}
+				data = { ...data, timestamp: serverTimestamp(), likes: "", dislikes: "", upvotes: JSON.stringify([]) };
+				addDoc(collection(this.db, type), data);
+				this.insertNotification(notif);
+				callback("success");
 			});
-		callback(data);
+		} catch (e) {
+			console.log(e);
+			callback({ error: true });
+		}
 	}
 
 	async fetchCommentsOrReplies(type, base_id, sort, callback) {

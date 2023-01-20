@@ -16,11 +16,16 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 				setAuthor(res);
 			});
 	}, [firebase, author_id]);
-	function addReply(message, author_id, base_id, reply_to = id) {
+	function addReply(message, base_id, reply_to = id) {
 		if (message === "") return;
-		let data = type === "replies" ? { message, author_id, base_comment_id: base_id, reply_to } : { message, author_id, base_comment_id: id };
+		// Type here specifies if the reply is a reply to either a comment or another reply
+		let data =
+			type === "replies"
+				? { message, author_id: credentials?.userId, base_comment_id: reply_to, reply_to: id, blog_id }
+				: { message, author_id: credentials?.userId, blog_id, base_comment_id: id };
+
 		firebase.storeCommentOrReply("replies", data, (res) => {
-			if (res.error) return;
+			// Replies here means what we are about to store is either a reply or a sub-reply
 			setShowReplyForm(false);
 			replyRef.current.value = "";
 		});
@@ -73,7 +78,7 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 						<button
 							onClick={(e) => {
 								e.preventDefault();
-								type === "comments" ? addReply(replyRef.current.value, credentials?.userId, base_id) : addReply(replyRef.current.value, credentials?.userId, base_id, id);
+								type === "comments" ? addReply(replyRef.current.value, base_id) : addReply(replyRef.current.value, credentials?.userId, base_id, id);
 							}}>
 							Add Reply
 						</button>

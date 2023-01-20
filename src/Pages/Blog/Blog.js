@@ -73,7 +73,7 @@ const Blog = () => {
 
 	function addComment(comment, author_id, blog_id) {
 		if (comment === "") return;
-		firebase.storeCommentOrReply("comments", { comment, author_id, blog_id }, (res) => {
+		firebase.storeCommentOrReply("comments", { comment, author_id, blog_id, receiver_id: profileData?.author?.userId }, (res) => {
 			if (res.error) return;
 			setShowAddComment(false);
 			commentRef.current.value = "";

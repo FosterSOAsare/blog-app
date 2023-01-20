@@ -1,0 +1,79 @@
+.notifications {
+	height: auto;
+	@include container;
+	.actions {
+		width: 100%;
+		height: auto;
+		padding-bottom: 20px;
+		margin-top: 10px;
+		@include flex(flex-end, center);
+		border-bottom: 2px solid grey;
+		.filter,
+		button {
+			border-radius: 0;
+			margin: 0;
+			font-size: 12px;
+			text-transform: uppercase;
+			color: $white;
+			font-weight: bold;
+			font-family: "Lato", sans-serif;
+		}
+		.filter {
+			margin-right: 20px;
+			@include flex(space-between, center);
+			border: 1px solid $grey;
+			padding: 3px 10px;
+			background-color: $text1;
+			p {
+				font-family: "Lato", sans-serif;
+			}
+
+			i {
+				margin-right: 10px;
+				font-size: 12px;
+			}
+		}
+		button {
+			background-color: #5a95db;
+			border: 0;
+			height: 22px;
+		}
+	}
+	.content {
+		margin-top: 20px;
+		.notification {
+			width: 100%;
+			height: auto;
+			margin-bottom: 20px;
+			padding: 10px 5px;
+			border-bottom: 1px solid $grey;
+			&:hover {
+				background-color: $grey;
+			}
+			// background-color: red;
+			.title {
+				height: auto;
+				.unread {
+					width: 7px;
+					align-self: center;
+					margin-right: 7px;
+					height: 7px;
+					border-radius: 50%;
+					background-color: #5a95db;
+				}
+				@include flex(flex-start, flex-start);
+
+				p {
+					font-size: 14px;
+					font-family: "Lato", sans-serif;
+				}
+			}
+			.timestamp {
+				margin-top: 5px;
+				height: 20px;
+				font-size: 12px;
+				opacity: 0.6;
+			}
+		}
+	}
+}

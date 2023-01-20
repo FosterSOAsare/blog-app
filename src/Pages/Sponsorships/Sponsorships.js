@@ -14,8 +14,8 @@ const Sponsorships = () => {
 		});
 	}, [firebase, credentials?.userId]);
 
-	function deleteSponsorship(sponsorship_id) {
-		firebase.deleteSponsorship(sponsorship_id, (res) => {
+	function deleteSponsorship(sponsorship_id, author_id) {
+		firebase.deleteSponsorship(sponsorship_id, author_id, credentials?.user?.username, (res) => {
 			if (res.error) return;
 		});
 	}
@@ -49,6 +49,7 @@ const Sponsorships = () => {
 								</thead>
 								<tbody>
 									{sponsorships.map((e) => {
+										console.log(e);
 										return (
 											<tr key={e.sponsorship_id} className="sponsorship">
 												<td className="image">
@@ -62,7 +63,7 @@ const Sponsorships = () => {
 													{!e.settled && e.status === "approved" && <span onClick={() => payForSponsporship(e.sponsorship_id, e.author_id)}>Send Payment</span>}
 												</td>
 												<td className="actions">
-													<p className="cancel" onClick={() => deleteSponsorship(e.sponsorship_id)}>
+													<p className="cancel" onClick={() => deleteSponsorship(e.sponsorship_id, e.author_id)}>
 														{e.status === "declined" ? "Delete" : "Cancel"}
 													</p>
 												</td>

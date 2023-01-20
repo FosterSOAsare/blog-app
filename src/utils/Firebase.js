@@ -176,7 +176,7 @@ export class Firebase {
 				data = { ...data, promo_image: res, status: "pending", settled: false };
 				// Store data
 				addDoc(collection(this.db, "sponsorships"), data);
-				addDoc(collection(this.db, "notifications"), { type: "newSponsorshipRequest", sponsor_id: data?.sponsor_id, receiver_id: data?.author_id });
+				addDoc(collection(this.db, "notifications"), { type: "newSponsorshipRequest", sponsor_id: data?.sponsor_id, receiver_id: data?.author_id, timestamp: serverTimestamp() });
 
 				callback("success");
 				return;
@@ -253,6 +253,7 @@ export class Firebase {
 					type: "sponsorshipSettled",
 					sponsor_id,
 					receiver_id: author_id,
+					timestamp: serverTimestamp(),
 				});
 			});
 			callback("success");
@@ -262,9 +263,10 @@ export class Firebase {
 		}
 	}
 
-	deleteSponsorship(sponsorship_id, callback) {
+	deleteSponsorship(sponsorship_id, author_id, sponsor_username, callback) {
 		try {
 			deleteDoc(doc(this.db, "sponsorships", sponsorship_id));
+			addDoc(collection(this.db, "notifications"), { timestamp: serverTimestamp(), receiver_id: author_id, type: "sponsorshipDeleted", sponsor_username });
 		} catch (e) {
 			callback({ error: true });
 		}
@@ -304,7 +306,7 @@ export class Firebase {
 	moderateRequest(status, receiver_id, author_id, request_id, callback) {
 		try {
 			updateDoc(doc(this.db, "sponsorships", request_id), { status });
-			addDoc(addDoc(collection(this.db, "notifications"), { type: "requestApproved", author_id, request_id, receiver_id }));
+			addDoc(addDoc(collection(this.db, "notifications"), { type: "requestModerated", author_id, request_id, receiver_id, timestamp: serverTimestamp() }));
 			callback("success");
 		} catch (e) {
 			callback({ error: true });
@@ -582,6 +584,33 @@ export class Firebase {
 			});
 		} catch (e) {
 			callback({ error: "An error occurred" });
+		}
+	}
+	fetchUserNotifications(user_id, callback) {
+		// Create a query against the collection.
+		try {
+			let q = query(collection(this.db, "notifications"), where("receiver_id", "==", user_id), orderBy("timestamp", "desc"));
+			onSnapshot(q, async (querySnapshot) => {
+				if (querySnapshot.docs?.length) {
+					let notifications = querySnapshot.docs.map((notification) => {
+						return { ...notification.data(), notification_id: notification.id };
+					});
+
+					callback(notifications);
+					return;
+				}
+				callback({ empty: true });
+			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
+	setReadNotification(notification_id, status, callback) {
+		try {
+			if (!status) updateDoc(doc(this.db, "notifications", notification_id), { status: "read" }, { merge: true });
+			callback("success");
+		} catch (e) {
+			callback({ error: true });
 		}
 	}
 }

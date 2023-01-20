@@ -70,9 +70,9 @@ const Header = () => {
 
 							{credentials.userId && (
 								<article className="user__notices">
-									<button className="notification">
+									<Link className="notification" to="/notifications">
 										<i className="fa-solid fa-bell"></i>
-									</button>
+									</Link>
 									<article ref={menuBtn}>
 										<p className="balance">{balance}</p>
 										{menuDisplay && <DesktopMenu {...credentials?.user} />}

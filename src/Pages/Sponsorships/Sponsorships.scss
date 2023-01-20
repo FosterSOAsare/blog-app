@@ -1,5 +1,117 @@
-.sponsorship {
-	background-color: red;
+.sponsorships {
 	@include container;
-	height: 200px;
+	position: relative;
+	height: auto;
+	h3 {
+		margin-bottom: 20px;
+	}
+	table {
+		width: 100%;
+		height: auto;
+		gap: 0;
+	}
+	tr {
+		min-height: 80px;
+		height: auto;
+		&:last-child {
+			td {
+				border: 0;
+			}
+		}
+	}
+
+	td {
+		padding: 10px;
+		border-bottom: 1px solid $grey;
+		img {
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+		}
+		font-size: 14px;
+		.approved {
+			color: green;
+			font-weight: bold;
+		}
+		.status {
+			opacity: 0.7;
+		}
+
+		span {
+			font-size: 12px;
+			margin-top: 3px;
+			opacity: 0.5;
+			&:hover {
+				text-decoration: underline;
+				cursor: pointer;
+			}
+		}
+		.cancel {
+			color: $error;
+			font-size: 14px;
+			&:hover {
+				text-decoration: underline;
+				cursor: pointer;
+			}
+		}
+	}
+
+	// .sponsorship {
+	// 	width: 100%;
+	// 	height: 80px;
+	// 	background-color: $grey;
+	// 	// @include flex(flex-start, center);
+	// 	padding: 0 20px;
+	// 	margin-top: 20px;
+	// 	img {
+	// 		width: 50px;
+	// 		height: 50px;
+	// 		border-radius: 50%;
+	// 	}
+	// 	// width: 100%;
+	// 	// height: auto;
+	// 	// padding: 10px 20px;
+	// 	// border-radius: 5px;
+	// 	// border: 2px solid $grey;
+	// 	// @include flex(flex-start, center);
+
+	// 	// .desc {
+	// 	// 	width: 70%;
+	// 	// 	height: auto;
+	// 	// 	// align-self: flex-start;
+	// 	// 	opacity: 0.8;
+	// 	// 	font-size: 14px;
+	// 	// 	margin-left: 20px;
+	// 	// 	text-decoration: none;
+	// 	// 	color: $text1;
+	// 	// 	&:hover {
+	// 	// 		text-decoration: underline;
+	// 	// 	}
+	// 	// }
+	// 	// .moderate {
+	// 	// 	font-size: 14px;
+	// 	// }
+	// }
+}
+.nothingHere {
+	opacity: 0.5;
+	text-align: center;
+	margin-top: 100px;
+}
+
+.error {
+	@include container;
+	background-color: $background2;
+	height: 130%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	@include flex(center, center);
+	flex-direction: column;
+	button {
+		height: 40px;
+		margin-top: 20px;
+		width: 120px;
+	}
 }

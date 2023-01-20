@@ -3,7 +3,9 @@
 	height: auto;
 	h3 {
 		margin-bottom: 20px;
+		background-color: red;
 	}
+
 	.request {
 		width: 100%;
 		height: auto;
@@ -37,4 +39,9 @@
 			font-size: 14px;
 		}
 	}
+}
+
+h3.nothingHere {
+	margin-top: 200px;
+	background-color: red;
 }

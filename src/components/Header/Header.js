@@ -8,6 +8,14 @@ const Header = () => {
 	const { credentials } = useGlobalContext();
 	const [menuDisplay, setMenuDisplay] = useState(false);
 	const menuBtn = useRef(null);
+	let balance = credentials?.user?.balance ? credentials?.user?.balance.toFixed(2) : 0.0;
+
+	const formatter = new Intl.NumberFormat("en-US", {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+	});
+
+	balance = formatter.format(balance);
 
 	useEffect(() => {
 		let parent = menuBtn.current;
@@ -66,7 +74,7 @@ const Header = () => {
 										<i className="fa-solid fa-bell"></i>
 									</button>
 									<article ref={menuBtn}>
-										<p className="balance">{credentials?.user?.balance ? "$" + credentials?.user?.balance.toFixed(2) : "$0.00"}</p>
+										<p className="balance">{balance}</p>
 										{menuDisplay && <DesktopMenu {...credentials?.user} />}
 									</article>
 								</article>

@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
-import { getFirestore, runTransaction, doc, setDoc, getDocs, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy } from "firebase/firestore";
+import { getFirestore, runTransaction, doc, setDoc, getDocs, getDoc, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy, deleteDoc } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -145,6 +145,7 @@ export class Firebase {
 		});
 	}
 	storeImg(image, path, callback) {
+		path = path.replace(/\s-/gi, "");
 		let storageRef = ref(this.storage, path);
 		try {
 			let uploadTask = uploadBytesResumable(storageRef, image);
@@ -175,7 +176,7 @@ export class Firebase {
 				data = { ...data, promo_image: res, status: "pending", settled: false };
 				// Store data
 				addDoc(collection(this.db, "sponsorships"), data);
-				addDoc(collection(this.db, "notifications"), { type: "newSponsorshipRequest", sponsor_id: data?.sponsor_id, author_id: data?.author_id });
+				addDoc(collection(this.db, "notifications"), { type: "newSponsorshipRequest", sponsor_id: data?.sponsor_id, receiver_id: data?.author_id });
 
 				callback("success");
 				return;
@@ -204,7 +205,70 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	fetchSponsoredAuthors(userId, callback) {
+		try {
+			// Create a query against the collection.
+			let q = query(collection(this.db, "sponsorships"), where("sponsor_id", "==", userId));
 
+			onSnapshot(q, async (querySnapshot) => {
+				if (querySnapshot.empty) {
+					callback({ empty: true });
+					return;
+				}
+				let sponsors = [];
+				let authors = [];
+				querySnapshot.docs.forEach((res) => {
+					authors.push(getDoc(doc(this.db, "users", res.data().author_id)));
+					sponsors.push({ ...res.data(), sponsorship_id: res?.id });
+				});
+				authors = await Promise.all(authors);
+
+				callback(
+					sponsors.map((e, index) => {
+						return { ...e, author: { ...authors[index].data() } };
+					})
+				);
+			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
+	async payForSponsporship(sponsorship_id, sponsor_id, author_id, callback) {
+		try {
+			await runTransaction(this.db, async (transaction) => {
+				const authorDoc = await transaction.get(doc(this.db, "users", author_id));
+				const sponsorDoc = await transaction.get(doc(this.db, "users", sponsor_id));
+				if (!authorDoc.exists() || !sponsorDoc.exists()) {
+					callback("A document does not exist");
+					return;
+				}
+				const newAuthorBalance = parseFloat(authorDoc.data().balance) + parseFloat(25);
+				const newSponsorBalance = parseFloat(sponsorDoc.data().balance) - 25;
+
+				transaction.update(doc(this.db, "sponsorships", sponsorship_id), { settled: true });
+				transaction.update(doc(this.db, "users", sponsor_id), { balance: parseFloat(newSponsorBalance.toFixed(2)) });
+				transaction.update(doc(this.db, "users", author_id), { balance: parseFloat(newAuthorBalance.toFixed(2)) });
+
+				addDoc(collection(this.db, "notifications"), {
+					type: "sponsorshipSettled",
+					sponsor_id,
+					receiver_id: author_id,
+				});
+			});
+			callback("success");
+		} catch (e) {
+			console.log(e);
+			callback("Transaction failed: ", e);
+		}
+	}
+
+	deleteSponsorship(sponsorship_id, callback) {
+		try {
+			deleteDoc(doc(this.db, "sponsorships", sponsorship_id));
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
 	fetchAllRequests(author_id, callback) {
 		try {
 			let q = query(collection(this.db, "sponsorships"), where("author_id", "==", author_id), where("status", "==", "pending"));
@@ -418,8 +482,8 @@ export class Firebase {
 				const newReceiverBalance = parseFloat(receiverDoc.data().balance) + parseFloat(value);
 				const newSenderBalance = parseFloat(senderDoc.data().balance) - parseFloat(value);
 				transaction.update(doc(this.db, type, id), { upvotes });
-				transaction.update(doc(this.db, "users", receiver_id), { balance: newReceiverBalance });
-				transaction.update(doc(this.db, "users", sender_id), { balance: newSenderBalance });
+				transaction.update(doc(this.db, "users", receiver_id), { balance: parseFloat(newReceiverBalance.toFixed(2)) });
+				transaction.update(doc(this.db, "users", sender_id), { balance: parseFloat(newSenderBalance.toFixed(2)) });
 			});
 			callback("success");
 		} catch (e) {

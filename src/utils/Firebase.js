@@ -713,6 +713,23 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	fetchUnreadNotifications(user_id, callback) {
+		try {
+			let q = query(collection(this.db, "notifications"), where("receiver_id", "==", user_id), where("status", "==", "unread"), orderBy("timestamp", "desc"));
+			onSnapshot(q, async (querySnapshot) => {
+				if (querySnapshot.docs?.length) {
+					let notifications = querySnapshot.docs.map((notification) => {
+						return { ...notification.data(), notification_id: notification.id };
+					});
+					callback(notifications);
+					return;
+				}
+				callback({ empty: true });
+			});
+		} catch (e) {
+			callback({ error: "An error occurred" });
+		}
+	}
 	setReadNotification(notification_id, status, callback) {
 		try {
 			if (!status) updateDoc(doc(this.db, "notifications", notification_id), { status: "read" }, { merge: true });

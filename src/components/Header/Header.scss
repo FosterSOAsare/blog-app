@@ -75,6 +75,9 @@ header {
 							cursor: pointer;
 						}
 					}
+					.unread {
+						color: red;
+					}
 					p {
 						&:hover {
 							cursor: pointer;

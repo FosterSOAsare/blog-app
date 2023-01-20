@@ -17,7 +17,6 @@ export const SubscriptionProvider = ({ children }) => {
 		} else {
 			firebase.addSubscription(newData, obj?.username, (res) => {
 				if (res.error) {
-					console.log(res);
 					return;
 				}
 			});

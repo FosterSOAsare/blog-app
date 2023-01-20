@@ -3,8 +3,9 @@ import { useGlobalContext } from "../../context/AppContext";
 import { useAuthContext } from "../../context/AuthContext";
 import Error from "../form/Error";
 
-const TipBox = ({ type, upvotes, author_id, id }) => {
+const TipBox = ({ type, upvotes, author_id, id, blog_id }) => {
 	const { credentials, firebase } = useGlobalContext();
+	const [waitingTip, setWaitingTip] = useState(false);
 	const [showForm, setShowForm] = useState(false);
 	let { error, errorFunc } = useAuthContext();
 	const [tips, setTips] = useState([]);
@@ -51,9 +52,11 @@ const TipBox = ({ type, upvotes, author_id, id }) => {
 			newData = [{ amount: parseFloat(value).toFixed(2), username: credentials?.user?.username, profile_img: credentials?.user?.img_src || "" }];
 		}
 
-		firebase.storeUpvote(type, id, JSON.stringify(newData), author_id, credentials?.userId, parseFloat(value).toFixed(2), (res) => {
+		setWaitingTip(true);
+		firebase.storeUpvote({ type, id, upvotes: JSON.stringify(newData), receiver_id: author_id, sender_id: credentials?.userId, value: parseFloat(value).toFixed(2), blog_id }, (res) => {
 			if (res.error) return;
 			setShowForm(false);
+			setWaitingTip(false);
 		});
 	}
 	return (
@@ -77,15 +80,20 @@ const TipBox = ({ type, upvotes, author_id, id }) => {
 						<input type="text" name="amount" id="amount" ref={amountInput} onFocus={() => errorFunc({ type: "clearError" })} />
 						{error.display !== "none" && <Error text={error.text} />}
 						<div className="actions">
-							<button onClick={sendTip}>Confirm tip</button>
-							<button
-								className="cancel"
-								onClick={(e) => {
-									e.preventDefault(e);
-									setShowForm(false);
-								}}>
-								Cancel
-							</button>
+							{!waitingTip && (
+								<>
+									<button onClick={sendTip}>Confirm tip</button>
+									<button
+										className="cancel"
+										onClick={(e) => {
+											e.preventDefault(e);
+											setShowForm(false);
+										}}>
+										Cancel
+									</button>
+								</>
+							)}
+							{waitingTip && <button className="waiting">Waiting...</button>}
 						</div>
 					</div>
 				</form>

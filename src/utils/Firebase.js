@@ -4,6 +4,7 @@ import { getFirestore, runTransaction, doc, setDoc, getDocs, getDoc, serverTimes
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { removeHTML, createLink, truncateText } from "../utils/Text";
 
 export class Firebase {
 	constructor() {
@@ -468,7 +469,7 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
-	async storeUpvote(type, id, upvotes, receiver_id, sender_id, value, callback) {
+	async storeUpvote({ type, id, upvotes, receiver_id, sender_id, value, blog_id }, callback) {
 		// Transaction
 		// Store new upvotes data
 		// Subtract amount from sender
@@ -477,15 +478,45 @@ export class Firebase {
 			await runTransaction(this.db, async (transaction) => {
 				const receiverDoc = await transaction.get(doc(this.db, "users", receiver_id));
 				const senderDoc = await transaction.get(doc(this.db, "users", sender_id));
+				const post = await transaction.get(doc(this.db, type, id));
 				if (!receiverDoc.exists() || !senderDoc.exists()) {
 					callback("A document does not exist");
 					return;
 				}
 				const newReceiverBalance = parseFloat(receiverDoc.data().balance) + parseFloat(value);
 				const newSenderBalance = parseFloat(senderDoc.data().balance) - parseFloat(value);
+
+				// Insert notification
+				let notif = {};
+				if (type === "blogs") {
+					notif = {
+						desc: `@${senderDoc.data().username} upvoted your post "${removeHTML(post.data().heading)}" with $${value}`,
+						link: createLink(receiverDoc.data().username, removeHTML(post.data().heading), post.id) + "#upvotes",
+						receiver_id,
+					};
+				}
+				if (type === "comments" || type === "replies") {
+					let blog = await transaction.get(doc(this.db, "blogs", blog_id));
+					// Create link with blog
+					if (type === "comments") {
+						notif = {
+							desc: `@${senderDoc.data().username} upvoted your comment "${truncateText(post.data()?.comment, 75)}" with $${value}`,
+							link: createLink(receiverDoc.data().username, removeHTML(blog.data().heading), blog.id),
+							receiver_id,
+						};
+					}
+					if (type === "replies") {
+						notif = {
+							desc: `@${senderDoc.data().username} upvoted your reply "${truncateText(post.data()?.message, 75)}" with $${value}`,
+							link: createLink(receiverDoc.data().username, removeHTML(blog.data().heading), blog.id),
+							receiver_id,
+						};
+					}
+				}
 				transaction.update(doc(this.db, type, id), { upvotes });
 				transaction.update(doc(this.db, "users", receiver_id), { balance: parseFloat(newReceiverBalance.toFixed(2)) });
 				transaction.update(doc(this.db, "users", sender_id), { balance: parseFloat(newSenderBalance.toFixed(2)) });
+				this.insertNotification(notif);
 			});
 			callback("success");
 		} catch (e) {
@@ -585,6 +616,10 @@ export class Firebase {
 		} catch (e) {
 			callback({ error: "An error occurred" });
 		}
+	}
+	insertNotification(data) {
+		data = { ...data, timestamp: serverTimestamp(), status: "unread" };
+		addDoc(collection(this.db, "notifications"), data);
 	}
 	fetchUserNotifications(user_id, callback) {
 		// Create a query against the collection.

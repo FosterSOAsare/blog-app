@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useState } from "react";
 import { useGlobalContext } from "../../../context/AppContext";
 import Interaction from "./Interaction/Interaction";
 
-const Comment = ({ comment, likes, dislikes, timestamp, id, upvotes, author_id }) => {
+const Comment = ({ comment, likes, dislikes, timestamp, id, upvotes, author_id, blog_id }) => {
 	const { firebase } = useGlobalContext();
 	const [repliesInfo, setRepliesInfo] = useReducer(reducerFunc, { showReplies: false, replies: [] });
 	const [activeReply, setActiveReply] = useState(null);
@@ -31,7 +31,7 @@ const Comment = ({ comment, likes, dislikes, timestamp, id, upvotes, author_id }
 
 	return (
 		<>
-			<Interaction {...{ type: "comments", message: comment, likes, dislikes, timestamp, id, upvotes, author_id, replies: repliesInfo?.replies, setRepliesInfo, repliesInfo }} />
+			<Interaction {...{ type: "comments", message: comment, likes, dislikes, timestamp, id, upvotes, author_id, replies: repliesInfo?.replies, setRepliesInfo, repliesInfo, blog_id }} />
 			{repliesInfo?.showReplies && (
 				<div className="replies">
 					{repliesInfo?.replies &&
@@ -52,6 +52,7 @@ const Comment = ({ comment, likes, dislikes, timestamp, id, upvotes, author_id }
 										reply_to: e.reply_to,
 										activeReply,
 										setActiveReply,
+										blog_id,
 									}}
 								/>
 							);

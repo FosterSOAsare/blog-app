@@ -42,7 +42,6 @@ const Profile = () => {
 		firebase.fetchBlogs(username, (blogs) => {
 			if (blogs.error) {
 				//
-				console.log(blogs.error);
 				return;
 			}
 			setProfileData({ type: "storeBlogs", payload: blogs });

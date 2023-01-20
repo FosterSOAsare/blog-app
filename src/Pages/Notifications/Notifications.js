@@ -9,7 +9,6 @@ const Notifications = () => {
 		firebase.fetchUserNotifications(credentials?.userId, (res) => {
 			// Sorting read and unread
 			res = [...res.filter((e) => !e.status), ...res.filter((e) => e.status === "read")];
-			console.log(res);
 			if (res.error) return;
 
 			setNotifications(res);

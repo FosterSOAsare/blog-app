@@ -9,7 +9,7 @@ const Upvotes = ({ blog_id, upvotes, author_id }) => {
 
 	return (
 		<>
-			<section className="upvotes">
+			<section className="upvotes" id="upvotes">
 				<div className="tips">
 					<TipBox {...{ upvotes, author_id, id: blog_id, type: "blogs" }} />
 					<div className="tippers">

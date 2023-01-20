@@ -3,8 +3,9 @@ import TipBox from "../../../../components/TipBox/TipBox";
 import Ratings from "../../../../components/Ratings/Ratings";
 import { NavLink } from "react-router-dom";
 import { useGlobalContext } from "../../../../context/AppContext";
-const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, author_id, base_id, reply_to, setRepliesInfo, repliesInfo, activeReply, setActiveReply }) => {
+const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, author_id, base_id, reply_to, setRepliesInfo, repliesInfo, activeReply, setActiveReply, blog_id }) => {
 	const { calculateTime, firebase, credentials } = useGlobalContext();
+
 	const [author, setAuthor] = useState("");
 	const replyRef = useRef(null);
 	const [showReplyForm, setShowReplyForm] = useState(false);
@@ -45,7 +46,7 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 				<p>{message}</p>
 				<div className="interactions">
 					<Ratings {...{ likes, dislikes, id, type }} />
-					<TipBox {...{ type, upvotes, author_id: author_id, id }} />
+					<TipBox {...{ type, upvotes, author_id: author_id, id, blog_id }} />
 					{author?.img_src ? <img src={author?.img_src} alt="Author" /> : <i className="fa-solid fa-user"></i>}
 					<NavLink className="link" to={`/@${author?.username}`}>
 						{author?.username}

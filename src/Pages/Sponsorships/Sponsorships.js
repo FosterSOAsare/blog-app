@@ -15,7 +15,7 @@ const Sponsorships = () => {
 	}, [firebase, credentials?.userId]);
 
 	function deleteSponsorship(sponsorship_id, author_id) {
-		firebase.deleteSponsorship(sponsorship_id, author_id, credentials?.user?.username, (res) => {
+		firebase.deleteSponsorship(sponsorship_id, author_id, credentials?.userId, (res) => {
 			if (res.error) return;
 		});
 	}

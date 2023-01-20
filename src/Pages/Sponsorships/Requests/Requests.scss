@@ -3,7 +3,6 @@
 	height: auto;
 	h3 {
 		margin-bottom: 20px;
-		background-color: red;
 	}
 
 	.request {
@@ -13,6 +12,7 @@
 		border-radius: 5px;
 		border: 2px solid $grey;
 		@include flex(flex-start, center);
+		margin-bottom: 20px;
 		.image {
 			width: 50px;
 			height: 50px;
@@ -43,5 +43,4 @@
 
 h3.nothingHere {
 	margin-top: 200px;
-	background-color: red;
 }

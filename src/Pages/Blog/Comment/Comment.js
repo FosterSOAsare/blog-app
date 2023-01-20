@@ -3,7 +3,6 @@ import { useGlobalContext } from "../../../context/AppContext";
 import Interaction from "./Interaction/Interaction";
 
 const Comment = ({ comment, likes, dislikes, timestamp, id, upvotes, author_id, blog_id }) => {
-	console.log(author_id);
 	const { firebase } = useGlobalContext();
 	const [repliesInfo, setRepliesInfo] = useReducer(reducerFunc, { showReplies: false, replies: [] });
 	const [activeReply, setActiveReply] = useState(null);

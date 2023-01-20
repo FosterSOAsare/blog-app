@@ -171,25 +171,37 @@ export class Firebase {
 		name = name + "." + ext;
 
 		try {
-			this.storeImg(data.image, `sponsorships/${name}`, (res) => {
+			console.log(data);
+			this.storeImg(data.image, `sponsorships/${name}`, async (res) => {
 				if (res.error) return;
-				delete data.image;
 				data = { ...data, promo_image: res, status: "pending", settled: false };
-				// Store data
-				addDoc(collection(this.db, "sponsorships"), data);
-				addDoc(collection(this.db, "notifications"), { type: "newSponsorshipRequest", sponsor_id: data?.sponsor_id, receiver_id: data?.author_id, timestamp: serverTimestamp() });
+				// 	// Store data
+
+				await runTransaction(this.db, async (transaction) => {
+					const sponsor = await transaction.get(doc(this.db, "users", data?.sponsor_id));
+					let notif = {
+						desc: `Sponsorship request received from @${sponsor?.data()?.username}.`,
+						link: "/sponsorships/requests",
+						type: "sponsorship",
+						receiver_id: data?.author_id,
+					};
+					delete data.image;
+					addDoc(collection(this.db, "sponsorships"), data);
+					this.insertNotification(notif);
+				});
 
 				callback("success");
 				return;
 			});
 		} catch (e) {
+			console.log(e);
 			callback({ error: true });
 		}
 	}
 	fetchSponsors(userId, callback) {
 		try {
 			// Create a query against the collection.
-			let q = query(collection(this.db, "sponsorships"), where("author_id", "==", userId), where("status", "==", "approved"));
+			let q = query(collection(this.db, "sponsorships"), where("author_id", "==", userId), where("status", "==", "approved"), where("settled", "==", true));
 
 			onSnapshot(q, (querySnapshot) => {
 				if (querySnapshot.empty) {
@@ -246,16 +258,17 @@ export class Firebase {
 				const newAuthorBalance = parseFloat(authorDoc.data().balance) + parseFloat(25);
 				const newSponsorBalance = parseFloat(sponsorDoc.data().balance) - 25;
 
+				let notif = {
+					desc: `Payment received : Your sponsorship request by @${sponsorDoc.data().username} has been finalized`,
+					link: `/@${authorDoc.data().username}`,
+					type: "sponsorship",
+					receiver_id: author_id,
+				};
 				transaction.update(doc(this.db, "sponsorships", sponsorship_id), { settled: true });
 				transaction.update(doc(this.db, "users", sponsor_id), { balance: parseFloat(newSponsorBalance.toFixed(2)) });
 				transaction.update(doc(this.db, "users", author_id), { balance: parseFloat(newAuthorBalance.toFixed(2)) });
 
-				addDoc(collection(this.db, "notifications"), {
-					type: "sponsorshipSettled",
-					sponsor_id,
-					receiver_id: author_id,
-					timestamp: serverTimestamp(),
-				});
+				this.insertNotification(notif);
 			});
 			callback("success");
 		} catch (e) {
@@ -264,10 +277,20 @@ export class Firebase {
 		}
 	}
 
-	deleteSponsorship(sponsorship_id, author_id, sponsor_username, callback) {
+	async deleteSponsorship(sponsorship_id, author_id, sponsor_id, callback) {
 		try {
-			deleteDoc(doc(this.db, "sponsorships", sponsorship_id));
-			addDoc(collection(this.db, "notifications"), { timestamp: serverTimestamp(), receiver_id: author_id, type: "sponsorshipDeleted", sponsor_username });
+			await runTransaction(this.db, async (transaction) => {
+				let sponsor = await transaction.get(doc(this.db, "users", sponsor_id));
+				let author = await transaction.get(doc(this.db, "users", author_id));
+				let notif = {
+					desc: `@${sponsor.data().username} has terminated his/her sponsorship`,
+					link: `/@${author.data().username}`,
+					type: "sponsorship",
+					receiver_id: author_id,
+				};
+				deleteDoc(doc(this.db, "sponsorships", sponsorship_id));
+				this.insertNotification(notif);
+			});
 		} catch (e) {
 			callback({ error: true });
 		}
@@ -304,10 +327,20 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
-	moderateRequest(status, receiver_id, author_id, request_id, callback) {
+	async moderateRequest(status, receiver_id, author_id, request_id, callback) {
 		try {
-			updateDoc(doc(this.db, "sponsorships", request_id), { status });
-			addDoc(addDoc(collection(this.db, "notifications"), { type: "requestModerated", author_id, request_id, receiver_id, timestamp: serverTimestamp() }));
+			await runTransaction(this.db, async (transaction) => {
+				const author = await transaction.get(doc(this.db, "users", author_id));
+
+				let notif = {
+					desc: `@${author.data().username} ${status} your sponsorship.${status === "approved" ? " Check to complete payment" : ""}`,
+					link: "/sponsorships",
+					type: "sponsorship",
+					receiver_id,
+				};
+				updateDoc(doc(this.db, "sponsorships", request_id), { status });
+				this.insertNotification(notif);
+			});
 			callback("success");
 		} catch (e) {
 			callback({ error: true });
@@ -513,6 +546,10 @@ export class Firebase {
 						};
 					}
 				}
+				notif = {
+					...notif,
+					type: "upvotes",
+				};
 				transaction.update(doc(this.db, type, id), { upvotes });
 				transaction.update(doc(this.db, "users", receiver_id), { balance: parseFloat(newReceiverBalance.toFixed(2)) });
 				transaction.update(doc(this.db, "users", sender_id), { balance: parseFloat(newSenderBalance.toFixed(2)) });
@@ -534,6 +571,8 @@ export class Firebase {
 						desc: `@${author.data().username} commented on your post, "${removeHTML(document.data().heading)}"`,
 						link: createLink(author.data().username, removeHTML(document.data()?.heading), data?.blog_id) + "#comments",
 						message: data?.comment,
+						type: "comment",
+						receiver_id: data.receiver_id,
 					};
 				}
 				if (type === "replies") {
@@ -542,19 +581,23 @@ export class Firebase {
 						reply_to = await transaction.get(doc(this.db, "replies", data?.reply_to));
 						notif = {
 							desc: `@${author.data().username} replied to your reply, "${truncateText(reply_to?.data().message)}"`,
+							receiver_id: reply_to.data().author_id,
 						};
 					} else {
 						reply_to = await transaction.get(doc(this.db, "comments", data?.base_comment_id));
 						notif = {
 							desc: `@${author.data().username} replied to your comment, "${truncateText(reply_to?.data().comment)}"`,
+							receiver_id: reply_to.data().author_id,
 						};
 					}
 					notif = {
 						...notif,
 						link: createLink(author.data().username, removeHTML(document.data()?.heading), data?.blog_id) + "#comments",
 						message: data?.message,
+						type: "reply",
 					};
 				}
+
 				data = { ...data, timestamp: serverTimestamp(), likes: "", dislikes: "", upvotes: JSON.stringify([]) };
 				addDoc(collection(this.db, type), data);
 				this.insertNotification(notif);

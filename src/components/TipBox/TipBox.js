@@ -65,7 +65,6 @@ const TipBox = ({ type, upvotes, author_id, id, blog_id }) => {
 				className="upvote"
 				onClick={() => {
 					if (credentials?.userId === author_id) return;
-					console.log("clicked");
 					setShowForm(true);
 				}}>
 				<i className="fa-solid fa-arrow-up"></i>

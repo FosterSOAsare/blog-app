@@ -1,39 +1,29 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useState } from "react";
 import { useGlobalContext } from "../../../context/AppContext";
 import { Navigate } from "react-router";
 
-const Notification = ({ type, notification_id, sponsor_id, sponsor_username, status, sponsorship_id, timestamp, request_id }) => {
-	const [attachedData, setAttachedFunc] = useReducer(reducerFunc, { description: "", link: "" });
-	const { credentials, calculateTime } = useGlobalContext();
+const Notification = ({ link, desc, message, notification_id, status, timestamp }) => {
+	const { calculateTime } = useGlobalContext();
 	const [navigate, setNavigate] = useState(false);
 
 	const { firebase } = useGlobalContext();
 
-	function reducerFunc(attachedData, action) {
-		switch (action.type) {
-			case "setDesc":
-				return { ...attachedData, description: action.payload };
-			case "setLink":
-				return { ...attachedData, link: action.payload };
-			default:
-				return attachedData;
-		}
-	}
-
 	function setRead() {
-		firebase.setReadNotification(notification_id, status, (res) => {});
+		firebase.setReadNotification(notification_id, status, (res) => {
+			setNavigate(true);
+		});
 	}
 	return (
 		<>
 			<div className="notification" onClick={setRead}>
 				<div className="title">
-					{!status && <div className="unread"></div>}
-					<p className="desc">Dead</p>
+					{status === "unread" && <div className="unread"></div>}
+					<p className="desc">{desc}</p>
 				</div>
-				{<div className="attached_content"></div>}
-				<p className="timestamp">20 minutes ago</p>
+				{message && <div className="attached_content">{message}</div>}
+				<p className="timestamp">{calculateTime(timestamp.seconds)}</p>
 			</div>
-			{navigate && <Navigate to={attachedData?.link}></Navigate>}
+			{navigate && <Navigate to={link}></Navigate>}
 		</>
 	);
 };

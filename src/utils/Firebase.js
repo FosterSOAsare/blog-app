@@ -710,6 +710,7 @@ export class Firebase {
 				callback({ empty: true });
 			});
 		} catch (e) {
+			console.log(e);
 			callback({ error: "An error occurred" });
 		}
 	}
@@ -732,7 +733,7 @@ export class Firebase {
 	}
 	setReadNotification(notification_id, status, callback) {
 		try {
-			if (!status) updateDoc(doc(this.db, "notifications", notification_id), { status: "read" }, { merge: true });
+			if (status === "unread") updateDoc(doc(this.db, "notifications", notification_id), { status: "read" }, { merge: true });
 			callback("success");
 		} catch (e) {
 			callback({ error: true });

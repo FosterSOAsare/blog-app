@@ -5,12 +5,16 @@ import Notification from "./Notification/Notification";
 const Notifications = () => {
 	const [notifications, setNotifications] = useState([]);
 	const { firebase, credentials } = useGlobalContext();
+
 	useEffect(() => {
 		firebase.fetchUserNotifications(credentials?.userId, (res) => {
+			if (res.empty) {
+				setNotifications(res);
+				return;
+			}
 			// Sorting read and unread
-			res = [...res.filter((e) => !e.status), ...res.filter((e) => e.status === "read")];
+			res = [...res.filter((e) => e.status === "unread"), ...res.filter((e) => e.status === "read")];
 			if (res.error) return;
-
 			setNotifications(res);
 		});
 	}, [firebase, credentials?.userId]);

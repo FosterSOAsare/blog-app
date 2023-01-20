@@ -17,6 +17,7 @@ import Sponsorships from "./Pages/Sponsorships/Sponsorships";
 import NewSponsorship from "./Pages/Sponsorships/NewSponsorship/NewSponsorship";
 import Requests from "./Pages/Sponsorships/Requests/Requests";
 import Request from "./Pages/Sponsorships/Requests/Request/Request";
+import Notifications from "./Pages/Notifications/Notifications";
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
 	return credentials.userId ? children : <Navigate to="/login"></Navigate>;
@@ -54,6 +55,7 @@ function App() {
 						</Route>
 					</Route>
 					<Route path="register" element={<CheckLogged><Register /></CheckLogged>}></Route>
+					<Route path="notifications"  element={<LoginRequired><Notifications /></LoginRequired>} ></Route>
 					<Route path="login" element={<CheckLogged><Login /></CheckLogged>}></Route>
 				</Route>
 				<Route path="/verifications" element={<CheckLogged><Verifications /></CheckLogged> }></Route>

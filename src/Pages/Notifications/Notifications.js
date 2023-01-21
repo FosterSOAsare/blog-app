@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "../../context/AppContext";
 import Notification from "./Notification/Notification";
 import Waiting from "../../assets/images/Waiting.gif";
@@ -6,26 +6,47 @@ import Loading from "../../components/Loading/Loading";
 
 const Notifications = () => {
 	const [notifications, setNotifications] = useState([]);
+	const [showOptions, setShowOptions] = useState(false);
+	const filterRef = useRef(null);
 	// Waiting for a functionality like mark as read or filtering
 	const [waiting, setWaiting] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const { firebase, credentials } = useGlobalContext();
 
+	function sortNotifications(notifications) {
+		return (notifications = [...notifications.filter((e) => e.status === "unread"), ...notifications.filter((e) => e.status === "read")]);
+	}
 	useEffect(() => {
 		firebase.fetchUserNotifications(credentials?.userId, (res) => {
 			if (res.empty) {
 				setNotifications(res);
-
 				return;
 			}
 			// Sorting read and unread
 			// Group read and unread
-			res = [...res.filter((e) => e.status === "unread"), ...res.filter((e) => e.status === "read")];
+			res = sortNotifications(res);
 			if (res.error) return;
 			setNotifications(res.length === 0 ? { empty: true } : res);
 			setLoading(false);
 		});
 	}, [firebase, credentials?.userId]);
+
+	useEffect(() => {
+		let parent = filterRef.current;
+		let current = undefined;
+		notifications &&
+			parent &&
+			document.addEventListener("mousemove", (e) => {
+				current = e.target;
+				if (parent.contains(e.target)) {
+					setShowOptions(true);
+				} else {
+					setTimeout(() => {
+						!parent.contains(current) && setShowOptions(false);
+					}, 200);
+				}
+			});
+	}, [notifications]);
 
 	function markRead() {
 		let unread = notifications.filter((e) => e.status === "unread");
@@ -43,6 +64,14 @@ const Notifications = () => {
 			});
 		}
 	}
+	function fetchFilteredNotifcations(type) {
+		setWaiting(true);
+		firebase.fetchFilteredNotifications(type, credentials?.userId, (res) => {
+			res = sortNotifications(res);
+			setNotifications(res);
+			setWaiting(false);
+		});
+	}
 	return (
 		<section className="notifications">
 			{/* If notifications is empty. */}
@@ -53,9 +82,31 @@ const Notifications = () => {
 					{!waiting && (
 						<>
 							<div className="actions">
-								<div className="filter">
+								<div className="filter" ref={filterRef}>
 									<i className="fa-solid fa-filter"></i>
 									<p>filter</p>
+									{showOptions && (
+										<div className="filter_options">
+											<p className="option" onClick={() => fetchFilteredNotifcations("all")}>
+												All
+											</p>
+											<p className="option" onClick={() => fetchFilteredNotifcations("comment")}>
+												Comments
+											</p>
+											<p className="option" onClick={() => fetchFilteredNotifcations("reply")}>
+												Replies
+											</p>
+											<p className="option" onClick={() => fetchFilteredNotifcations("sponsorship")}>
+												Sponsors
+											</p>
+											<p className="option" onClick={() => fetchFilteredNotifcations("upvotes")}>
+												Upvotes
+											</p>
+											<p className="option" onClick={() => fetchFilteredNotifcations("post")}>
+												Subscriptions
+											</p>
+										</div>
+									)}
 								</div>
 								{/* Check if there are unread messages . If yes display , mark these as read */}
 								{notifications.filter((e) => e.status === "unread").length > 0 && (

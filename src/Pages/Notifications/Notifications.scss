@@ -24,6 +24,7 @@
 			border: 1px solid $grey;
 			padding: 3px 10px;
 			background-color: $text1;
+			position: relative;
 			p {
 				font-family: "Lato", sans-serif;
 			}
@@ -31,6 +32,30 @@
 			i {
 				margin-right: 10px;
 				font-size: 12px;
+			}
+			.filter_options {
+				width: 130px;
+				height: auto;
+				position: absolute;
+				top: 25px;
+				border-radius: 3px;
+				overflow: none;
+				left: -25px;
+				border: 1px solid $grey;
+				background-color: $white;
+				z-index: 2;
+				.option {
+					text-transform: capitalize;
+					border-bottom: 1px solid $grey;
+					padding: 8px 10px;
+					color: $text1;
+					&:last-child {
+						border: none;
+					}
+					&:hover {
+						background-color: $background2;
+					}
+				}
 			}
 		}
 		button {

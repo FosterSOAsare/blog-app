@@ -714,41 +714,52 @@ export class Firebase {
 	fetchUserNotifications(user_id, callback) {
 		// Create a query against the collection.
 		try {
-			let q1 = query(collection(this.db, "notifications"), where("receivers", "array-contains", { receiver_id: user_id, status: "read" }));
-			let q2 = query(collection(this.db, "notifications"), where("receivers", "array-contains", { receiver_id: user_id, status: "unread" }));
-			let q3 = query(collection(this.db, "notifications"), where("receiver_id", "==", user_id));
+			let q1 = query(collection(this.db, "notifications"), where("receiver_id", "==", user_id));
+
 			// Needs different queries since the or operator is not available
 			onSnapshot(q1, async (res1) => {
-				onSnapshot(q2, async (res2) => {
-					onSnapshot(q3, async (res3) => {
-						// Returns the 3 arrays.
-						let result = [
-							...res1.docs.map((e) => {
-								let data = { ...e.data(), notification_id: e.id };
-								// Strip out the receivers and add a status for the current user
-								delete data.receivers;
-								data.status = "read";
-								return data;
-							}),
-							...res2.docs.map((e) => {
-								let data = { ...e.data(), notification_id: e.id };
-								// Strip out the receivers and add a status for the current user
-								delete data.receivers;
-								data.status = "unread";
-								return data;
-							}),
-							...res3.docs.map((e) => {
-								return { ...e.data(), notification_id: e.id };
-							}),
-						];
-						callback(result);
-					});
+				await this.fetchComplexNotifications(user_id, (res) => {
+					let result = [
+						...res1.docs.map((e) => {
+							let data = { ...e.data(), notification_id: e.id };
+							return data;
+						}),
+						...res,
+					];
+					callback(result);
 				});
 			});
 		} catch (e) {
 			console.log(e);
 			callback({ error: "An error occurred" });
 		}
+	}
+
+	async fetchComplexNotifications(user_id, callback) {
+		let q1 = query(collection(this.db, "notifications"), where("receivers", "array-contains", { receiver_id: user_id, status: "read" }));
+		let q2 = query(collection(this.db, "notifications"), where("receivers", "array-contains", { receiver_id: user_id, status: "unread" }));
+		onSnapshot(q1, async (res1) => {
+			onSnapshot(q2, async (res2) => {
+				// Returns the 3 arrays.
+				let result = [
+					...res1.docs.map((e) => {
+						let data = { ...e.data(), notification_id: e.id };
+						// Strip out the receivers and add a status for the current user
+						delete data.receivers;
+						data.status = "read";
+						return data;
+					}),
+					...res2.docs.map((e) => {
+						let data = { ...e.data(), notification_id: e.id };
+						// Strip out the receivers and add a status for the current user
+						delete data.receivers;
+						data.status = "unread";
+						return data;
+					}),
+				];
+				callback(result);
+			});
+		});
 	}
 	fetchUnreadNotifications(user_id, callback) {
 		try {
@@ -784,5 +795,33 @@ export class Firebase {
 		} catch (e) {
 			callback({ error: true });
 		}
+	}
+
+	fetchFilteredNotifications(type, receiver_id, callback) {
+		let q = "";
+		if (type === "post") {
+			this.fetchComplexNotifications(receiver_id, (res) => {
+				callback(res);
+			});
+			return;
+		}
+		if (type === "all") {
+			this.fetchUserNotifications(receiver_id, (res) => {
+				callback(res);
+			});
+			return;
+		}
+		if (type === "posts") {
+			q = query(collection(this.db, "notifications"));
+		} else {
+			q = query(collection(this.db, "notifications"), where("type", "==", type));
+		}
+		onSnapshot(q, (res) => {
+			callback(
+				res.docs.map((e) => {
+					return { ...e.data(), notification_id: e.id };
+				})
+			);
+		});
 	}
 }

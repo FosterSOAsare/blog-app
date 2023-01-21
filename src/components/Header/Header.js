@@ -8,7 +8,7 @@ const Header = () => {
 	const { credentials, firebase } = useGlobalContext();
 	const [menuDisplay, setMenuDisplay] = useState(false);
 	const menuBtn = useRef(null);
-	const [unreadNotifications, setUnreadNotifications] = useState([]);
+	const [unreadNotifications, setUnreadNotifications] = useState(null);
 	let balance = credentials?.user?.balance ? credentials?.user?.balance.toFixed(2) : 0.0;
 
 	const formatter = new Intl.NumberFormat("en-US", {
@@ -37,7 +37,7 @@ const Header = () => {
 	useEffect(() => {
 		firebase.fetchUnreadNotifications(credentials?.userId, (res) => {
 			if (res.error) return;
-			setUnreadNotifications(res.empty ? [] : res);
+			setUnreadNotifications(res);
 		});
 	}, [firebase, credentials?.userId]);
 	return (
@@ -79,7 +79,7 @@ const Header = () => {
 							{credentials.userId && (
 								<article className="user__notices">
 									<Link className="notification" to="/notifications">
-										<i className={`fa-solid fa-bell${unreadNotifications.length > 0 ? " unread" : ""}`}></i>
+										<i className={`fa-solid fa-bell${unreadNotifications > 0 ? " unread" : ""}`}></i>
 									</Link>
 									<article ref={menuBtn}>
 										<p className="balance">{balance}</p>

@@ -416,30 +416,44 @@ export class Firebase {
 		}
 	}
 
-	storeBlog(data, callback) {
-		// Store lead Image first
-		let path = "blogs/" + data.name;
-		data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", views: 0, savedCount: 0, upvotes: JSON.stringify([]) };
+	async storeBlog(data, callback) {
+		try {
+			// Store lead Image first
+			let path = "blogs/" + data.name;
+			data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", views: 0, savedCount: 0, upvotes: JSON.stringify([]) };
+			this.storeImg(data?.file, path, async (res) => {
+				if (res.error) {
+					callback(res);
+					return;
+				}
+				delete data.file;
+				delete data.name;
+				delete data.author_id;
+				data.lead_image_src = res;
+				await runTransaction(this.db, async (transaction) => {
+					let q = query(collection(this.db, "subscriptions"), where("username", "==", data.author));
+					let subscriptions = await getDocs(q);
+					subscriptions = subscriptions.docs[0].data();
+					let subscribers = subscriptions.followers.split(" ");
 
-		this.storeImg(data?.file, path, (res) => {
-			if (res.error) {
-				callback(res);
-				return;
-			}
-			delete data.file;
-			delete data.name;
-			delete data.author_id;
-			data.lead_image_src = res;
-			// Insert Blog
-			addDoc(collection(this.db, "blogs"), data)
-				.then((response) => {
-					callback(response);
-				})
-				.catch((e) => {
-					callback({ error: e });
+					addDoc(collection(this.db, "blogs"), data).then((res) => {
+						let notif = {
+							desc: `@${data.author} has posted a new article, "${removeHTML(data.heading)}"`,
+							link: createLink(data.author, removeHTML(data.heading), res.id),
+							receivers: subscribers.map((e) => {
+								return { receiver_id: e, status: "unread" };
+							}),
+							type: "post",
+						};
+						this.insertNotification(notif);
+					});
 				});
-			callback(data);
-		});
+				// Insert Blog
+				callback(data);
+			});
+		} catch (e) {
+			callback({ error: true });
+		}
 	}
 
 	updateBlog(data, callback) {
@@ -691,23 +705,45 @@ export class Firebase {
 		}
 	}
 	insertNotification(data) {
-		data = { ...data, timestamp: serverTimestamp(), status: "unread" };
+		data = { ...data, timestamp: serverTimestamp() };
+		if (!data.receivers) {
+			data.status = "unread";
+		}
 		addDoc(collection(this.db, "notifications"), data);
 	}
 	fetchUserNotifications(user_id, callback) {
 		// Create a query against the collection.
 		try {
-			let q = query(collection(this.db, "notifications"), where("receiver_id", "==", user_id), orderBy("timestamp", "desc"));
-			onSnapshot(q, async (querySnapshot) => {
-				if (querySnapshot.docs?.length) {
-					let notifications = querySnapshot.docs.map((notification) => {
-						return { ...notification.data(), notification_id: notification.id };
+			let q1 = query(collection(this.db, "notifications"), where("receivers", "array-contains", { receiver_id: user_id, status: "read" }));
+			let q2 = query(collection(this.db, "notifications"), where("receivers", "array-contains", { receiver_id: user_id, status: "unread" }));
+			let q3 = query(collection(this.db, "notifications"), where("receiver_id", "==", user_id));
+			// Needs different queries since the or operator is not available
+			onSnapshot(q1, async (res1) => {
+				onSnapshot(q2, async (res2) => {
+					onSnapshot(q3, async (res3) => {
+						// Returns the 3 arrays.
+						let result = [
+							...res1.docs.map((e) => {
+								let data = { ...e.data(), notification_id: e.id };
+								// Strip out the receivers and add a status for the current user
+								delete data.receivers;
+								data.status = "read";
+								return data;
+							}),
+							...res2.docs.map((e) => {
+								let data = { ...e.data(), notification_id: e.id };
+								// Strip out the receivers and add a status for the current user
+								delete data.receivers;
+								data.status = "unread";
+								return data;
+							}),
+							...res3.docs.map((e) => {
+								return { ...e.data(), notification_id: e.id };
+							}),
+						];
+						callback(result);
 					});
-
-					callback(notifications);
-					return;
-				}
-				callback({ empty: true });
+				});
 			});
 		} catch (e) {
 			console.log(e);
@@ -716,25 +752,35 @@ export class Firebase {
 	}
 	fetchUnreadNotifications(user_id, callback) {
 		try {
-			let q = query(collection(this.db, "notifications"), where("receiver_id", "==", user_id), where("status", "==", "unread"), orderBy("timestamp", "desc"));
-			onSnapshot(q, async (querySnapshot) => {
-				if (querySnapshot.docs?.length) {
-					let notifications = querySnapshot.docs.map((notification) => {
-						return { ...notification.data(), notification_id: notification.id };
-					});
-					callback(notifications);
-					return;
-				}
-				callback({ empty: true });
+			let q = query(collection(this.db, "notifications"), where("receiver_id", "==", user_id), where("status", "==", "unread"));
+			let q2 = query(collection(this.db, "notifications"), where("receivers", "array-contains", { receiver_id: user_id, status: "unread" }));
+			onSnapshot(q, async (res1) => {
+				onSnapshot(q2, async (res2) => {
+					let totalUnread = res1.docs.length + res2.docs.length;
+					callback(totalUnread);
+				});
+				return;
 			});
 		} catch (e) {
 			callback({ error: "An error occurred" });
 		}
 	}
-	setReadNotification(notification_id, status, callback) {
+	async setReadNotification(notification_id, receiver_id, callback) {
 		try {
-			if (status === "unread") updateDoc(doc(this.db, "notifications", notification_id), { status: "read" }, { merge: true });
-			callback("success");
+			await runTransaction(this.db, async (transaction) => {
+				// Fetch notification\
+				let notificationDoc = await transaction.get(doc(this.db, "notifications", notification_id));
+				notificationDoc = notificationDoc.data();
+				if (notificationDoc.receivers) {
+					let receivers = notificationDoc.receivers.map((e) => {
+						return e.receiver_id === receiver_id && e.status === "unread" ? { ...e, status: "read" } : e;
+					});
+					transaction.update(doc(this.db, "notifications", notification_id), { receivers });
+				} else {
+					if (notificationDoc.status === "unread") transaction.update(doc(this.db, "notifications", notification_id), { status: "read" }, { merge: true });
+				}
+				callback("success");
+			});
 		} catch (e) {
 			callback({ error: true });
 		}

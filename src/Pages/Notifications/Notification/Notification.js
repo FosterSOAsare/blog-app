@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { useGlobalContext } from "../../../context/AppContext";
 import { Navigate } from "react-router";
 
-const Notification = ({ link, desc, message, notification_id, status, timestamp }) => {
+const Notification = ({ link, desc, message, notification_id, status, timestamp, receiver_id }) => {
 	const { calculateTime } = useGlobalContext();
 	const [navigate, setNavigate] = useState(false);
 
 	const { firebase } = useGlobalContext();
 
 	function setRead() {
-		firebase.setReadNotification(notification_id, status, (res) => {
+		firebase.setReadNotification(notification_id, receiver_id, (res) => {
 			setNavigate(true);
 		});
 	}

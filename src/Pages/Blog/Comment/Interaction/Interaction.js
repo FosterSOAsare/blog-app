@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import { useGlobalContext } from "../../../../context/AppContext";
 const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, author_id, base_id, reply_to, setRepliesInfo, repliesInfo, activeReply, setActiveReply, blog_id }) => {
 	const { calculateTime, firebase, credentials } = useGlobalContext();
-
+	const [waiting, setWaiting] = useState(false);
 	const [author, setAuthor] = useState("");
 	const replyRef = useRef(null);
 	const [showReplyForm, setShowReplyForm] = useState(false);
@@ -16,7 +16,8 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 				setAuthor(res);
 			});
 	}, [firebase, author_id]);
-	function addReply(message, base_id, reply_to = id) {
+	function addReply(message, reply_to = id) {
+		setWaiting(true);
 		if (message === "") return;
 		// Type here specifies if the reply is a reply to either a comment or another reply
 		let data =
@@ -27,6 +28,7 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 		firebase.storeCommentOrReply("replies", data, (res) => {
 			// Replies here means what we are about to store is either a reply or a sub-reply
 			setShowReplyForm(false);
+			setWaiting(false);
 			replyRef.current.value = "";
 		});
 	}
@@ -75,21 +77,26 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 				<form className="replyForm">
 					<div className="container">
 						<textarea name="comment" id="" cols="30" rows="10" placeholder="Add your reply" ref={replyRef}></textarea>
-						<button
-							onClick={(e) => {
-								e.preventDefault();
-								type === "comments" ? addReply(replyRef.current.value, base_id) : addReply(replyRef.current.value, credentials?.userId, base_id, id);
-							}}>
-							Add Reply
-						</button>
-						<button
-							className="cancel"
-							onClick={(e) => {
-								e.preventDefault();
-								setShowReplyForm(false);
-							}}>
-							Cancel
-						</button>
+						{!waiting && (
+							<>
+								<button
+									onClick={(e) => {
+										e.preventDefault();
+										addReply(replyRef.current.value);
+									}}>
+									Add Reply
+								</button>
+								<button
+									className="cancel"
+									onClick={(e) => {
+										e.preventDefault();
+										setShowReplyForm(false);
+									}}>
+									Cancel
+								</button>
+							</>
+						)}
+						{waiting && <button className="waiting">Waiting...</button>}
 					</div>
 				</form>
 			)}

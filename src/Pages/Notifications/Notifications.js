@@ -13,6 +13,7 @@ const Notifications = () => {
 				return;
 			}
 			// Sorting read and unread
+			// Group read and unread
 			res = [...res.filter((e) => e.status === "unread"), ...res.filter((e) => e.status === "read")];
 			if (res.error) return;
 			setNotifications(res);
@@ -31,7 +32,7 @@ const Notifications = () => {
 				{notifications?.empty && <p className="nothingHere">Nothing Here...</p>}
 				{!notifications?.empty &&
 					notifications.map((e) => {
-						return <Notification key={e.notification_id} {...e} />;
+						return <Notification key={e.notification_id} {...e} receiver_id={credentials?.userId} />;
 					})}
 			</div>
 		</section>

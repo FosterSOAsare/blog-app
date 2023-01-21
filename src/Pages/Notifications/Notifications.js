@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../../context/AppContext";
 import Notification from "./Notification/Notification";
+import Waiting from "../../assets/images/Waiting.gif";
+import Loading from "../../components/Loading/Loading";
 
 const Notifications = () => {
 	const [notifications, setNotifications] = useState([]);
+	// Waiting for a functionality like mark as read or filtering
 	const [waiting, setWaiting] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const { firebase, credentials } = useGlobalContext();
 
 	useEffect(() => {
 		firebase.fetchUserNotifications(credentials?.userId, (res) => {
 			if (res.empty) {
 				setNotifications(res);
+
 				return;
 			}
 			// Sorting read and unread
@@ -18,6 +23,7 @@ const Notifications = () => {
 			res = [...res.filter((e) => e.status === "unread"), ...res.filter((e) => e.status === "read")];
 			if (res.error) return;
 			setNotifications(res.length === 0 ? { empty: true } : res);
+			setLoading(false);
 		});
 	}, [firebase, credentials?.userId]);
 
@@ -40,8 +46,8 @@ const Notifications = () => {
 	return (
 		<section className="notifications">
 			{/* If notifications is empty. */}
-			{notifications?.empty && !waiting && <p className="nothingHere">Nothing Here...</p>}
-			{!notifications?.empty && (
+			{notifications?.empty && !waiting && !loading && <p className="nothingHere">Nothing Here...</p>}
+			{!notifications?.empty && !loading && (
 				<>
 					{/* If notifications is not empty and is not waiting for mark all as read functionality */}
 					{!waiting && (
@@ -51,9 +57,12 @@ const Notifications = () => {
 									<i className="fa-solid fa-filter"></i>
 									<p>filter</p>
 								</div>
-								<button className="markRead" onClick={markRead}>
-									Mark As Read
-								</button>
+								{/* Check if there are unread messages . If yes display , mark these as read */}
+								{notifications.filter((e) => e.status === "unread").length > 0 && (
+									<button className="markRead" onClick={markRead}>
+										Mark These As Read
+									</button>
+								)}
 							</div>
 							<div className="content">
 								{notifications.map((e) => {
@@ -63,9 +72,14 @@ const Notifications = () => {
 						</>
 					)}
 					{/* If notifications is not empty but is  waiting for mark all as read functionality */}
-					{waiting && <p className="nothingHere waiting">Waiting...</p>}
+					{waiting && (
+						<div className="waiting">
+							<img className="" src={Waiting} alt="Waiting" />
+						</div>
+					)}
 				</>
 			)}
+			{loading && <Loading />}
 		</section>
 	);
 };

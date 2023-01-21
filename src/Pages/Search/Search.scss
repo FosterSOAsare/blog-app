@@ -1,0 +1,49 @@
+section.search {
+	height: auto;
+	background-color: $background2;
+	.container {
+		@include container;
+		min-height: 60vh;
+		@include flex(center, center);
+		flex-direction: column;
+		form {
+			background-color: white;
+			width: 100%;
+			height: auto;
+			border-radius: 3px;
+			@include flex(space-between, center);
+			border: 2px solid $grey;
+			padding: 0 1%;
+			margin-bottom: 10px;
+			input {
+				width: 95%;
+				height: 45px;
+				border: 0;
+				border-radius: 0;
+				margin: 0;
+				font-size: 16px;
+			}
+			button {
+				width: 20px;
+				background-color: transparent;
+				border-color: $grey;
+				padding: 0 15px;
+				height: 30px;
+				@include flex(center, center);
+				i {
+					color: $text1;
+				}
+				// border: 0;
+				margin: 0;
+			}
+		}
+		.example {
+			font-weight: bold;
+			font-size: 14px;
+			span {
+				font-style: italic;
+				font-weight: normal;
+			}
+		}
+	}
+}

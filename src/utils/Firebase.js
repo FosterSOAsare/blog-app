@@ -824,4 +824,11 @@ export class Firebase {
 			);
 		});
 	}
+
+	getQuery(queryString, callback) {
+		let q1 = query(collection(this.db, "blogs"), where("heading", "array-contains-any", "Determination"));
+		getDocs(q1).then((e) => {
+			console.log(e);
+		});
+	}
 }

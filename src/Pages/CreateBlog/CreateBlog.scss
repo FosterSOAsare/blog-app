@@ -108,6 +108,23 @@ section.createBlog {
 	}
 }
 
+.error {
+	min-height: 90vh;
+	@include container;
+	@include flex(center, center);
+	flex-direction: column;
+	margin-top: 50px;
+	position: fixed;
+	top: 80px;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	background-color: $white;
+	button {
+		height: 40px;
+		margin-top: 20px;
+	}
+}
 .dark {
 	section.createBlog {
 		p,
@@ -132,6 +149,12 @@ section.createBlog {
 			label {
 				color: $darkText1;
 			}
+		}
+	}
+	.error {
+		background-color: $darkBg;
+		p {
+			color: $error;
 		}
 	}
 }

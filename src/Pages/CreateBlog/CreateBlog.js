@@ -7,17 +7,16 @@ import { removeHTML, removeSpaces, removeSpecialChars } from "../../utils/Text";
 import NotFound from "../NotFound/NotFound";
 import { useState } from "react";
 import ConfirmPopup from "../../components/Popups/ConfirmPopup";
+import { useAuthContext } from "../../context/AuthContext";
 const CreateBlog = () => {
 	const [edit, setEdit] = useReducer(reducerFunc, { data: null });
 	const [navigate, setNavigate] = useState(false);
-	function reducerFunc(edit, action) {
-		switch (action.type) {
-			case "setData":
-				return { ...edit, data: action.payload };
-			default:
-				return edit;
-		}
-	}
+	const { error, errorFunc } = useAuthContext();
+
+	// Clear error on start up
+	useEffect(() => {
+		errorFunc({ type: "clearError" });
+	}, [errorFunc]);
 	// Edit page also used the createBlogPage
 	let { credentials, firebase, notFound, setNotFound } = useGlobalContext();
 	const [stored, setStored] = useReducer(storedFunc, { stored: false, published: false });
@@ -27,6 +26,15 @@ const CreateBlog = () => {
 	let header = useRef(null);
 	// Check params
 	let { blogId } = useParams();
+
+	function reducerFunc(edit, action) {
+		switch (action.type) {
+			case "setData":
+				return { ...edit, data: action.payload };
+			default:
+				return edit;
+		}
+	}
 
 	useEffect(() => {
 		// Fetch blog data
@@ -74,6 +82,15 @@ const CreateBlog = () => {
 			return;
 		}
 		if (!image.files?.length) {
+			errorFunc({ type: "displayError", payload: "Lead Image not set. Please add a lead image " });
+			return;
+		}
+		if (removeHTML(heading).length < 4) {
+			errorFunc({ type: "displayError", payload: "Heading must be more than 4 characters long" });
+			return;
+		}
+		if (removeHTML(heading).length < 25) {
+			errorFunc({ type: "displayError", payload: "Post must be more than 25 characters long" });
 			return;
 		}
 		let ext = image.files[0].name.split(".");
@@ -151,6 +168,12 @@ const CreateBlog = () => {
 					{stored.published && <Navigate to={`/@${credentials?.user?.username}`} />}
 					{navigate && <Navigate to={`/@${credentials?.user?.username}`} />}
 				</>
+			)}
+			{!notFound && error.display !== "none" && (
+				<div className="error">
+					<p>{error.text}</p>
+					<button onClick={() => errorFunc({ type: "clearError" })}>Okay</button>
+				</div>
 			)}
 			{notFound && <NotFound />}
 		</>

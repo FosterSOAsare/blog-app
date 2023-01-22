@@ -64,7 +64,7 @@
 				margin-left: 10px;
 				@include flex(center, center);
 				i {
-					font-size: 14px;
+					font-size: 12px;
 				}
 			}
 		}
@@ -116,6 +116,36 @@
 				background-color: transparent;
 				border: 2px solid $error;
 				color: $error;
+			}
+		}
+	}
+}
+
+.dark {
+	.userInfo {
+		.section__text {
+			h3 {
+				color: $darkText1;
+			}
+			.bio {
+				color: white;
+				.icon {
+					background-color: $darkText2;
+					border: 1px solid $darkText1;
+					color: black;
+				}
+			}
+			p {
+				color: $darkText1;
+			}
+			.subs {
+				.subCount {
+					.icon {
+						i {
+							color: $darkText1;
+						}
+					}
+				}
 			}
 		}
 	}

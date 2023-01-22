@@ -5,10 +5,15 @@
 	padding: 20px 0 50px 0;
 	.container {
 		@include container;
-
 		.blogs {
 			width: 100%;
 			height: auto;
 		}
+	}
+}
+
+.dark {
+	.homepage {
+		background-color: $darkBg;
 	}
 }

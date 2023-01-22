@@ -11,7 +11,6 @@ section.createBlog {
 		width: 100%;
 		max-width: 380px;
 		margin-left: auto;
-		// background-color: red;
 		height: 40px;
 		margin-bottom: 10px;
 		@include flex(space-between, center);
@@ -94,6 +93,31 @@ section.createBlog {
 	article.header {
 		p {
 			font-weight: bold;
+		}
+	}
+}
+
+.dark {
+	section.createBlog {
+		p,
+		h2 {
+			color: $darkText1;
+		}
+		.controls {
+			a {
+				font-size: 12px;
+				color: $darkText1;
+			}
+			button {
+				font-weight: bold;
+				color: $darkText1;
+			}
+		}
+		.adds {
+			button,
+			label {
+				color: $darkText1;
+			}
 		}
 	}
 }

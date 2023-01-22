@@ -24,3 +24,10 @@
 		width: 120px;
 	}
 }
+
+.dark {
+	.loading,
+	.errorOccurred {
+		background-color: $darkBg;
+	}
+}

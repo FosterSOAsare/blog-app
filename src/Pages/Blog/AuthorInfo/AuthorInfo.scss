@@ -126,3 +126,48 @@
 		}
 	}
 }
+
+.dark {
+	.author_info {
+		.desc {
+			.actions {
+				p,
+				.link {
+					color: $darkText1;
+				}
+				.edit,
+				.subscribe {
+					border: 1px solid $darkText1;
+					color: $darkText1;
+				}
+			}
+			.bio {
+				color: $darkText1;
+			}
+			.userTime {
+				.complain {
+					background-color: $grey;
+					.drop {
+						border: 1px solid $darkBg;
+						background-color: $darkBg2;
+						.drop_elem {
+							background-color: $darkBg;
+							border-bottom: 1px solid $grey;
+							color: $darkText1;
+							&:hover {
+								background-color: $darkBg2;
+							}
+							&:last-child {
+								border: none;
+							}
+						}
+					}
+				}
+			}
+			.editTime {
+				margin-top: 10px;
+				font-size: 13px;
+			}
+		}
+	}
+}

@@ -77,7 +77,6 @@ const CreateBlog = () => {
 	return (
 		<>
 			<section className="App createBlog">
-				<p className="username">{credentials?.user?.username}</p>
 				<div className="controls">
 					<a href="https://read.cash/@Read.Cash/how-to-use-the-editor-at-readcash-e2df60aa" target="_blank" rel="noreferrer">
 						Editor help

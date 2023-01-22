@@ -44,3 +44,13 @@
 h3.nothingHere {
 	margin-top: 200px;
 }
+
+.dark {
+	.requests {
+		.request {
+			.desc {
+				color: $darkText1;
+			}
+		}
+	}
+}

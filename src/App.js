@@ -18,6 +18,7 @@ import NewSponsorship from "./Pages/Sponsorships/NewSponsorship/NewSponsorship";
 import Requests from "./Pages/Sponsorships/Requests/Requests";
 import Request from "./Pages/Sponsorships/Requests/Request/Request";
 import Notifications from "./Pages/Notifications/Notifications";
+import { useDarkContext } from "./context/DarkContext";
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
 	return credentials.userId ? children : <Navigate to="/login"></Navigate>;
@@ -29,8 +30,9 @@ function CheckLogged({ children }) {
 }
 
 function App() {
+	const {theme } = useDarkContext();
 	return (
-		<div className="App">
+		<div className={`App ${theme}`}>
 			<Routes>
 				<Route path="/" element={<Shared />}>
 					<Route index element={<HomePage />}></Route>

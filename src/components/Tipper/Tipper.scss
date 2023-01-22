@@ -38,3 +38,14 @@
 		font-size: 14px;
 	}
 }
+
+.dark {
+	.tipper {
+		background-color: $darkBg;
+
+		.blog_info {
+			color: $darkText1;
+			background-color: $darkBg2;
+		}
+	}
+}

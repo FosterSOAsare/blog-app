@@ -27,3 +27,13 @@ main.profile {
 	@include flex(center, center);
 	background-color: $background2;
 }
+
+.dark {
+	#articles {
+		background-color: $darkBg2;
+	}
+	.noblogs {
+		background-color: $darkBg2;
+		color: $darkText1;
+	}
+}

@@ -92,7 +92,9 @@ const Account = () => {
 									{error.display !== "none" && <Error text={error?.text} />}
 
 									<div className="controls">
-										<button onClick={changePassword}>Change</button>
+										<button onClick={changePassword} className="change">
+											Change
+										</button>
 										<button
 											id="cancel"
 											onClick={(e) => {

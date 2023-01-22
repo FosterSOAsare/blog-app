@@ -2,7 +2,6 @@
 	width: 100%;
 	@include container;
 	height: 40px;
-	margin-top: 10px;
 	@include flex(flex-start, center);
 	gap: 30px;
 	.control {
@@ -29,6 +28,17 @@
 	.views {
 		&:hover {
 			color: $text1;
+		}
+	}
+}
+
+.dark {
+	.blogControls {
+		.control.booked {
+			i,
+			p {
+				color: red;
+			}
 		}
 	}
 }

@@ -3,3 +3,10 @@ main.communities {
 	background-color: $background2;
 	font-size: 32px;
 }
+
+.dark {
+	main.communities {
+		background-color: $darkBg;
+		color: $darkText1;
+	}
+}

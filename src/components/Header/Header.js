@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import { useGlobalContext } from "../../context/AppContext";
 import Button2 from "../buttons/Button2";
 import DesktopMenu from "./DesktopMenu";
+import { useDarkContext } from "../../context/DarkContext";
 
 const Header = () => {
 	const { credentials, firebase } = useGlobalContext();
 	const [menuDisplay, setMenuDisplay] = useState(false);
 	const menuBtn = useRef(null);
+	const { theme, toggleTheme } = useDarkContext();
 	const [unreadNotifications, setUnreadNotifications] = useState(null);
 	let balance = credentials?.user?.balance ? credentials?.user?.balance.toFixed(2) : 0.0;
 
@@ -74,6 +76,9 @@ const Header = () => {
 								<Link className="search" to="/search">
 									<i className="fa-solid fa-magnifying-glass"></i>
 								</Link>
+								<div className="theme">
+									<i className={`fa-${theme === "light" ? "solid" : "regular"} fa-moon`} onClick={toggleTheme}></i>
+								</div>
 							</article>
 
 							{credentials.userId && (

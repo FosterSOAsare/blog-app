@@ -69,3 +69,18 @@
 		text-decoration: none;
 	}
 }
+
+.dark {
+	#sponsors {
+		border: 1px solid $darkText2;
+		box-shadow: none;
+		.sponsors_intro {
+			color: $darkText1;
+		}
+		.sponsors__container {
+			.sponsor {
+				box-shadow: none;
+			}
+		}
+	}
+}

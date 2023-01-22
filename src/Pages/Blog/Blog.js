@@ -88,13 +88,19 @@ const Blog = () => {
 						<div className="article__image" data-heading={removeHTML(profileData?.blog?.heading)}>
 							<img src={profileData?.blog?.lead_image_src} alt="Lead" />
 						</div>
-						<BlogControls commentsLen={profileData?.comments.length} bookmarks={profileData?.blog?.bookmarks ? profileData?.blog?.bookmarks : []} blog_id={profileData?.blog?.blog_id} />
-						<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} editTime={profileData?.blog?.editTime} />
-						<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
-						<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} id={profileData?.blog?.blog_id} type="blogs" />
-						<Upvotes blog_id={profileData?.blog?.blog_id} upvotes={profileData?.blog?.upvotes} author_id={profileData?.author?.userId} />
-						<Sponsors data={profileData?.author} />
-						<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} editTime={profileData?.blog?.editTime} />
+						<div className="blog__content">
+							<BlogControls
+								commentsLen={profileData?.comments.length}
+								bookmarks={profileData?.blog?.bookmarks ? profileData?.blog?.bookmarks : []}
+								blog_id={profileData?.blog?.blog_id}
+							/>
+							<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} editTime={profileData?.blog?.editTime} />
+							<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
+							<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} id={profileData?.blog?.blog_id} type="blogs" />
+							<Upvotes blog_id={profileData?.blog?.blog_id} upvotes={profileData?.blog?.upvotes} author_id={profileData?.author?.userId} />
+							<Sponsors data={profileData?.author} />
+							<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} editTime={profileData?.blog?.editTime} />
+						</div>
 					</main>
 					<section id="comments">
 						<div className="comments__container">

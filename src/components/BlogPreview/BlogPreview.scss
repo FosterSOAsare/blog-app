@@ -59,6 +59,9 @@
 				&:hover {
 					cursor: pointer;
 				}
+				i {
+					font-size: 13px;
+				}
 			}
 			.active,
 			.dislike {
@@ -138,6 +141,43 @@
 		.comments {
 			text-decoration: none;
 			color: black;
+		}
+	}
+}
+
+.dark {
+	.blogPreview {
+		background-color: #293448;
+		.link {
+			color: $darkText1;
+		}
+		.actions {
+			.action {
+				.icon {
+					color: $darkText2;
+				}
+			}
+			p {
+				color: white;
+			}
+
+			.blog_controls {
+				background-color: $grey;
+				.controls_sub {
+					background-color: #293448;
+					border: 1px solid $darkBg;
+					.elem {
+						border-bottom: 1px solid $grey;
+						color: $darkText1;
+						&:hover {
+							background-color: $darkBg;
+						}
+						&:last-child {
+							border: none;
+						}
+					}
+				}
+			}
 		}
 	}
 }

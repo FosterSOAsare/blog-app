@@ -8,6 +8,7 @@ import { useAuthContext } from "../../../context/AuthContext";
 const NewSponsorship = () => {
 	// Fetch user and sponsors
 	const [loading, setLoading] = useState(true);
+	const [waiting, setWaiting] = useState(false);
 	const [showForm, setShowForm] = useState(false);
 
 	const [displayedImage, setDisplayedImage] = useState(null);
@@ -65,10 +66,11 @@ const NewSponsorship = () => {
 			errorFunc({ type: "displayError", payload: "Please enter a valid link " });
 			return;
 		}
-
+		setWaiting(true);
 		firebase.storeSponsorship({ promo_desc, promo_link, image: images[0], author_id: userData?.user?.user_id, sponsor_id: credentials?.userId }, (res) => {
 			if (res.error) return;
 			setShowForm(false);
+			setWaiting(false);
 		});
 	}
 	return (
@@ -109,7 +111,8 @@ const NewSponsorship = () => {
 										onFocus={() => errorFunc({ type: "clearError" })}
 									/>
 									{error.display !== "none" && <Error text={error.text} />}
-									<button>Send sponsorship Notice </button>
+									{!waiting && <button>Send sponsorship Notice </button>}
+									{waiting && <button className="waiting">Waiting ... </button>}
 								</form>
 							)}
 						</>

@@ -10,7 +10,6 @@ section.popup {
 	flex-direction: column;
 	opacity: 1;
 	z-index: 3;
-	// background-color: red;
 	p {
 		font-size: 15px;
 		font-weight: bold;
@@ -18,7 +17,6 @@ section.popup {
 	}
 	.actions {
 		width: 40%;
-		// background-color: red;
 		@include flex(space-between, center);
 		gap: 20px;
 		button {
@@ -36,16 +34,37 @@ section.popup {
 section.confirmPopUp {
 	.actions {
 		@include flex(center, center);
+		.opt1 {
+			background-color: red;
+			border: none;
+		}
+		.opt2 {
+			background-color: transparent;
+			color: $text1;
+		}
 	}
 	button {
 		height: 35px;
 	}
-	.opt1 {
-		background-color: red;
-		border: none;
+}
+
+.dark {
+	section.popup {
+		background-color: $darkBg;
+		p {
+			color: $darkText1;
+		}
 	}
-	.opt2 {
-		background-color: transparent;
-		color: $text1;
+	section.confirmPopUp {
+		.actions {
+			button.opt1 {
+				color: $darkText1;
+			}
+			button.opt2 {
+				background-color: transparent;
+				border: 2px solid $white;
+				color: $white;
+			}
+		}
 	}
 }

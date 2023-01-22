@@ -12,9 +12,7 @@ header {
 		height: 100%;
 		@include container;
 		@include flex(space-between, center);
-		h3.logo {
-			color: red !important;
-		}
+
 		.left__side {
 			position: relative;
 			width: auto;
@@ -201,6 +199,98 @@ header {
 		}
 		.link {
 			color: $text1;
+		}
+	}
+}
+
+.dark {
+	header {
+		background-color: $darkBg2;
+		.header__container {
+			h3.logo > .link {
+				color: $darkText1;
+			}
+			.left__side {
+				.content {
+					.profile__menu {
+						p,
+						.link {
+							color: $darkText1;
+						}
+					}
+					.controls,
+					.user__notices {
+						i {
+							color: $darkText1;
+						}
+						i.unread {
+							color: $error;
+						}
+					}
+
+					.search {
+						i {
+							color: $darkText1;
+						}
+					}
+					p.balance {
+						color: $darkText1;
+					}
+
+					.menu {
+						background-color: $darkBg2;
+						box-shadow: 2px 2px 3px rgba(19, 18, 18, 0.781), -2px -2px 3px rgba(29, 28, 28, 0.781);
+
+						.profile {
+							.image {
+								border: 1px solid $darkText1;
+							}
+							.text {
+								color: $darkText1;
+							}
+						}
+						.menuItem {
+							color: $darkText1;
+							span {
+								display: block;
+								font-size: 12px;
+								opacity: 0.4;
+							}
+						}
+
+						.logout {
+							color: red;
+						}
+						button {
+							width: 120px;
+							height: 30px;
+							// margin-top: 20px;
+							color: $text1;
+							background-color: transparent;
+							border: none;
+						}
+					}
+				}
+
+				.username {
+					color: $darkText1;
+					opacity: 0.9;
+				}
+
+				.register {
+					background-color: $darkText1;
+					border: 2px solid $darkText1;
+					.link {
+						color: $text1;
+					}
+				}
+				.login {
+					border: 2px solid $darkText1;
+					.link {
+						color: $darkText1;
+					}
+				}
+			}
 		}
 	}
 }

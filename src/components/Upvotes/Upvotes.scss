@@ -1,20 +1,17 @@
 .upvotes {
 	@include container;
-	// background-color: red;
 	height: 200px;
 	padding: 0;
 	margin-top: 30px;
 	.tips {
 		width: 100%;
 		height: 50px;
-		// background-color: green;
 		@include flex(flex-start, center);
 		position: relative;
 
 		.tippers {
 			width: 200px;
 			height: 100%;
-			// background-color: green;
 			margin-left: 20px;
 			@include flex(flex-start, center);
 			padding-left: 40px;
@@ -28,6 +25,14 @@
 		img {
 			width: 160px;
 			height: 100%;
+		}
+	}
+}
+
+.dark {
+	.upvotes {
+		.tips {
+			color: $darkText1;
 		}
 	}
 }

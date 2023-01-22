@@ -12,11 +12,15 @@ html {
 }
 $text1: #2e475d;
 $text2: #74c0fc;
+$darkText1: #d1d5db;
+$darkText2: #e5e7eb;
 $white: #ffffff;
 $error: red;
 $background2: #f3f4f6;
 $liked: #4063eb;
 $grey: #bdbdbd;
+$darkBg: #1f2937;
+$darkBg2: #19222e;
 @mixin flex($justify, $align) {
 	display: flex;
 	align-items: $align;
@@ -87,6 +91,7 @@ button {
 		width: 10%;
 		height: 40px;
 		@include flex(center, center);
+		background-color: $white;
 		i {
 			font-size: 13px;
 			color: $text1;
@@ -104,6 +109,7 @@ button {
 		color: $text2;
 	}
 	span {
+		margin-left: 3px;
 		&:hover {
 			cursor: pointer;
 			text-decoration: underline;
@@ -128,7 +134,10 @@ textarea {
 	min-height: 150px;
 	resize: none;
 	padding: 10px 20px;
-	border-radius: 10px;
+	border-radius: 5px;
+	&:focus {
+		outline: none;
+	}
 }
 
 button.cancel {
@@ -140,4 +149,18 @@ button.cancel {
 body {
 	padding-top: 98px;
 	padding-bottom: 100vh;
+}
+body:has(.dark) {
+	background-color: $darkBg;
+}
+.dark {
+	.passwordInput {
+		border: 2px solid $darkText1;
+	}
+	.rectify {
+		color: $darkText1;
+	}
+	button {
+		color: $darkText1;
+	}
 }

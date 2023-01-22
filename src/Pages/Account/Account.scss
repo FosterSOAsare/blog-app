@@ -109,3 +109,65 @@
 		}
 	}
 }
+
+.dark {
+	.account {
+		h3 {
+			color: $darkText1;
+		}
+		.details {
+			h3 {
+				text-align: center;
+			}
+
+			.email,
+			.password {
+				border: none;
+				background-color: $darkBg;
+			}
+			.email {
+				p {
+					color: $white;
+				}
+				.email__address {
+					color: $white;
+					background-color: #374151;
+				}
+			}
+			.password {
+				form {
+					label,
+					input {
+						display: block;
+					}
+					label {
+						color: $white;
+					}
+					input {
+						background-color: #374151;
+						color: $white;
+						border: none;
+						&:focus {
+							border: none;
+						}
+					}
+
+					.controls {
+						width: 100%;
+						@include flex(center, center);
+						margin-top: 20px;
+						.change {
+							background-color: $grey;
+							color: $text1;
+							border: none;
+							font-weight: bold;
+						}
+						#cancel {
+							color: $darkText1;
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -49,10 +49,13 @@ export const AppProvider = ({ children }) => {
 	useEffect(() => {
 		if (credentials.userId) {
 			// Fetch credentials
-			firebase.fetchUserWithUid(credentials.userId, (userData) => {
-				if (userData?.error || !userData) {
+			firebase.fetchUserWithUid(credentials?.userId, (userData) => {
+				if (userData?.error) {
 					// credentialsDispatchFunc({ type: "logout" });
 					return;
+				}
+				if (!userData && navigator.onLine) {
+					credentialsDispatchFunc({ type: "logout" });
 				}
 				credentialsDispatchFunc({ type: "setUser", payload: userData });
 			});

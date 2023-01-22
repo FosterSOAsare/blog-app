@@ -6,7 +6,7 @@ import DesktopMenu from "./DesktopMenu";
 import { useDarkContext } from "../../context/DarkContext";
 
 const Header = () => {
-	const { credentials, firebase } = useGlobalContext();
+	const { credentials, firebase, notFound } = useGlobalContext();
 	const [menuDisplay, setMenuDisplay] = useState(false);
 	const menuBtn = useRef(null);
 	const { theme, toggleTheme } = useDarkContext();
@@ -24,6 +24,7 @@ const Header = () => {
 		let parent = menuBtn.current;
 		let current = undefined;
 		credentials.user &&
+			!notFound &&
 			document.addEventListener("mousemove", (e) => {
 				current = e.target;
 				if (parent.contains(e.target)) {
@@ -34,7 +35,7 @@ const Header = () => {
 					}, 200);
 				}
 			});
-	}, [credentials.user]);
+	}, [credentials.user, notFound]);
 
 	useEffect(() => {
 		firebase.fetchUnreadNotifications(credentials?.userId, (res) => {
@@ -44,57 +45,59 @@ const Header = () => {
 	}, [firebase, credentials?.userId]);
 	return (
 		<>
-			<header>
-				<div className="header__container">
-					<h3 className="logo">
-						<Link className="link" to="/">
-							Blog
-						</Link>
-					</h3>
+			{!notFound && (
+				<header>
+					<div className="header__container">
+						<h3 className="logo">
+							<Link className="link" to="/">
+								Blog
+							</Link>
+						</h3>
 
-					<div className="left__side">
-						<div className="content">
-							{!credentials.userId && (
-								<div className="ctas">
-									<Button2 text="register" link="/register" />
-									<Button2 text="login" link="/login" />
-								</div>
-							)}
+						<div className="left__side">
+							<div className="content">
+								{!credentials.userId && (
+									<div className="ctas">
+										<Button2 text="register" link="/register" />
+										<Button2 text="login" link="/login" />
+									</div>
+								)}
 
-							{credentials.userId && (
-								<div className="profile__menu">
-									<p>Topics</p>
+								{credentials.userId && (
+									<div className="profile__menu">
+										<p>Topics</p>
 
-									<Link to="/write" className="link">
-										Write
+										<Link to="/write" className="link">
+											Write
+										</Link>
+									</div>
+								)}
+								<article className="controls">
+									<Link className="search" to="/search">
+										<i className="fa-solid fa-magnifying-glass"></i>
 									</Link>
-								</div>
-							)}
-							<article className="controls">
-								<Link className="search" to="/search">
-									<i className="fa-solid fa-magnifying-glass"></i>
-								</Link>
-								<div className="theme">
-									<i className={`fa-${theme === "light" ? "solid" : "regular"} fa-moon`} onClick={toggleTheme}></i>
-								</div>
-							</article>
-
-							{credentials.userId && (
-								<article className="user__notices">
-									<Link className="notification" to="/notifications">
-										<i className={`fa-solid fa-bell${unreadNotifications > 0 ? " unread" : ""}`}></i>
-									</Link>
-									<article ref={menuBtn}>
-										<p className="balance">{balance}</p>
-										{menuDisplay && <DesktopMenu {...credentials?.user} />}
-									</article>
+									<div className="theme">
+										<i className={`fa-${theme === "light" ? "solid" : "regular"} fa-moon`} onClick={toggleTheme}></i>
+									</div>
 								</article>
-							)}
+
+								{credentials.userId && (
+									<article className="user__notices">
+										<Link className="notification" to="/notifications">
+											<i className={`fa-solid fa-bell${unreadNotifications > 0 ? " unread" : ""}`}></i>
+										</Link>
+										<article ref={menuBtn}>
+											<p className="balance">{balance}</p>
+											{menuDisplay && <DesktopMenu {...credentials?.user} />}
+										</article>
+									</article>
+								)}
+							</div>
+							<p className="username">{credentials?.user?.username}</p>
 						</div>
-						<p className="username">{credentials?.user?.username}</p>
 					</div>
-				</div>
-			</header>
+				</header>
+			)}
 		</>
 	);
 };

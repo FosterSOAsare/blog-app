@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Input from "../components/form/Input";
 import PasswordInput from "../components/form/PasswordInput";
@@ -9,11 +9,13 @@ import { useAuthContext } from "../context/AuthContext";
 const Login = () => {
 	const [loginData, setLoginData] = useState({ email: "", password: "" });
 
-	let { error, errorFunc, verifications } = useAuthContext();
+	let { error, errorFunc, verifications, setWaiting, waiting } = useAuthContext();
 	const { firebase, credentials, credentialsDispatchFunc } = useGlobalContext();
 
 	function handleSubmit(e) {
 		e.preventDefault();
+		if (waiting) return;
+		setWaiting(true);
 		// Validate email
 		if (!verifications.verifyEmail(loginData.email)) {
 			errorFunc({ type: "displayError", payload: "Please enter a valid email address" });
@@ -44,6 +46,15 @@ const Login = () => {
 			return { ...prev, [e.target.name]: e.target.value };
 		});
 	}
+	useEffect(() => {
+		errorFunc({ type: "clearError" });
+	}, [errorFunc]);
+
+	useEffect(() => {
+		if (error.display === "block") {
+			setWaiting(false);
+		}
+	}, [error, setWaiting]);
 
 	function handleFocus() {
 		errorFunc({ type: "clearError" });
@@ -57,7 +68,7 @@ const Login = () => {
 					<Input name="email" placeholder="Enter your email address" handleChange={handleChange} value={loginData.email} handleFocus={handleFocus} />
 					<PasswordInput type="password" placeholder="************" handleChange={handleChange} value={loginData.password} handleFocus={handleFocus} />
 					{error.display !== "none" && <Error text={error.text} />}
-					<button>Log in</button>
+					<button>{waiting ? "Waiting..." : "Log in"}</button>
 				</form>
 				<p className="rectify">
 					Already have an account?

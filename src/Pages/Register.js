@@ -5,14 +5,18 @@ import { Link, Navigate } from "react-router-dom";
 import Error from "../components/form/Error";
 import { useAuthContext } from "../context/AuthContext";
 import { useGlobalContext } from "../context/AppContext";
+import { useEffect } from "react";
 
 const Register = () => {
 	const [registerData, setRegistrationData] = useState({ email: "", password: "", username: "" });
 	const [isRegistered, setIsRegistered] = useState(false);
-	let { error, errorFunc, verifications } = useAuthContext();
+	let { error, errorFunc, verifications, waiting, setWaiting } = useAuthContext();
 	let { firebase } = useGlobalContext();
 	function handleSubmit(e) {
+		if (waiting) return;
 		e.preventDefault();
+		setWaiting(true);
+
 		// Validate email
 		if (!verifications.verifyEmail(registerData.email)) {
 			errorFunc({ type: "displayError", payload: "Please enter a valid email address" });
@@ -44,6 +48,7 @@ const Register = () => {
 					}
 
 					setIsRegistered(true);
+					setWaiting(false);
 				});
 			}
 		});
@@ -54,6 +59,15 @@ const Register = () => {
 			return { ...prev, [e.target.name]: e.target.value };
 		});
 	}
+	useEffect(() => {
+		errorFunc({ type: "clearError" });
+	}, [errorFunc]);
+
+	useEffect(() => {
+		if (error.display === "block") {
+			setWaiting(false);
+		}
+	}, [error, setWaiting]);
 
 	function handleFocus() {
 		errorFunc({ type: "clearError" });
@@ -67,7 +81,7 @@ const Register = () => {
 					<Input name="email" placeholder="Enter your email address" handleChange={handleChange} value={registerData.email} handleFocus={handleFocus} />
 					<PasswordInput type="password" placeholder="************" handleChange={handleChange} value={registerData.password} handleFocus={handleFocus} />
 					{error.display !== "none" && <Error text={error.text} />}
-					<button>Sign Up</button>
+					<button>{!waiting ? "Sign Up" : "Waiting..."}</button>
 				</form>
 				<p className="rectify">
 					Already have an account?

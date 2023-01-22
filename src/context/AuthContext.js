@@ -1,11 +1,13 @@
 import { useContext, createContext } from "react";
 import { useReducer } from "react";
 import { Verifications } from "../utils/Verifications";
+import { useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 	const [error, errorFunc] = useReducer(reducerFunc, { display: "none", text: "" });
+	const [waiting, setWaiting] = useState(false);
 	const verifications = new Verifications();
 
 	function reducerFunc(error, action) {
@@ -19,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 		}
 	}
 
-	return <AuthContext.Provider value={{ error, errorFunc, verifications }}>{children}</AuthContext.Provider>;
+	return <AuthContext.Provider value={{ error, errorFunc, verifications, waiting, setWaiting }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuthContext = () => {

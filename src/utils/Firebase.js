@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential, deleteUser } from "firebase/auth";
 import { getFirestore, runTransaction, doc, setDoc, getDocs, getDoc, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy, deleteDoc } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
@@ -666,6 +666,7 @@ export class Firebase {
 				callback("success");
 			})
 			.catch((error) => {
+				console.log(error);
 				callback({ error: true });
 			});
 	}
@@ -822,6 +823,12 @@ export class Firebase {
 					return { ...e.data(), notification_id: e.id };
 				})
 			);
+		});
+	}
+
+	deleteAUser(userObject, callback) {
+		deleteUser(userObject).then((res) => {
+			callback(res);
 		});
 	}
 }

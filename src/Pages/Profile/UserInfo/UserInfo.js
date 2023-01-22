@@ -4,7 +4,7 @@ import { checkSubscribed } from "../../../utils/Subscriptions.util";
 import { useSubscriptionContext } from "../../../context/SubscriptionContext";
 import Loading from "../../../components/Loading/Loading";
 
-const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
+const UserInfo = ({ setShowEditForm, setBlockUserActive, setDeleteUserActive, data }) => {
 	const { subscriptionToggle, imageUpload } = useSubscriptionContext();
 	const [subs, subsDispatchFunc] = useReducer(reducerFunc, { subscribed: false, subscribers: [], data: {} });
 
@@ -87,7 +87,11 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 									Block User
 								</button>
 							)}
-							{data?.username === credentials.user?.username && <button className="block">Delete Account</button>}
+							{data?.username === credentials.user?.username && (
+								<button className="block" onClick={() => setDeleteUserActive(true)}>
+									Delete Account
+								</button>
+							)}
 						</div>
 					</div>
 				</section>

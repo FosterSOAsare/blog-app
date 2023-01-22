@@ -6,13 +6,13 @@ import Sponsors from "../../components/Sponsors/Sponsors";
 import BlogPreview from "../../components/BlogPreview/BlogPreview";
 import { useGlobalContext } from "../../context/AppContext";
 import { useAuthContext } from "../../context/AuthContext";
-import { useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 import Loading from "../../components/Loading/Loading";
 const Profile = () => {
 	const [profileData, setProfileData] = useReducer(reducerFunc, { user: null, blogs: null });
 	const { error, errorFunc } = useAuthContext();
 	const { verifications } = useAuthContext();
-	let { firebase } = useGlobalContext();
+	let { firebase, credentialsDispatchFunc } = useGlobalContext();
 
 	let username = useParams().username;
 	username = username.split("@")[1];
@@ -28,9 +28,9 @@ const Profile = () => {
 		}
 	}
 
-	// firebase.storeBio("This is a test");
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [blockUserActive, setBlockUserActive] = useState(false);
+	const [deleteUserActive, setDeleteUserActive] = useState(false);
 
 	// Fetch data about user
 	useEffect(() => {
@@ -73,13 +73,52 @@ const Profile = () => {
 			}
 		});
 	}
+
+	function deleteUser(e, value) {
+		e.preventDefault();
+		if (!verifications.validatePassword(value)) {
+			errorFunc({ type: "displayError", payload: "Password must contain at least eight characters, at least one number , both lower and uppercase letters and a special character" });
+			return;
+		}
+
+		// check password validity
+		firebase.getUserObject((userObject) => {
+			console.log(value);
+			firebase.validatePassword(userObject, value, (res) => {
+				if (res.error) {
+					errorFunc({ type: "displayError", payload: "Please enter your valid password" });
+					return;
+				}
+				// PAssword valid
+				firebase.deleteAUser(userObject, (res) => {
+					console.log(res);
+					localStorage.setItem("userId", null);
+					credentialsDispatchFunc({ type: "logout" });
+				});
+			});
+		});
+	}
 	return (
 		<>
 			<main className="profile">
-				<UserInfo setShowEditForm={setShowEditForm} setBlockUserActive={setBlockUserActive} data={profileData.user} />
-				{showEditForm && <FormPopup desc="Edit your bio" placeholder="Enter your new bio here" type="textarea" setShowEditForm={setShowEditForm} proceed={saveBio} {...{ error, errorFunc }} />}
+				<UserInfo setShowEditForm={setShowEditForm} setBlockUserActive={setBlockUserActive} data={profileData.user} setDeleteUserActive={setDeleteUserActive} />
+				{showEditForm && (
+					<FormPopup desc="Edit your bio" placeholder="Enter your new bio here" type="textarea" setShow={setShowEditForm} proceed={saveBio} {...{ error, errorFunc }} opt1="Save Bio" />
+				)}
 				{blockUserActive && (
 					<ConfirmPopup desc={`Are you sure you want to block @${profileData?.user?.username}`} opt1="Block" opt2="Cancel" setShow={setBlockUserActive} proceed={blockUser} {...{ error }} />
+				)}
+				{deleteUserActive && (
+					<FormPopup
+						desc="Are you sure you want to delete your account?"
+						placeholder="Enter account password "
+						type="input"
+						setShow={setDeleteUserActive}
+						proceed={deleteUser}
+						inputType="password"
+						opt1="Delete Account"
+						{...{ error, errorFunc }}
+					/>
 				)}
 				<Sponsors data={profileData.user} />
 			</main>

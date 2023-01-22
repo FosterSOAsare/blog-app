@@ -130,9 +130,11 @@
 			.bio {
 				color: white;
 				.icon {
-					background-color: $darkText2;
+					background-color: $white;
+					i {
+						color: $text1;
+					}
 					border: 1px solid $darkText1;
-					color: black;
 				}
 			}
 			p {

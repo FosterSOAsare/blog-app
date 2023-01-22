@@ -77,7 +77,11 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, data }) => {
 								<p>{subs.subscribers.length}</p>
 							</div>
 
-							{credentials?.userId && data.username !== credentials.user.username && <button onClick={() => subscriptionToggle(subs.subscribed, subs.subscribers, subs?.data, { username: data?.username, id: credentials?.userId })}>{!subs.subscribed ? "Subscribe" : "Unsubscribe"}</button>}
+							{credentials?.userId && data.username !== credentials.user.username && (
+								<button onClick={() => subscriptionToggle(subs.subscribed, subs.subscribers, subs?.data, { username: data?.username, id: credentials?.userId })}>
+									{!subs.subscribed ? "Subscribe" : "Unsubscribe"}
+								</button>
+							)}
 							{credentials?.userId && data.username !== credentials.user.username && (
 								<button className="block delete" onClick={() => setBlockUserActive(true)}>
 									Block User

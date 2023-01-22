@@ -67,4 +67,13 @@ section.confirmPopUp {
 			}
 		}
 	}
+	.formPopUp {
+		form {
+			p.error {
+				color: $error;
+				font-size: 14px;
+				margin-top: 2px;
+			}
+		}
+	}
 }

@@ -4,8 +4,12 @@ import EditorBalloon from "@ckeditor/ckeditor5-build-balloon";
 import { useGlobalContext } from "../../context/AppContext";
 import { Navigate, useParams } from "react-router";
 import { removeHTML, removeSpaces, removeSpecialChars } from "../../utils/Text";
+import NotFound from "../NotFound/NotFound";
+import { useState } from "react";
+import ConfirmPopup from "../../components/Popups/ConfirmPopup";
 const CreateBlog = () => {
 	const [edit, setEdit] = useReducer(reducerFunc, { data: null });
+	const [navigate, setNavigate] = useState(false);
 	function reducerFunc(edit, action) {
 		switch (action.type) {
 			case "setData":
@@ -15,8 +19,9 @@ const CreateBlog = () => {
 		}
 	}
 	// Edit page also used the createBlogPage
-	let { credentials, firebase } = useGlobalContext();
+	let { credentials, firebase, notFound, setNotFound } = useGlobalContext();
 	const [stored, setStored] = useReducer(storedFunc, { stored: false, published: false });
+	const [confirmDeleteBlog, setConfirmDeleteBlog] = useState(false);
 	let article = useRef(null);
 	let leadImage = useRef(null);
 	let header = useRef(null);
@@ -27,10 +32,16 @@ const CreateBlog = () => {
 		// Fetch blog data
 		blogId &&
 			firebase.fetchBlog(blogId, (res) => {
+				if (res.error) return;
+				if (res.empty) {
+					setNotFound(true);
+					return;
+				}
 				setEdit({ type: "setData", payload: res });
+				setNotFound(false);
 			});
 		// blogId && "";
-	}, [blogId, firebase]);
+	}, [blogId, firebase, setNotFound]);
 
 	function storedFunc(stored, action) {
 		switch (action.type) {
@@ -74,56 +85,74 @@ const CreateBlog = () => {
 			setStored({ type: "publish" });
 		});
 	}
+	function deleteArticle(e) {
+		firebase.deleteArticle(blogId, (res) => {
+			setNavigate(true);
+			setNotFound(false);
+			if (res.error) return;
+		});
+	}
 	return (
 		<>
-			<section className="App createBlog">
-				<div className="controls">
-					<a href="https://read.cash/@Read.Cash/how-to-use-the-editor-at-readcash-e2df60aa" target="_blank" rel="noreferrer">
-						Editor help
-					</a>
-					<button className="draft">Save as Draft</button>
-					<button onClick={publishArticle}>Publish</button>
-					<div className="dots"></div>
-				</div>
+			{!notFound && (
+				<>
+					{confirmDeleteBlog && <ConfirmPopup desc={`Are you sure you want to delete the article`} opt1="Delete" opt2="Cancel" setShow={setConfirmDeleteBlog} proceed={deleteArticle} />}
+					<section className="App createBlog">
+						<div className="controls">
+							<a href="https://read.cash/@Read.Cash/how-to-use-the-editor-at-readcash-e2df60aa" target="_blank" rel="noreferrer">
+								Editor help
+							</a>
+							<button className="draft">Save as Draft</button>
+							<button onClick={publishArticle}>Publish</button>
+							{edit?.data && (
+								<button className="cancel delete" onClick={() => setConfirmDeleteBlog(true)}>
+									Delete
+								</button>
+							)}
+						</div>
 
-				<div className="adds">
-					<button>Add Topics</button>
-					<button>Submit to community</button>
-					<label htmlFor="lead__image">Add lead image</label>
-					<input type="file" accept="image/*" name="lead__image" id="lead__image" ref={leadImage} />
-				</div>
-				<article className="editor header">
-					<CKEditor
-						editor={EditorBalloon}
-						data={edit?.data ? edit?.data?.heading : ""}
-						ref={header}
-						config={{ placeholder: "Add a title..." }}
-						onReady={(editor) => {
-							// You can store the "editor" and use when it is needed.
-							editor.editing.view.change((writer) => {
-								writer.setStyle("min-height", "50px", editor.editing.view.document.getRoot());
-								writer.setStyle("font-size", "42px", editor.editing.view.document.getRoot());
-							});
-						}}
-					/>
-				</article>
-				<article className="editor">
-					<CKEditor
-						editor={EditorBalloon}
-						data={edit?.data ? edit?.data?.message : ""}
-						ref={article}
-						onReady={(editor) => {
-							// You can store the "editor" and use when it is needed.
-							editor.editing.view.change((writer) => {
-								writer.setStyle("min-height", "300px", editor.editing.view.document.getRoot());
-								writer.setStyle("font-size", "17px", editor.editing.view.document.getRoot());
-							});
-						}}
-						config={{ placeholder: "Then start writing..." }}
-					/>
-				</article>
-			</section>
-			{stored.published && <Navigate to={`/@${credentials?.user?.username}`} />}
+						<div className="adds">
+							<button>Add Topics</button>
+							<button>Submit to community</button>
+							<label htmlFor="lead__image">Add lead image</label>
+							<input type="file" accept="image/*" name="lead__image" id="lead__image" ref={leadImage} />
+						</div>
+						<article className="editor header">
+							<CKEditor
+								editor={EditorBalloon}
+								data={edit?.data ? edit?.data?.heading : ""}
+								ref={header}
+								config={{ placeholder: "Add a title..." }}
+								onReady={(editor) => {
+									// You can store the "editor" and use when it is needed.
+									editor.editing.view.change((writer) => {
+										writer.setStyle("min-height", "50px", editor.editing.view.document.getRoot());
+										writer.setStyle("font-size", "24px", editor.editing.view.document.getRoot());
+									});
+								}}
+							/>
+						</article>
+						<article className="editor">
+							<CKEditor
+								editor={EditorBalloon}
+								data={edit?.data ? edit?.data?.message : ""}
+								ref={article}
+								onReady={(editor) => {
+									// You can store the "editor" and use when it is needed.
+									editor.editing.view.change((writer) => {
+										writer.setStyle("min-height", "300px", editor.editing.view.document.getRoot());
+										writer.setStyle("font-size", "17px", editor.editing.view.document.getRoot());
+									});
+								}}
+								config={{ placeholder: "Then start writing..." }}
+							/>
+						</article>
+					</section>
+					{stored.published && <Navigate to={`/@${credentials?.user?.username}`} />}
+					{navigate && <Navigate to={`/@${credentials?.user?.username}`} />}
+				</>
+			)}
+			{notFound && <NotFound />}
 		</>
 	);
 };

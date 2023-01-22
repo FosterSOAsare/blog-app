@@ -1,0 +1,14 @@
+.notFound {
+	@include container;
+	height: 90vh;
+	@include flex(center, center);
+	text-transform: uppercase;
+	font-family: "Lato", sans-serif;
+	word-spacing: 8px;
+	font-size: 18px;
+}
+.dark {
+	.notFound {
+		color: $darkText1;
+	}
+}

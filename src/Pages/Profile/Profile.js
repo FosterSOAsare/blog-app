@@ -7,12 +7,13 @@ import BlogPreview from "../../components/BlogPreview/BlogPreview";
 import { useGlobalContext } from "../../context/AppContext";
 import { useAuthContext } from "../../context/AuthContext";
 import { useParams } from "react-router";
+import NotFound from "../NotFound/NotFound";
 import Loading from "../../components/Loading/Loading";
 const Profile = () => {
 	const [profileData, setProfileData] = useReducer(reducerFunc, { user: null, blogs: null });
 	const { error, errorFunc } = useAuthContext();
 	const { verifications } = useAuthContext();
-	let { firebase, credentialsDispatchFunc } = useGlobalContext();
+	let { firebase, credentialsDispatchFunc, notFound, setNotFound } = useGlobalContext();
 
 	let username = useParams().username;
 	username = username.split("@")[1];
@@ -36,9 +37,11 @@ const Profile = () => {
 	useEffect(() => {
 		firebase.fetchUserWithUsername(username, (res) => {
 			if (res?.error) {
+				setNotFound(true);
 				return;
 			}
 			setProfileData({ type: "storeUser", payload: res });
+			setNotFound(false);
 		});
 		firebase.fetchBlogs(username, (blogs) => {
 			if (blogs.error) {
@@ -47,7 +50,7 @@ const Profile = () => {
 			}
 			setProfileData({ type: "storeBlogs", payload: blogs });
 		});
-	}, [firebase, username]);
+	}, [firebase, username, notFound, setNotFound]);
 
 	function blockUser(e) {
 		console.log(e);
@@ -98,39 +101,52 @@ const Profile = () => {
 	}
 	return (
 		<>
-			<main className="profile">
-				<UserInfo setShowEditForm={setShowEditForm} setBlockUserActive={setBlockUserActive} data={profileData.user} setDeleteUserActive={setDeleteUserActive} />
-				{showEditForm && (
-					<FormPopup desc="Edit your bio" placeholder="Enter your new bio here" type="textarea" setShow={setShowEditForm} proceed={saveBio} {...{ error, errorFunc }} opt1="Save Bio" />
-				)}
-				{blockUserActive && (
-					<ConfirmPopup desc={`Are you sure you want to block @${profileData?.user?.username}`} opt1="Block" opt2="Cancel" setShow={setBlockUserActive} proceed={blockUser} {...{ error }} />
-				)}
-				{deleteUserActive && (
-					<FormPopup
-						desc="Are you sure you want to delete your account? Note : This will not delete your articles but will prevent you from logging in totally "
-						placeholder="Enter account password "
-						type="input"
-						setShow={setDeleteUserActive}
-						proceed={deleteUser}
-						inputType="password"
-						opt1="Delete Account"
-						{...{ error, errorFunc }}
-					/>
-				)}
-				<Sponsors data={profileData.user} />
-			</main>
+			{!notFound && (
+				<>
+					<main className="profile">
+						<UserInfo setShowEditForm={setShowEditForm} setBlockUserActive={setBlockUserActive} data={profileData.user} setDeleteUserActive={setDeleteUserActive} />
+						{showEditForm && (
+							<FormPopup
+								desc="Edit your bio"
+								placeholder="Enter your new bio here"
+								type="textarea"
+								setShow={setShowEditForm}
+								proceed={saveBio}
+								{...{ error, errorFunc }}
+								opt1="Save Bio"
+							/>
+						)}
+						{blockUserActive && (
+							<ConfirmPopup desc={`Are you sure you want to block @${profileData?.user?.username}`} opt1="Block" opt2="Cancel" setShow={setBlockUserActive} proceed={blockUser} />
+						)}
+						{deleteUserActive && (
+							<FormPopup
+								desc="Are you sure you want to delete your account? Note : This will not delete your articles but will prevent you from logging in totally "
+								placeholder="Enter account password "
+								type="input"
+								setShow={setDeleteUserActive}
+								proceed={deleteUser}
+								inputType="password"
+								opt1="Delete Account"
+								{...{ error, errorFunc }}
+							/>
+						)}
+						<Sponsors data={profileData.user} />
+					</main>
 
-			{!profileData?.blogs && <Loading className="profileLoading" errorStatus={false} />}
-			{profileData?.blogs && profileData?.blogs.length > 0 && (
-				<section id="articles">
-					{profileData.blogs.length > 0 &&
-						profileData.blogs.map((e) => {
-							return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
-						})}
-				</section>
+					{!profileData?.blogs && <Loading className="profileLoading" errorStatus={false} />}
+					{profileData?.blogs && profileData?.blogs.length > 0 && (
+						<section id="articles">
+							{profileData.blogs.length > 0 &&
+								profileData.blogs.map((e) => {
+									return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
+								})}
+						</section>
+					)}
+					{profileData?.blogs && profileData?.blogs.length === 0 && <p className="noblogs">Nothing here...</p>}
+				</>
 			)}
-			{profileData?.blogs && profileData?.blogs.length === 0 && <p className="noblogs">Nothing here...</p>}
+			{notFound && <NotFound />}
 		</>
 	);
 };

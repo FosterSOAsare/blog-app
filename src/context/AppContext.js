@@ -5,6 +5,7 @@ const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
 	const [firebase, setFirebase] = useState(null);
+	const [notFound, setNotFound] = useState(false);
 	useMemo(() => setFirebase(new Firebase()), []);
 	const [credentials, credentialsDispatchFunc] = useReducer(reducerFunc, { userId: JSON.parse(localStorage.getItem("userId")) || null, user: null });
 
@@ -59,7 +60,7 @@ export const AppProvider = ({ children }) => {
 		}
 		localStorage.setItem("userId", JSON.stringify(credentials.userId));
 	}, [credentials.userId, firebase]);
-	return <AppContext.Provider value={{ firebase, credentials, credentialsDispatchFunc, calculateTime }}>{children}</AppContext.Provider>;
+	return <AppContext.Provider value={{ firebase, credentials, credentialsDispatchFunc, calculateTime, notFound, setNotFound }}>{children}</AppContext.Provider>;
 };
 
 export const useGlobalContext = () => {

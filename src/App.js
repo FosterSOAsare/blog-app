@@ -19,6 +19,7 @@ import Request from "./Pages/Sponsorships/Requests/Request/Request";
 import Notifications from "./Pages/Notifications/Notifications";
 import ComingSoon from "./Pages/ComingSoon/ComingSoon";
 import { useDarkContext } from "./context/DarkContext";
+import NotFound from "./Pages/NotFound/NotFound";
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
 	return credentials.userId ? children : <Navigate to="/login"></Navigate>;
@@ -59,6 +60,7 @@ function App() {
 					<Route path="login" element={<CheckLogged><Login /></CheckLogged>}></Route>
 				</Route>
 				<Route path="/verifications" element={<CheckLogged><Verifications /></CheckLogged> }></Route>
+				<Route path="*" element={<NotFound/>}></Route>
 			</Routes>
 		</div>
 	);

@@ -14,6 +14,17 @@ section.createBlog {
 		height: 40px;
 		margin-bottom: 10px;
 		@include flex(space-between, center);
+		.delete {
+			// background-color: red;
+			color: $error;
+			// text-decoration: underline;
+			font-size: 14px;
+			font-weight: bold;
+			&:hover {
+				text-decoration: underline;
+				cursor: pointer;
+			}
+		}
 		.actions {
 			width: 50%;
 			height: 100%;
@@ -107,6 +118,9 @@ section.createBlog {
 			a {
 				font-size: 12px;
 				color: $darkText1;
+			}
+			button.delete {
+				color: $error;
 			}
 			button {
 				font-weight: bold;

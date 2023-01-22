@@ -9,9 +9,11 @@ import Loading from "../../components/Loading/Loading";
 import Sponsors from "../../components/Sponsors/Sponsors";
 import Comment from "./Comment/Comment";
 import BlogControls from "./BlogControls/BlogControls";
+import NotFound from "../NotFound/NotFound";
+import { removeSpaces, removeSpecialChars } from "../../utils/Text";
 const Blog = () => {
 	const [profileData, setProfileDispatchFunc] = useReducer(reducerFunc, { author: null, blog: {}, comments: [] });
-	const { firebase, credentials } = useGlobalContext();
+	const { firebase, credentials, notFound, setNotFound } = useGlobalContext();
 	const [showAddComment, setShowAddComment] = useState(false);
 
 	let { blogTitle } = useParams();
@@ -39,7 +41,17 @@ const Blog = () => {
 		// Fetch username and blog
 		firebase.fetchBlog(blogId, (res) => {
 			if (res.error) return;
-			if (res.empty) return;
+			if (res.empty) {
+				setNotFound(true);
+				return;
+			}
+			// Check if the link provided is an exaqct match of the heading
+			let link = `${removeSpaces(removeSpecialChars(removeHTML(res.heading))).toLowerCase()}-${res.blog_id}`;
+			if (link !== blogTitle) {
+				setNotFound(true);
+				return;
+			}
+			// Check heading to see if it matches
 			setProfileDispatchFunc({ type: "storeBlog", payload: res });
 		});
 
@@ -55,7 +67,7 @@ const Blog = () => {
 			}
 			setProfileDispatchFunc({ type: "storeAuthor", payload: res });
 		});
-	}, [firebase, blogTitle, username]);
+	}, [firebase, blogTitle, username, setNotFound]);
 
 	useEffect(() => {
 		let parent = commentRef.current;
@@ -81,53 +93,58 @@ const Blog = () => {
 	}
 	return (
 		<>
-			{!profileData?.blog?.blog_id && <Loading />}
-			{profileData?.blog?.blog_id && (
+			{!notFound && (
 				<>
-					<main className="blog">
-						<div className="article__image" data-heading={removeHTML(profileData?.blog?.heading)}>
-							<img src={profileData?.blog?.lead_image_src} alt="Lead" />
-						</div>
-						<div className="blog__content">
-							<BlogControls
-								commentsLen={profileData?.comments.length}
-								bookmarks={profileData?.blog?.bookmarks ? profileData?.blog?.bookmarks : []}
-								blog_id={profileData?.blog?.blog_id}
-							/>
-							<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} editTime={profileData?.blog?.editTime} />
-							<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
-							<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} id={profileData?.blog?.blog_id} type="blogs" />
-							<Upvotes blog_id={profileData?.blog?.blog_id} upvotes={profileData?.blog?.upvotes} author_id={profileData?.author?.userId} />
-							<Sponsors data={profileData?.author} />
-							<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} editTime={profileData?.blog?.editTime} />
-						</div>
-					</main>
-					<section id="comments">
-						<div className="comments__container">
-							<h3>Comments</h3>
-							{credentials?.user && <textarea name="comment" id="" cols="30" rows="10" placeholder="Add your comment" ref={commentRef}></textarea>}
-							{credentials?.user && showAddComment && (
-								<button
-									onClick={(e) => {
-										addComment(commentRef.current.value, credentials?.userId, profileData?.blog?.blog_id);
-									}}>
-									Add comment
-								</button>
-							)}
-
-							{!showAddComment && (
-								<div className="content">
-									{!profileData?.comments && <Loading />}
-									{profileData?.comments &&
-										profileData?.comments?.map((e) => {
-											return <Comment key={e.id} {...e} blog_id={profileData?.blog?.blog_id} />;
-										})}
+					{!profileData?.blog?.blog_id && <Loading />}
+					{profileData?.blog?.blog_id && (
+						<>
+							<main className="blog">
+								<div className="article__image" data-heading={removeHTML(profileData?.blog?.heading)}>
+									<img src={profileData?.blog?.lead_image_src} alt="Lead" />
 								</div>
-							)}
-						</div>
-					</section>
+								<div className="blog__content">
+									<BlogControls
+										commentsLen={profileData?.comments.length}
+										bookmarks={profileData?.blog?.bookmarks ? profileData?.blog?.bookmarks : []}
+										blog_id={profileData?.blog?.blog_id}
+									/>
+									<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} editTime={profileData?.blog?.editTime} />
+									<div className="content" dangerouslySetInnerHTML={{ __html: profileData?.blog?.message }}></div>
+									<Ratings likes={profileData?.blog?.likes} dislikes={profileData?.blog?.dislikes} id={profileData?.blog?.blog_id} type="blogs" />
+									<Upvotes blog_id={profileData?.blog?.blog_id} upvotes={profileData?.blog?.upvotes} author_id={profileData?.author?.userId} />
+									<Sponsors data={profileData?.author} />
+									<AuthorInfo {...profileData?.author} blog_id={profileData?.blog?.blog_id} blog_timestamp={profileData?.blog?.timestamp} editTime={profileData?.blog?.editTime} />
+								</div>
+							</main>
+							<section id="comments">
+								<div className="comments__container">
+									<h3>Comments</h3>
+									{credentials?.user && <textarea name="comment" id="" cols="30" rows="10" placeholder="Add your comment" ref={commentRef}></textarea>}
+									{credentials?.user && showAddComment && (
+										<button
+											onClick={(e) => {
+												addComment(commentRef.current.value, credentials?.userId, profileData?.blog?.blog_id);
+											}}>
+											Add comment
+										</button>
+									)}
+
+									{!showAddComment && (
+										<div className="content">
+											{!profileData?.comments && <Loading />}
+											{profileData?.comments &&
+												profileData?.comments?.map((e) => {
+													return <Comment key={e.id} {...e} blog_id={profileData?.blog?.blog_id} />;
+												})}
+										</div>
+									)}
+								</div>
+							</section>
+						</>
+					)}
 				</>
 			)}
+			{notFound && <NotFound />}
 		</>
 	);
 };

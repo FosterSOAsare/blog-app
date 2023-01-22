@@ -316,7 +316,7 @@ export class Firebase {
 		try {
 			let q = doc(this.db, "sponsorships", request_id);
 			onSnapshot(q, (querySnapshot) => {
-				if (querySnapshot.empty) {
+				if (!querySnapshot.exists()) {
 					callback({ empty: true });
 					return;
 				}
@@ -483,6 +483,15 @@ export class Firebase {
 		} catch (error) {
 			console.log(error);
 			callback({ error: "An error occurred " });
+		}
+	}
+
+	deleteArticle(blog_id, callback) {
+		try {
+			deleteDoc(doc(this.db, "blogs", blog_id));
+			callback("success");
+		} catch (e) {
+			callback({ error: true });
 		}
 	}
 

@@ -45,7 +45,10 @@ function App() {
 						<Route path="edit/:blogId"  element={<LoginRequired><CreateBlog /></LoginRequired>} ></Route>
 						<Route path=":blogTitle"  element={<Blog />} ></Route>
 					</Route>
-					<Route path="search" element={<Search />}></Route>
+					<Route path="search" >
+						<Route index element={<Search />}></Route>
+						<Route path=":topic" element={<Search/>}></Route>
+					</Route>
 					<Route path="report" element={<ComingSoon />}></Route>
 					<Route path="sponsorships" >
 						<Route index element={<LoginRequired><Sponsorships /></LoginRequired>}></Route>

@@ -78,7 +78,7 @@ const Header = () => {
 											<aside className="topics">
 												{topics.map((e, index) => {
 													return (
-														<NavLink key={index} to={`/serach/${e.toLowerCase()}`} className="link">
+														<NavLink key={index} to={`/search/${e.toLowerCase()}`} className="link">
 															{e}
 														</NavLink>
 													);

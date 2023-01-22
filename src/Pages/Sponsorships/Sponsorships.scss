@@ -62,7 +62,7 @@
 	margin-top: 100px;
 }
 
-.error {
+.insufficientFunds {
 	@include container;
 	background-color: $background2;
 	height: 130%;
@@ -85,5 +85,8 @@
 	}
 	table {
 		color: $darkText1;
+	}
+	.insufficientFunds {
+		background-color: $darkBg;
 	}
 }

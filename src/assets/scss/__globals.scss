@@ -163,4 +163,7 @@ body:has(.dark) {
 	button {
 		color: $darkText1;
 	}
+	.error {
+		color: $error;
+	}
 }

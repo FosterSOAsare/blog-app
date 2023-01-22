@@ -26,7 +26,6 @@ const Sponsorships = () => {
 			return;
 		}
 		firebase.payForSponsporship(sponsorship_id, credentials?.userId, author_id, (res) => {
-			console.log(res);
 			if (res.empty) return;
 		});
 	}
@@ -49,7 +48,6 @@ const Sponsorships = () => {
 								</thead>
 								<tbody>
 									{sponsorships.map((e) => {
-										console.log(e);
 										return (
 											<tr key={e.sponsorship_id} className="sponsorship">
 												<td className="image">
@@ -73,7 +71,7 @@ const Sponsorships = () => {
 								</tbody>
 							</table>
 							{error && (
-								<div className="error">
+								<div className="insufficientFunds">
 									<p>Insufficient funds, please add more funds to continue</p>
 									<button
 										onClick={() => {

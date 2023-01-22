@@ -25,6 +25,7 @@
 	background-color: $white;
 	z-index: 2;
 	top: -5px;
+	padding: 20px 0;
 	.container {
 		@include flex(flex-start, flex-start);
 		flex-direction: column;
@@ -47,5 +48,11 @@
 				opacity: 0.5;
 			}
 		}
+	}
+}
+
+.dark {
+	.tipForm {
+		background-color: $darkBg;
 	}
 }

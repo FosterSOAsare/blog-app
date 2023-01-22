@@ -110,7 +110,7 @@ const Profile = () => {
 				)}
 				{deleteUserActive && (
 					<FormPopup
-						desc="Are you sure you want to delete your account?"
+						desc="Are you sure you want to delete your account? Note : This will not delete your articles but will prevent you from logging in totally "
 						placeholder="Enter account password "
 						type="input"
 						setShow={setDeleteUserActive}

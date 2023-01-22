@@ -6,7 +6,7 @@ import Sponsors from "../../components/Sponsors/Sponsors";
 import BlogPreview from "../../components/BlogPreview/BlogPreview";
 import { useGlobalContext } from "../../context/AppContext";
 import { useAuthContext } from "../../context/AuthContext";
-import { Navigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import Loading from "../../components/Loading/Loading";
 const Profile = () => {
 	const [profileData, setProfileData] = useReducer(reducerFunc, { user: null, blogs: null });
@@ -83,7 +83,6 @@ const Profile = () => {
 
 		// check password validity
 		firebase.getUserObject((userObject) => {
-			console.log(value);
 			firebase.validatePassword(userObject, value, (res) => {
 				if (res.error) {
 					errorFunc({ type: "displayError", payload: "Please enter your valid password" });
@@ -91,7 +90,6 @@ const Profile = () => {
 				}
 				// PAssword valid
 				firebase.deleteAUser(userObject, (res) => {
-					console.log(res);
 					localStorage.setItem("userId", null);
 					credentialsDispatchFunc({ type: "logout" });
 				});

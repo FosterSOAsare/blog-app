@@ -1,14 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useGlobalContext } from "../../context/AppContext";
 import Button2 from "../buttons/Button2";
 import DesktopMenu from "./DesktopMenu";
 import { useDarkContext } from "../../context/DarkContext";
+import topics from "../../assets/Topics";
 
 const Header = () => {
 	const { credentials, firebase } = useGlobalContext();
 	const [menuDisplay, setMenuDisplay] = useState(false);
+	const [topicsDisplay, setTopicsDisplay] = useState(false);
+
 	const menuBtn = useRef(null);
+	const topicsBtn = useRef(null);
 	const { theme, toggleTheme } = useDarkContext();
 	const [unreadNotifications, setUnreadNotifications] = useState(null);
 	let balance = credentials?.user?.balance ? credentials?.user?.balance.toFixed(2) : 0.0;
@@ -22,15 +26,20 @@ const Header = () => {
 
 	useEffect(() => {
 		let parent = menuBtn.current;
+		let parent2 = topicsBtn.current;
 		let current = undefined;
+
 		credentials.user &&
 			document.addEventListener("mousemove", (e) => {
 				current = e.target;
 				if (parent.contains(e.target)) {
 					setMenuDisplay(true);
+				} else if (parent2.contains(e.target)) {
+					setTopicsDisplay(true);
 				} else {
 					setTimeout(() => {
 						!parent.contains(current) && setMenuDisplay(false);
+						!parent2.contains(current) && setTopicsDisplay(false);
 					}, 200);
 				}
 			});
@@ -63,7 +72,20 @@ const Header = () => {
 
 							{credentials.userId && (
 								<div className="profile__menu">
-									<p>Topics</p>
+									<div ref={topicsBtn}>
+										<p>Topics</p>
+										{topicsDisplay && (
+											<aside className="topics">
+												{topics.map((e, index) => {
+													return (
+														<NavLink key={index} to={`/serach/${e.toLowerCase()}`} className="link">
+															{e}
+														</NavLink>
+													);
+												})}
+											</aside>
+										)}
+									</div>
 
 									<Link to="/write" className="link">
 										Write

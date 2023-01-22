@@ -8,6 +8,7 @@ import NotFound from "../NotFound/NotFound";
 import { useState } from "react";
 import ConfirmPopup from "../../components/Popups/ConfirmPopup";
 import { useAuthContext } from "../../context/AuthContext";
+// import topics from "../../assets/Topics";
 const CreateBlog = () => {
 	const [edit, setEdit] = useReducer(reducerFunc, { data: null });
 	const [navigate, setNavigate] = useState(false);
@@ -15,6 +16,7 @@ const CreateBlog = () => {
 
 	// Clear error on start up
 	useEffect(() => {
+		console.log("dead");
 		errorFunc({ type: "clearError" });
 	}, [errorFunc]);
 	// Edit page also used the createBlogPage

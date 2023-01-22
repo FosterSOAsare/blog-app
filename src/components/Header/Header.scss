@@ -14,7 +14,6 @@ header {
 		@include flex(space-between, center);
 
 		.left__side {
-			position: relative;
 			width: auto;
 			height: 40px;
 			.content {
@@ -35,7 +34,6 @@ header {
 				.profile__menu {
 					width: auto;
 					margin-left: 50px;
-					position: relative;
 					margin-right: 10px;
 					height: auto;
 					@include flex(space-between, center);
@@ -82,6 +80,9 @@ header {
 						}
 					}
 				}
+				.user__notices {
+					position: relative;
+				}
 
 				.search {
 					i {
@@ -102,7 +103,7 @@ header {
 					height: 320px;
 					background-color: white;
 					box-shadow: 2px 2px 3px rgba(240, 237, 237, 0.781), -2px -2px 3px rgba(240, 237, 237, 0.781);
-					top: 10px;
+					top: 30px;
 					border-radius: 5px;
 					right: 0px;
 					position: absolute;
@@ -201,6 +202,35 @@ header {
 			color: $text1;
 		}
 	}
+	.topics {
+		height: auto;
+		min-height: 120px;
+		background-color: $white;
+		display: inline;
+		position: absolute;
+		top: 80%;
+		left: 0;
+		right: 0;
+		z-index: 3;
+		margin: 0 auto;
+		@include container;
+		width: auto;
+		padding: 20px 40px;
+		background-color: red;
+		border: 1px solid $grey;
+		border-radius: 2px;
+		.link {
+			display: inline-block;
+			margin-right: 20px;
+			margin-bottom: 10px;
+			font-family: "Lato", sans-serif;
+			color: $text1;
+			font-size: 14px;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
 }
 
 .dark {
@@ -290,6 +320,12 @@ header {
 						color: $darkText1;
 					}
 				}
+			}
+		}
+		.topics {
+			background-color: $darkBg;
+			.link {
+				color: $darkText1;
 			}
 		}
 	}

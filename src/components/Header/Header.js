@@ -64,9 +64,7 @@ const Header = () => {
 							{credentials.userId && (
 								<div className="profile__menu">
 									<p>Topics</p>
-									<Link to="/communities" className="link">
-										Communities
-									</Link>
+
 									<Link to="/write" className="link">
 										Write
 									</Link>

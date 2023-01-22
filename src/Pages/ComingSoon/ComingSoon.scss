@@ -1,0 +1,8 @@
+.comingSoon {
+	@include container;
+	height: 90vh;
+	@include flex(center, center);
+	h3 {
+		font-size: 42px;
+	}
+}

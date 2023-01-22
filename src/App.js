@@ -5,7 +5,6 @@ import Shared from "./Pages/Shared";
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
 import Verifications from "./Pages/Verifications/Verifications";
-import Communities from "./Pages/Communities/Communities";
 import Profile from "./Pages/Profile/Profile";
 import Blog from "./Pages/Blog/Blog";
 import { useGlobalContext } from "./context/AppContext";
@@ -18,6 +17,7 @@ import NewSponsorship from "./Pages/Sponsorships/NewSponsorship/NewSponsorship";
 import Requests from "./Pages/Sponsorships/Requests/Requests";
 import Request from "./Pages/Sponsorships/Requests/Request/Request";
 import Notifications from "./Pages/Notifications/Notifications";
+import ComingSoon from "./Pages/ComingSoon/ComingSoon";
 import { useDarkContext } from "./context/DarkContext";
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
@@ -45,9 +45,7 @@ function App() {
 						<Route path=":blogTitle"  element={<Blog />} ></Route>
 					</Route>
 					<Route path="search" element={<Search />}></Route>
-					<Route path="communities" element={<Communities />}></Route>
-					<Route path="report" element={<Communities />}></Route>
-					<Route path="moderations" element={<Communities />}></Route>
+					<Route path="report" element={<ComingSoon />}></Route>
 					<Route path="sponsorships" >
 						<Route index element={<LoginRequired><Sponsorships /></LoginRequired>}></Route>
 						<Route path="new/:userId" element={<LoginRequired><NewSponsorship /></LoginRequired>}></Route>

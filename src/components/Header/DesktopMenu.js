@@ -32,13 +32,7 @@ const DesktopMenu = ({ username, img_src, balance }) => {
 			<NavLink to="/saved" className="menuItem link">
 				Saved articles
 			</NavLink>
-			<NavLink to={`/communities`} className="menuItem link">
-				Communities
-			</NavLink>
 
-			<NavLink to={`/moderations`} className="menuItem link">
-				Moderation queue
-			</NavLink>
 			<NavLink to={`/sponsorships`} className="menuItem link">
 				Sponsorships
 			</NavLink>

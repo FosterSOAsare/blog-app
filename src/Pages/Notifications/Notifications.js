@@ -14,6 +14,9 @@ const Notifications = () => {
 	const { firebase, credentials } = useGlobalContext();
 
 	function sortNotifications(notifications) {
+		notifications.sort((a, b) => {
+			return b.timestamp.seconds - a.timestamp.seconds;
+		});
 		return (notifications = [...notifications.filter((e) => e.status === "unread"), ...notifications.filter((e) => e.status === "read")]);
 	}
 	useEffect(() => {

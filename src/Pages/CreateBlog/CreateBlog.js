@@ -132,7 +132,6 @@ const CreateBlog = () => {
 
 						<div className="adds">
 							<button>Add Topics</button>
-							<button>Submit to community</button>
 							<label htmlFor="lead__image">Add lead image</label>
 							<input type="file" accept="image/*" name="lead__image" id="lead__image" ref={leadImage} />
 						</div>

@@ -10,11 +10,19 @@ import Sponsors from "../../components/Sponsors/Sponsors";
 import Comment from "./Comment/Comment";
 import BlogControls from "./BlogControls/BlogControls";
 import NotFound from "../NotFound/NotFound";
+import { useBlockedContext } from "../../context/BlockedContext";
 import { removeSpaces, removeSpecialChars } from "../../utils/Text";
 const Blog = () => {
 	const [profileData, setProfileDispatchFunc] = useReducer(reducerFunc, { author: null, blog: {}, comments: [] });
 	const { firebase, credentials, notFound, setNotFound } = useGlobalContext();
 	const [showAddComment, setShowAddComment] = useState(false);
+	let { loggedInUserBlocked, checkBlockedByAuthor } = useBlockedContext();
+	console.log(loggedInUserBlocked);
+
+	// Check to see if the user of the current profile page has blocked the loggediIn user or not
+	useEffect(() => {
+		checkBlockedByAuthor(profileData?.author?.userId);
+	}, [profileData?.author, checkBlockedByAuthor]);
 
 	let { blogTitle } = useParams();
 	const commentRef = useRef(null);
@@ -93,7 +101,7 @@ const Blog = () => {
 	}
 	return (
 		<>
-			{!notFound && (
+			{!notFound && !loggedInUserBlocked && (
 				<>
 					{!profileData?.blog?.blog_id && <Loading />}
 					{profileData?.blog?.blog_id && (
@@ -156,7 +164,8 @@ const Blog = () => {
 					)}
 				</>
 			)}
-			{notFound && <NotFound />}
+			{loggedInUserBlocked && <p className="blocked">You have been blocked by @{profileData?.author?.username}</p>}
+			{!loggedInUserBlocked && notFound && <NotFound />}
 		</>
 	);
 };

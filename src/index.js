@@ -6,6 +6,7 @@ import { AppProvider } from "./context/AppContext";
 import { SubscriptionProvider } from "./context/SubscriptionContext";
 import { AuthProvider } from "./context/AuthContext";
 import DarkProvider from "./context/DarkContext";
+import BlockedProvider from "./context/BlockedContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
 	<BrowserRouter>
@@ -13,7 +14,9 @@ root.render(
 			<AuthProvider>
 				<SubscriptionProvider>
 					<DarkProvider>
-						<App />
+						<BlockedProvider>
+							<App />
+						</BlockedProvider>
 					</DarkProvider>
 				</SubscriptionProvider>
 			</AuthProvider>

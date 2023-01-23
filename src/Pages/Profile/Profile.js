@@ -9,12 +9,13 @@ import { useAuthContext } from "../../context/AuthContext";
 import { useParams } from "react-router";
 import NotFound from "../NotFound/NotFound";
 import Loading from "../../components/Loading/Loading";
+import { useBlockedContext } from "../../context/BlockedContext";
 const Profile = () => {
 	const [profileData, setProfileData] = useReducer(reducerFunc, { user: null, blogs: null });
 	const { error, errorFunc } = useAuthContext();
 	const { verifications } = useAuthContext();
 	let { firebase, credentials, credentialsDispatchFunc, notFound, setNotFound, blocked } = useGlobalContext();
-	// const [Profileblocked, blockedDispatchFunc] = useReducer(blockedFunc, { blockedUsers: [], blockedDocument: null });
+	let { loggedInUserBlocked, checkBlockedByAuthor } = useBlockedContext();
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [blockUserActive, setBlockUserActive] = useState(false);
 	const [deleteUserActive, setDeleteUserActive] = useState(false);
@@ -34,6 +35,12 @@ const Profile = () => {
 				return data;
 		}
 	}
+
+	// Check to see if the user of the current profile page has blocked the loggediIn user or not
+	useEffect(() => {
+		checkBlockedByAuthor(profileData?.user?.userId);
+	}, [profileData?.user, checkBlockedByAuthor]);
+
 	// Check to see if logged in user has blocked the author or not
 	function checkBlockedByLoggedInUser() {
 		if (blocked?.blockedUsers.empty) {
@@ -167,11 +174,13 @@ const Profile = () => {
 								{...{ error, errorFunc }}
 							/>
 						)}
-						<Sponsors data={profileData.user} />
+						{!loggedInUserBlocked && <Sponsors data={profileData.user} />}
+						{loggedInUserBlocked && <p className="blocked"> You have been blocked by @{profileData?.user?.username}</p>}
 					</main>
 
+					{/* Articles section on profile page */}
 					{!profileData?.blogs && <Loading className="profileLoading" errorStatus={false} />}
-					{profileData?.blogs && profileData?.blogs.length > 0 && (
+					{profileData?.blogs && profileData?.blogs.length > 0 && !loggedInUserBlocked && (
 						<section id="articles">
 							{profileData.blogs.length > 0 &&
 								profileData.blogs.map((e) => {
@@ -179,7 +188,7 @@ const Profile = () => {
 								})}
 						</section>
 					)}
-					{profileData?.blogs && profileData?.blogs.length === 0 && <p className="noblogs">Nothing here...</p>}
+					{profileData?.blogs && profileData?.blogs.length === 0 && loggedInUserBlocked && <p className="noblogs">Nothing here...</p>}
 				</>
 			)}
 			{notFound && <NotFound />}

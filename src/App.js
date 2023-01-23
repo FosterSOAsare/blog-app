@@ -20,6 +20,7 @@ import Notifications from "./Pages/Notifications/Notifications";
 import ComingSoon from "./Pages/ComingSoon/ComingSoon";
 import { useDarkContext } from "./context/DarkContext";
 import NotFound from "./Pages/NotFound/NotFound";
+
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
 	return credentials.userId ? children : <Navigate to="/login"></Navigate>;

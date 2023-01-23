@@ -5,7 +5,7 @@ import { useReducer, useEffect } from "react";
 import { checkSubscribed } from "../../../utils/Subscriptions.util";
 import { useSubscriptionContext } from "../../../context/SubscriptionContext";
 
-const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp, editTime }) => {
+const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp, editTime, topics }) => {
 	const [subs, subsDispatchFunc] = useReducer(reducerFunc, { subscribed: false, subscribers: [], data: {} });
 	const [showDrop, setShowDrop] = useState(false);
 	let { credentials, firebase, calculateTime } = useGlobalContext();
@@ -94,6 +94,7 @@ const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp, editTime 
 					)}
 				</div>
 				<div className="bio">{bio ? bio : "User has no bio at the moment"}</div>
+				{topics && <p className="topics">Topics : {topics.join(", ")}</p>}
 				<div className="userTime">
 					<p>{time}</p>
 					<div className="complain" ref={complain}>
@@ -108,7 +109,7 @@ const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp, editTime 
 						)}
 					</div>
 				</div>
-				{<p className="editTime">Last edited : {calculateTime(editTime?.seconds)}</p>}
+				{editTime && <p className="editTime">Last edited : {calculateTime(editTime?.seconds)}</p>}
 				<div className="communities"></div>
 			</div>
 		</section>

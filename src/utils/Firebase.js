@@ -430,6 +430,7 @@ export class Firebase {
 				delete data.name;
 				delete data.author_id;
 				data.lead_image_src = res;
+				if (!data.topics) delete data.topics;
 				await runTransaction(this.db, async (transaction) => {
 					let q = query(collection(this.db, "subscriptions"), where("username", "==", data.author));
 					let subscriptions = await getDocs(q);

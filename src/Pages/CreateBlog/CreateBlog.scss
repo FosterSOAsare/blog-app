@@ -2,6 +2,7 @@ section.createBlog {
 	@include container;
 	min-height: 30vh;
 	height: auto;
+
 	p {
 		color: $text1;
 		font-weight: bold;
@@ -87,23 +88,100 @@ section.createBlog {
 				cursor: pointer;
 			}
 		}
-	}
-	article.editor {
-		width: 100%;
-		height: 100%;
-		border-radius: 5px;
-		font-size: 14px;
-		color: $text1;
-		margin-bottom: 30px;
-		p {
+		.blogSelectedTopics {
+			width: auto;
+			max-width: 80%;
+			height: auto;
+			margin-right: 20px;
+			font-size: 13px;
+			font-family: "Lato", sans-serif;
 			font-weight: normal;
-			line-height: 30px;
+			span {
+				font-family: "Lato", sans-serif;
+			}
 		}
 	}
+	.editors {
+		position: relative;
+		width: 100%;
+		height: auto;
+		section.selectedTopics {
+			@include container;
+			height: 60vh;
+			border-radius: 5px;
+			border: 1px solid $grey;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			z-index: 2;
+			padding: 0px;
+			background-color: $white;
+			.topics {
+				height: auto;
+				min-height: 30px;
+				padding: 5px;
+				@include flex(space-between, flex-start);
+				.left {
+					width: 80%;
+					height: auto;
+				}
+				button {
+					align-self: center;
+					height: 30px;
+					font-size: 12px;
+				}
+				span {
+					font-size: 13px;
+					margin-right: 10px;
+					padding: 3px 5px;
+					display: inline-block;
+					border-radius: 4px;
+					border: 2px solid $grey;
+					margin-bottom: 5px;
+					i {
+						margin: 0;
+						margin-left: 4px;
+						font-size: 10px;
+					}
+				}
+			}
+			.select {
+				width: 100%;
+				height: auto;
+				max-height: 92.5%;
+				overflow-y: scroll;
+				background-color: $white;
+				padding: 10px 0;
+				.topicItem {
+					padding-left: 20px;
+					font-size: 13px;
+					margin-bottom: 2px;
+					color: $text1;
+					&:hover {
+						background-color: #3b82f6;
+					}
+				}
+			}
+		}
+		article.editor {
+			width: 100%;
+			height: 100%;
+			border-radius: 5px;
+			font-size: 14px;
+			color: $text1;
+			margin-bottom: 30px;
+			p {
+				font-weight: normal;
+				line-height: 30px;
+			}
+		}
 
-	article.header {
-		p {
-			font-weight: bold;
+		article.header {
+			p {
+				font-weight: bold;
+			}
 		}
 	}
 }
@@ -120,11 +198,13 @@ section.createBlog {
 	right: 0;
 	margin: 0 auto;
 	background-color: $white;
+	z-index: 3;
 	button {
 		height: 40px;
 		margin-top: 20px;
 	}
 }
+
 .dark {
 	section.createBlog {
 		p,
@@ -148,6 +228,11 @@ section.createBlog {
 			button,
 			label {
 				color: $darkText1;
+			}
+		}
+		.editors {
+			section.selectedTopics {
+				background-color: $darkBg;
 			}
 		}
 	}

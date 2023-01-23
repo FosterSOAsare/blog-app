@@ -47,7 +47,7 @@ function App() {
 					</Route>
 					<Route path="search" >
 						<Route index element={<Search />}></Route>
-						<Route path=":topic" element={<Search/>}></Route>
+						<Route path=":topic" element={<Search />}></Route>
 					</Route>
 					<Route path="report" element={<ComingSoon />}></Route>
 					<Route path="sponsorships" >

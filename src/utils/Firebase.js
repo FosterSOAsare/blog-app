@@ -35,7 +35,10 @@ export class Firebase {
 					username,
 				});
 				// Store Data in db collection
-				sendEmailVerification(userCredential.user);
+				sendEmailVerification(userCredential.user, {
+					url: "http://localhost:3000/login",
+					handleCodeInApp: true,
+				});
 				// send back response
 				callback(userCredential.user);
 			})
@@ -666,7 +669,12 @@ export class Firebase {
 	}
 
 	sendVerification(user, callback) {
-		callback(sendEmailVerification(user));
+		callback(
+			sendEmailVerification(user, {
+				url: "http://localhost:3000/login",
+				handleCodeInApp: true,
+			})
+		);
 	}
 
 	validatePassword(user, password, callback) {

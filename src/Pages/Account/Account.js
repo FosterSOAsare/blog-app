@@ -69,7 +69,6 @@ const Account = () => {
 										onClick={() =>
 											firebase.sendVerification(userObject, (res) => {
 												if (res?.error) return;
-												console.log(res);
 											})
 										}>
 										Send Verification

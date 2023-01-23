@@ -232,6 +232,18 @@ section.createBlog {
 		}
 		.editors {
 			section.selectedTopics {
+				.topics {
+					.left {
+						span {
+							color: $darkText1;
+							i {
+								opacity: 0.5;
+							}
+						}
+					}
+				}
+			}
+			section.selectedTopics {
 				background-color: $darkBg;
 			}
 		}

@@ -841,4 +841,34 @@ export class Firebase {
 			callback(res);
 		});
 	}
+	storeBlockedUsers(docId, newBlockedUser, user_id, callback) {
+		try {
+			if (!docId) {
+				addDoc(collection(this.db, "blocks"), {
+					user_id,
+					blocks: newBlockedUser,
+				});
+			} else {
+				updateDoc(doc(this.db, "blocks", docId), { blocks: newBlockedUser });
+			}
+			callback("success");
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
+	fetchBlockedUsers(user_id, callback) {
+		try {
+			let q = query(collection(this.db, "blocks"), where("user_id", "==", user_id));
+			onSnapshot(q, (res) => {
+				if (res.empty) {
+					callback({ empty: true });
+					return;
+				}
+
+				callback({ ...res.docs[0].data(), doc_id: res.docs[0].id });
+			});
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
 }

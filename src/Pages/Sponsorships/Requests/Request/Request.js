@@ -25,7 +25,7 @@ const Request = () => {
 
 	function moderateRequest(status) {
 		firebase.moderateRequest(status, request?.sponsor_id, request?.author_id, request_id, (res) => {
-			console.log(res);
+			// console.log(res);
 		});
 	}
 

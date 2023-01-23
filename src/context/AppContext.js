@@ -8,6 +8,7 @@ export const AppProvider = ({ children }) => {
 	const [notFound, setNotFound] = useState(false);
 	useMemo(() => setFirebase(new Firebase()), []);
 	const [credentials, credentialsDispatchFunc] = useReducer(reducerFunc, { userId: JSON.parse(localStorage.getItem("userId")) || null, user: null });
+	const [blocked, blockedDispatchFunc] = useReducer(blockedFunc, { blockedUsers: [], blockedDocument: null });
 
 	function reducerFunc(credentials, action) {
 		switch (action.type) {
@@ -17,6 +18,18 @@ export const AppProvider = ({ children }) => {
 				return { ...credentials, userId: null, user: null };
 			case "setUser":
 				return { ...credentials, user: action.payload };
+
+			default:
+				return credentials;
+		}
+	}
+
+	function blockedFunc(blocked, action) {
+		switch (action.type) {
+			case "setBlockedUsers":
+				return { ...blocked, blockedUsers: action.payload };
+			case "setBlockedDoc":
+				return { ...blocked, blockedDocument: action.payload };
 			default:
 				return credentials;
 		}
@@ -51,7 +64,6 @@ export const AppProvider = ({ children }) => {
 			// Fetch credentials
 			firebase.fetchUserWithUid(credentials?.userId, (userData) => {
 				if (userData?.error) {
-					// credentialsDispatchFunc({ type: "logout" });
 					return;
 				}
 				if (!userData && navigator.onLine) {
@@ -59,11 +71,19 @@ export const AppProvider = ({ children }) => {
 				}
 				credentialsDispatchFunc({ type: "setUser", payload: userData });
 			});
+			firebase.fetchBlockedUsers(credentials?.userId, (blockedUsers) => {
+				if (blockedUsers?.error) {
+					return;
+				}
+				blockedDispatchFunc({ type: "setBlockedUsers", payload: blockedUsers.blocks ? blockedUsers.blocks : [] });
+				blockedDispatchFunc({ type: "setBlockedDoc", payload: blockedUsers.doc_id ? blockedUsers.doc_id : null });
+			});
+
 			//
 		}
 		localStorage.setItem("userId", JSON.stringify(credentials.userId));
 	}, [credentials.userId, firebase]);
-	return <AppContext.Provider value={{ firebase, credentials, credentialsDispatchFunc, calculateTime, notFound, setNotFound }}>{children}</AppContext.Provider>;
+	return <AppContext.Provider value={{ firebase, credentials, credentialsDispatchFunc, calculateTime, notFound, setNotFound, blocked, blockedDispatchFunc }}>{children}</AppContext.Provider>;
 };
 
 export const useGlobalContext = () => {

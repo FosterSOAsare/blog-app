@@ -13,7 +13,6 @@ const BlogControls = ({ commentsLen, views = 0, bookmarks = [], blog_id }) => {
 		// Update bookmarks
 		firebase.updateBookmarks(blog_id, bookmarks, (res) => {
 			if (res.error) return;
-			console.log(res);
 		});
 	}
 	return (

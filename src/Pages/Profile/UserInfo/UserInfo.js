@@ -4,7 +4,7 @@ import { checkSubscribed } from "../../../utils/Subscriptions.util";
 import { useSubscriptionContext } from "../../../context/SubscriptionContext";
 import Loading from "../../../components/Loading/Loading";
 
-const UserInfo = ({ setShowEditForm, setBlockUserActive, setDeleteUserActive, data }) => {
+const UserInfo = ({ setShowEditForm, setBlockUserActive, setDeleteUserActive, data, checkBlockedByLoggedInUser }) => {
 	const { subscriptionToggle, imageUpload } = useSubscriptionContext();
 	const [subs, subsDispatchFunc] = useReducer(reducerFunc, { subscribed: false, subscribers: [], data: {} });
 
@@ -83,8 +83,8 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, setDeleteUserActive, da
 								</button>
 							)}
 							{credentials?.userId && data.username !== credentials.user.username && (
-								<button className="block delete" onClick={() => setBlockUserActive(true)}>
-									Block User
+								<button className={`${checkBlockedByLoggedInUser() ? "unblock" : "block delete"}`} onClick={() => setBlockUserActive(true)}>
+									{checkBlockedByLoggedInUser() ? "Unblock" : "Block"} User
 								</button>
 							)}
 							{data?.username === credentials.user?.username && (

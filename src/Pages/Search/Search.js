@@ -1,19 +1,32 @@
 import React, { useState } from "react";
 import { useGlobalContext } from "../../context/AppContext";
 import BlogPreview from "../../components/BlogPreview/BlogPreview";
+import { useParams } from "react-router";
+import { useEffect } from "react";
 
 const Search = () => {
 	const [searchResult, setSearchResult] = useState([]);
 	const { firebase } = useGlobalContext();
+	const { topic } = useParams();
 
 	function submitSearch(e) {
 		e.preventDefault();
 		let data = new FormData(e.target).get("searchQuery");
+		if (data.length < 3) return;
 		firebase.getQuery(data, (res) => {
 			if (res.error) return;
 			setSearchResult(res);
 		});
 	}
+
+	// Fetch results based on tags
+	useEffect(() => {
+		topic &&
+			firebase.searchBlogsWithATag(topic, (res) => {
+				if (res.error) return;
+				setSearchResult(res);
+			});
+	}, [topic, firebase]);
 	return (
 		<section className="search">
 			<div className="container">
@@ -24,7 +37,7 @@ const Search = () => {
 					</button>
 				</form>
 				<p className="example">
-					For example : <span>Dead_Alnix</span>
+					For example : <span>Domestic Violence</span>
 				</p>
 
 				<div className="results">

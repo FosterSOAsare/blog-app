@@ -853,7 +853,11 @@ export class Firebase {
 
 			// Filtering
 			blogs = blogs.filter((e) => {
-				return e.heading.toLowerCase().includes(queryString.toLowerCase()) || e.message.toLowerCase().includes(queryString.toLowerCase());
+				return (
+					e.heading.toLowerCase().includes(queryString.toLowerCase()) ||
+					e.message.toLowerCase().includes(queryString.toLowerCase()) ||
+					e.author.toLowerCase().includes(queryString.toLowerCase())
+				);
 			});
 			if (blogs.length === 0) {
 				callback({ empty: true });
@@ -864,7 +868,7 @@ export class Firebase {
 	}
 
 	searchBlogsWithATag(tag, callback) {
-		let q1 = query(collection(this.db, "blogs"), where("topics", "array-contains", tag), orderBy("timestamp"));
+		let q1 = query(collection(this.db, "blogs"), where("topics", "array-contains", tag.toLowerCase()), orderBy("timestamp"));
 		onSnapshot(q1, (querySnapshot) => {
 			if (querySnapshot.empty) {
 				callback({ empty: true });
@@ -874,7 +878,7 @@ export class Firebase {
 			let blogs = querySnapshot.docs.map((doc) => {
 				return { ...doc.data(), blog_id: doc.id };
 			});
-			console.log(blogs);
+
 			callback(blogs);
 		});
 	}

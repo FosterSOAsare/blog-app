@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useGlobalContext } from "../../context/AppContext";
+import BlogPreview from "../../components/BlogPreview/BlogPreview";
 
 const Search = () => {
 	const [searchResult, setSearchResult] = useState([]);
@@ -9,7 +10,7 @@ const Search = () => {
 		e.preventDefault();
 		let data = new FormData(e.target).get("searchQuery");
 		firebase.getQuery(data, (res) => {
-			console.log(res);
+			if (res.error) return;
 			setSearchResult(res);
 		});
 	}
@@ -26,7 +27,13 @@ const Search = () => {
 					For example : <span>Dead_Alnix</span>
 				</p>
 
-				{searchResult.length > 0 && <div className="result"></div>}
+				<div className="results">
+					{searchResult.length > 0 &&
+						searchResult.map((e) => {
+							return <BlogPreview key={e.blog_id} {...e} />;
+						})}
+					{searchResult.empty && <p className="empty">Nothing found</p>}
+				</div>
 			</div>
 		</section>
 	);

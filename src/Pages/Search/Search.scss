@@ -1,6 +1,7 @@
 section.search {
 	height: auto;
 	background-color: $background2;
+	padding-top: 30px;
 	.container {
 		@include container;
 		min-height: 60vh;
@@ -43,6 +44,13 @@ section.search {
 			span {
 				font-style: italic;
 				font-weight: normal;
+			}
+		}
+		.results {
+			margin-top: 30px;
+			.empty {
+				opacity: 0.6;
+				margin-top: 30px;
 			}
 		}
 	}

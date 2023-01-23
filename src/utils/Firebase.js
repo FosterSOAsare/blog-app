@@ -825,10 +825,40 @@ export class Firebase {
 		});
 	}
 
+	// Using server side filtering since the workarounds are paid methods
 	getQuery(queryString, callback) {
-		let q1 = query(collection(this.db, "blogs"), where("heading", "array-contains-any", "Determination"));
-		getDocs(q1).then((e) => {
-			console.log(e);
+		let q1 = collection(this.db, "blogs");
+		onSnapshot(q1, (querySnapshot) => {
+			// Getting data
+			let blogs = querySnapshot.docs.map((doc) => {
+				return { ...doc.data(), blog_id: doc.id };
+			});
+
+			// Filtering
+			blogs = blogs.filter((e) => {
+				return e.heading.toLowerCase().includes(queryString.toLowerCase()) || e.message.toLowerCase().includes(queryString.toLowerCase());
+			});
+			if (blogs.length === 0) {
+				callback({ empty: true });
+				return;
+			}
+			callback(blogs);
+		});
+	}
+
+	searchBlogsWithATag(tag, callback) {
+		let q1 = query(collection(this.db, "blogs"), where("topics", "array-contains", tag), orderBy("timestamp"));
+		onSnapshot(q1, (querySnapshot) => {
+			if (querySnapshot.empty) {
+				callback({ empty: true });
+				return;
+			}
+			// Getting data
+			let blogs = querySnapshot.docs.map((doc) => {
+				return { ...doc.data(), blog_id: doc.id };
+			});
+			console.log(blogs);
+			callback(blogs);
 		});
 	}
 }

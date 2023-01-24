@@ -3,8 +3,9 @@ import { useGlobalContext } from "../../../context/AppContext";
 import { checkSubscribed } from "../../../utils/Subscriptions.util";
 import { useSubscriptionContext } from "../../../context/SubscriptionContext";
 import Loading from "../../../components/Loading/Loading";
+import { NavLink } from "react-router-dom";
 
-const UserInfo = ({ setShowEditForm, setBlockUserActive, setDeleteUserActive, data, checkBlockedByLoggedInUser }) => {
+const UserInfo = ({ setShowEditForm, setDeleteUserActive, data, checkBlockedByLoggedInUser }) => {
 	const { subscriptionToggle, imageUpload } = useSubscriptionContext();
 	const [subs, subsDispatchFunc] = useReducer(reducerFunc, { subscribed: false, subscribers: [], data: {} });
 
@@ -77,15 +78,15 @@ const UserInfo = ({ setShowEditForm, setBlockUserActive, setDeleteUserActive, da
 								<p>{subs.subscribers.length}</p>
 							</div>
 
-							{credentials?.userId && data.username !== credentials.user.username && (
+							{credentials?.userId && data.username !== credentials.user.username && !checkBlockedByLoggedInUser() && (
 								<button onClick={() => subscriptionToggle(subs.subscribed, subs.subscribers, subs?.data, { username: data?.username, id: credentials?.userId })}>
 									{!subs.subscribed ? "Subscribe" : "Unsubscribe"}
 								</button>
 							)}
 							{credentials?.userId && data.username !== credentials.user.username && (
-								<button className={`${checkBlockedByLoggedInUser() ? "unblock" : "block delete"}`} onClick={() => setBlockUserActive(true)}>
+								<NavLink className={`link ${checkBlockedByLoggedInUser() ? "unblock" : "block delete"}`} to={`/block/${data.userId}`}>
 									{checkBlockedByLoggedInUser() ? "Unblock" : "Block"} User
-								</button>
+								</NavLink>
 							)}
 							{data?.username === credentials.user?.username && (
 								<button className="block" onClick={() => setDeleteUserActive(true)}>

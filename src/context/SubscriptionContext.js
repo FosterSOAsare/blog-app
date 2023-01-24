@@ -11,7 +11,6 @@ export const SubscriptionProvider = ({ children }) => {
 	function subscriptionToggle(subscribed, subscribers, data, obj) {
 		let newData = subscribed ? removeSubscription(subscribers, credentials?.userId) : addSubscription(subscribers, credentials?.userId);
 		// followers
-
 		if (!data.empty) {
 			firebase.updateSubscription(newData, data?.id, (res) => {});
 		} else {

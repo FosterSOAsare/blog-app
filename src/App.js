@@ -20,6 +20,7 @@ import Notifications from "./Pages/Notifications/Notifications";
 import ComingSoon from "./Pages/ComingSoon/ComingSoon";
 import { useDarkContext } from "./context/DarkContext";
 import NotFound from "./Pages/NotFound/NotFound";
+import Block from "./Pages/Block/Block";
 
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
@@ -64,6 +65,7 @@ function App() {
 					<Route path="login" element={<CheckLogged><Login /></CheckLogged>}></Route>
 				</Route>
 				<Route path="/verifications" element={<CheckLogged><Verifications /></CheckLogged> }></Route>
+				<Route path="/block/:userId" element={<LoginRequired><Block /></LoginRequired> }></Route>
 				<Route path="*" element={<NotFound/>}></Route>
 			</Routes>
 		</div>

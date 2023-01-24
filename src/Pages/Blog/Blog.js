@@ -17,7 +17,6 @@ const Blog = () => {
 	const { firebase, credentials, notFound, setNotFound } = useGlobalContext();
 	const [showAddComment, setShowAddComment] = useState(false);
 	let { loggedInUserBlocked, checkBlockedByAuthor } = useBlockedContext();
-	console.log(loggedInUserBlocked);
 
 	// Check to see if the user of the current profile page has blocked the loggediIn user or not
 	useEffect(() => {

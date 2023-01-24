@@ -6,8 +6,9 @@ import { removeHTML, createLink } from "../../utils/Text";
 import Ratings from "../Ratings/Ratings";
 
 const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, likes, views, upvotes, comments, author }) => {
-	const { credentials } = useGlobalContext();
+	const { credentials, firebase } = useGlobalContext();
 	const [sub, showSub] = useState(false);
+	const [userInfo, setUserInfo] = useState({});
 	heading = removeHTML(heading);
 	const subButton = useRef(null);
 
@@ -37,6 +38,13 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 				}
 			});
 	}, [credentials.user]);
+
+	useEffect(() => {
+		firebase.fetchUserWithUsername(author, (res) => {
+			if (res.error) return;
+			setUserInfo(res);
+		});
+	}, [firebase, author]);
 
 	return (
 		<article className="blogPreview">
@@ -87,7 +95,11 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 							<NavLink className="elem" to="/report">
 								Report this
 							</NavLink>
-							<p className="elem">Block this user</p>
+							{credentials?.user?.username !== author && (
+								<NavLink className="elem" to={`/block/${userInfo?.userId}`}>
+									Block this user
+								</NavLink>
+							)}
 						</div>
 					)}
 				</article>

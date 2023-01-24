@@ -1,7 +1,6 @@
 import React, { useState, useReducer, useEffect } from "react";
 import UserInfo from "./UserInfo/UserInfo";
 import FormPopup from "../../components/Popups/FormPopup";
-import ConfirmPopup from "../../components/Popups/ConfirmPopup";
 import Sponsors from "../../components/Sponsors/Sponsors";
 import BlogPreview from "../../components/BlogPreview/BlogPreview";
 import { useGlobalContext } from "../../context/AppContext";
@@ -17,7 +16,6 @@ const Profile = () => {
 	let { firebase, credentials, credentialsDispatchFunc, notFound, setNotFound, blocked } = useGlobalContext();
 	let { loggedInUserBlocked, checkBlockedByAuthor } = useBlockedContext();
 	const [showEditForm, setShowEditForm] = useState(false);
-	const [blockUserActive, setBlockUserActive] = useState(false);
 	const [deleteUserActive, setDeleteUserActive] = useState(false);
 
 	let username = useParams().username;
@@ -57,11 +55,6 @@ const Profile = () => {
 			}
 			setProfileData({ type: "storeUser", payload: res });
 			setNotFound(false);
-
-			// / Fetch the users who have been blocked by the profile user
-			firebase.fetchBlockedUsers(res.userId, (res) => {
-				setProfileData({ type: "setBlockedUsers", payload: res });
-			});
 		});
 		firebase.fetchBlogs(username, (blogs) => {
 			if (blogs.error) {
@@ -71,21 +64,6 @@ const Profile = () => {
 			setProfileData({ type: "storeBlogs", payload: blogs });
 		});
 	}, [firebase, username, notFound, setNotFound, credentials?.userId]);
-
-	function toggleBlockUser(e) {
-		// If blocked , filter and remove userId .
-		//  IF not blocked , check to see the document exists . If no , just send the profile Users Id as blocked else push it to the existing
-		let newData = [];
-		if (blocked?.blockedUsers.includes(profileData?.user?.userId)) {
-			newData = blocked.blockedUsers.filter((e) => e !== profileData?.user?.userId);
-		} else {
-			newData = [...blocked.blockedUsers, profileData?.user?.userId];
-		}
-		firebase.storeBlockedUsers(blocked.blockedDocument, newData, credentials?.userId, (res) => {
-			if (res.error) return;
-			setBlockUserActive(false);
-		});
-	}
 
 	function saveBio(e, value) {
 		e.preventDefault();
@@ -135,13 +113,7 @@ const Profile = () => {
 			{!notFound && (
 				<>
 					<main className="profile">
-						<UserInfo
-							setShowEditForm={setShowEditForm}
-							setBlockUserActive={setBlockUserActive}
-							data={profileData.user}
-							setDeleteUserActive={setDeleteUserActive}
-							checkBlockedByLoggedInUser={checkBlockedByLoggedInUser}
-						/>
+						<UserInfo setShowEditForm={setShowEditForm} data={profileData.user} setDeleteUserActive={setDeleteUserActive} checkBlockedByLoggedInUser={checkBlockedByLoggedInUser} />
 						{showEditForm && (
 							<FormPopup
 								desc="Edit your bio"
@@ -151,15 +123,6 @@ const Profile = () => {
 								proceed={saveBio}
 								{...{ error, errorFunc }}
 								opt1="Save Bio"
-							/>
-						)}
-						{blockUserActive && (
-							<ConfirmPopup
-								desc={`Are you sure you want to ${checkBlockedByLoggedInUser() ? "unblock" : "block"}  @${profileData?.user?.username}`}
-								opt1={checkBlockedByLoggedInUser() ? "Unblock" : "Block"}
-								opt2="Cancel"
-								setShow={setBlockUserActive}
-								proceed={toggleBlockUser}
 							/>
 						)}
 						{deleteUserActive && (

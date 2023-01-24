@@ -11,7 +11,7 @@ import { Navigate } from "react-router";
 
 const Report = () => {
 	const { error, errorFunc } = useAuthContext();
-	const [saved, setSaved] = useState(true);
+	const [saved, setSaved] = useState(false);
 	const [navigate, setNavigate] = useState(false);
 	const report = useRef();
 	const { firebase, credentials } = useGlobalContext();

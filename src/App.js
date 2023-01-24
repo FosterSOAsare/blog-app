@@ -21,6 +21,8 @@ import ComingSoon from "./Pages/ComingSoon/ComingSoon";
 import { useDarkContext } from "./context/DarkContext";
 import NotFound from "./Pages/NotFound/NotFound";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
+import Block from "./Pages/Block/Block";
+
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
 	return credentials.userId ? children : <Navigate to="/login"></Navigate>;
@@ -65,6 +67,7 @@ function App() {
 				</Route>
 				<Route path="/verifications" element={<CheckLogged><Verifications /></CheckLogged> }></Route>
 				<Route path="/resetpassword" element={<ResetPassword/>}></Route>
+				<Route path="/block/:userId" element={<LoginRequired><Block /></LoginRequired> }></Route>
 				<Route path="*" element={<NotFound/>}></Route>
 			</Routes>
 		</div>

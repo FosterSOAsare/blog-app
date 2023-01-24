@@ -1,0 +1,28 @@
+body:has(section.block) {
+	padding: 0;
+	@include flex(center, center);
+
+	.actions {
+		.block {
+			border: 2px solid $error;
+			color: $error;
+			background-color: transparent;
+		}
+		.cancel {
+			color: $text1;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+}
+
+.dark {
+	section.block {
+		.actions {
+			.cancel {
+				color: $darkText1;
+			}
+		}
+	}
+}

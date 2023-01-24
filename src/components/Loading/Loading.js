@@ -2,7 +2,6 @@ import React from "react";
 import LoadingGif from "../../assets/images/loading.gif";
 
 const Loading = ({ errorStatus }) => {
-	// console.log(errorStatus);
 	return (
 		<>
 			{!errorStatus && (

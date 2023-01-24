@@ -186,7 +186,6 @@ export class Firebase {
 		name = name + "." + ext;
 
 		try {
-			console.log(data);
 			this.storeImg(data.image, `sponsorships/${name}`, async (res) => {
 				if (res.error) return;
 				data = { ...data, promo_image: res, status: "pending", settled: false };
@@ -209,7 +208,6 @@ export class Firebase {
 				return;
 			});
 		} catch (e) {
-			console.log(e);
 			callback({ error: true });
 		}
 	}
@@ -287,7 +285,6 @@ export class Firebase {
 			});
 			callback("success");
 		} catch (e) {
-			console.log(e);
 			callback("Transaction failed: ", e);
 		}
 	}
@@ -412,11 +409,10 @@ export class Firebase {
 
 	updateSubscription(data, docId, callback) {
 		try {
-			updateDoc(doc(this.db, "subscriptions", docId), { followers: data }).then((res) => {
-				callback(res);
-			});
+			updateDoc(doc(this.db, "subscriptions", docId), { followers: data });
+			callback("success");
 		} catch (e) {
-			callback(e);
+			console.log(e);
 			callback({ error: "An error occurred" });
 		}
 	}
@@ -497,7 +493,6 @@ export class Firebase {
 			updateDoc(doc(this.db, "blogs", data.blog_id), data).then(() => {});
 			callback("success");
 		} catch (error) {
-			console.log(error);
 			callback({ error: "An error occurred " });
 		}
 	}
@@ -643,7 +638,6 @@ export class Firebase {
 				callback("success");
 			});
 		} catch (e) {
-			console.log(e);
 			callback({ error: true });
 		}
 	}
@@ -698,7 +692,6 @@ export class Firebase {
 				callback("success");
 			})
 			.catch((error) => {
-				console.log(error);
 				callback({ error: true });
 			});
 	}
@@ -763,7 +756,6 @@ export class Firebase {
 				});
 			});
 		} catch (e) {
-			console.log(e);
 			callback({ error: "An error occurred" });
 		}
 	}
@@ -939,5 +931,53 @@ export class Firebase {
 				}
 				callback({ error: true });
 			});
+	}
+	async storeBlockedUsers(data, callback) {
+		try {
+			// 	//
+			if (data.type === "block") {
+				let q = query(collection(this.db, "subscriptions"), where("username", "==", data.username));
+				getDocs(q).then((res) => {
+					let subscriptionsData = { ...res.docs[0].data(), id: res.docs[0].id };
+					let followersArray = subscriptionsData.followers.split(" ");
+					// Check if user is subscribed or not
+					if (followersArray.includes(data.user_id)) {
+						let newData = followersArray.filter((e) => e !== data.user_id);
+						updateDoc(doc(this.db, "subscriptions", subscriptionsData.id), {
+							followers: newData.join(" "),
+						});
+					}
+				});
+				// console.log(profileUserDoc);
+				// 		// Unsubscribe from the user
+				// 		// Store blocked
+			}
+			if (!data.docId) {
+				addDoc(collection(this.db, "blocks"), {
+					user_id: data.user_id,
+					blocks: data.newData,
+				});
+			} else {
+				updateDoc(doc(this.db, "blocks", data.docId), { blocks: data.newData });
+			}
+			callback("success");
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
+	fetchBlockedUsers(user_id, callback) {
+		try {
+			let q = query(collection(this.db, "blocks"), where("user_id", "==", user_id));
+			onSnapshot(q, (res) => {
+				if (res.empty) {
+					callback({ empty: true });
+					return;
+				}
+
+				callback({ ...res.docs[0].data(), doc_id: res.docs[0].id });
+			});
+		} catch (e) {
+			callback({ error: true });
+		}
 	}
 }

@@ -112,10 +112,28 @@
 				font-size: 12px;
 				padding: 0px 10px;
 			}
+			.link {
+				background-color: $darkBg;
+				color: $darkText1;
+				margin: 0;
+				height: 30px;
+				margin-left: 20px;
+				@include flex(center, center);
+				border-radius: 5px;
+				font-size: 13px;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
 			.block {
 				background-color: transparent;
 				border: 2px solid $error;
 				color: $error;
+				padding: 0 10px;
+			}
+			.unblock {
+				background-color: transparent;
+				color: $text1;
 			}
 		}
 	}
@@ -148,6 +166,9 @@
 						}
 					}
 				}
+			}
+			.unblock {
+				color: $darkText1;
 			}
 		}
 	}

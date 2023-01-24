@@ -5,6 +5,12 @@ main.profile {
 	@include container;
 	margin-top: 30px;
 	margin-bottom: 30px;
+
+	.blocked {
+		margin-top: 70px;
+		@include flex(center, center);
+		opacity: 0.5;
+	}
 }
 
 #articles {

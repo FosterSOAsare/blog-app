@@ -6,14 +6,13 @@ import Loading from "../../components/Loading/Loading";
 const Account = () => {
 	const [showPasswordChange, setShowPasswordChange] = useState();
 	const [userObject, setUserObject] = useState({});
+	const [waiting, setWaiting] = useState(false);
 	const myForm = useRef(null);
 	const { firebase } = useGlobalContext();
 	let { error, errorFunc, verifications } = useAuthContext();
 	// Fetch user object
 	useEffect(() => {
 		firebase.getUserObject((res) => {
-			console.log(res);
-
 			if (res?.error) return;
 			if (!res) {
 				console.log("Auth not created");
@@ -69,15 +68,20 @@ const Account = () => {
 							{!userObject?.emailVerified && (
 								<>
 									<p className="warning">Email address not verified. Do so to avoid account loss</p>
-									<button
-										className="verification"
-										onClick={() =>
-											firebase.sendVerification(userObject, (res) => {
-												if (res?.error) return;
-											})
-										}>
-										Send Verification
-									</button>
+									{!waiting && (
+										<button
+											className="verification"
+											onClick={() => {
+												setWaiting(true);
+												firebase.sendVerification(userObject, (res) => {
+													if (res?.error) return;
+													setWaiting(false);
+												});
+											}}>
+											Send Verification
+										</button>
+									)}
+									{waiting && <button className="waiting">Waiting...</button>}
 								</>
 							)}
 							<p className="desc">Cannot be changed</p>

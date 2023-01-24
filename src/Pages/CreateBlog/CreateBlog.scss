@@ -189,7 +189,7 @@ section.createBlog {
 	}
 }
 
-.error {
+.blogError {
 	min-height: 90vh;
 	@include container;
 	@include flex(center, center);

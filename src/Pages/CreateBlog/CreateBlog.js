@@ -244,7 +244,7 @@ const CreateBlog = () => {
 				</>
 			)}
 			{!notFound && error.display !== "none" && (
-				<div className="error">
+				<div className="blogError">
 					<p>{error.text}</p>
 					<button onClick={() => errorFunc({ type: "clearError" })}>Okay</button>
 				</div>

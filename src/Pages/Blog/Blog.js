@@ -107,6 +107,7 @@ const Blog = () => {
 										commentsLen={profileData?.comments.length}
 										bookmarks={profileData?.blog?.bookmarks ? profileData?.blog?.bookmarks : []}
 										blog_id={profileData?.blog?.blog_id}
+										viewers={profileData?.blog?.viewers}
 									/>
 									<AuthorInfo
 										{...profileData?.author}

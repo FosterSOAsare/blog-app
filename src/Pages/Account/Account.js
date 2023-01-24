@@ -12,7 +12,12 @@ const Account = () => {
 	// Fetch user object
 	useEffect(() => {
 		firebase.getUserObject((res) => {
+			console.log(res);
+
 			if (res?.error) return;
+			if (!res) {
+				console.log("Auth not created");
+			}
 			setUserObject(res);
 		});
 	}, [firebase]);

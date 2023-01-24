@@ -5,9 +5,10 @@ import { useGlobalContext } from "../../context/AppContext";
 import { removeHTML, createLink } from "../../utils/Text";
 import Ratings from "../Ratings/Ratings";
 
-const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, likes, views, upvotes, comments, author }) => {
+const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, likes, upvotes, viewers, comments, author }) => {
 	const { credentials } = useGlobalContext();
 	const [sub, showSub] = useState(false);
+
 	heading = removeHTML(heading);
 	const subButton = useRef(null);
 
@@ -66,7 +67,7 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 					<div className="icon">
 						<i className="fa-solid fa-eye"></i>
 					</div>
-					<p>{views}</p>
+					<p>{viewers ? viewers.length : 0}</p>
 				</div>
 
 				<p>${total}</p>

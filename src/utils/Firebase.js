@@ -423,7 +423,7 @@ export class Firebase {
 		try {
 			// Store lead Image first
 			let path = "blogs/" + data.name;
-			data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", views: 0, savedCount: 0, upvotes: JSON.stringify([]) };
+			data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", viewers: [], savedCount: 0, upvotes: JSON.stringify([]) };
 			this.storeImg(data?.file, path, async (res) => {
 				if (res.error) {
 					callback(res);
@@ -671,7 +671,7 @@ export class Firebase {
 	sendVerification(user, callback) {
 		callback(
 			sendEmailVerification(user, {
-				url: "http://localhost:3000/login",
+				url: "http://localhost:3000/account",
 				handleCodeInApp: true,
 			})
 		);
@@ -889,5 +889,16 @@ export class Firebase {
 
 			callback(blogs);
 		});
+	}
+
+	updateViewers(blog_id, newData, callback) {
+		try {
+			updateDoc(doc(this.db, "blogs", blog_id), {
+				viewers: newData,
+			});
+			callback("Success");
+		} catch (e) {
+			callback({ error: true });
+		}
 	}
 }

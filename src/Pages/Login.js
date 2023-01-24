@@ -66,6 +66,9 @@ const Login = () => {
 				<h3>Log into your Acount</h3>
 				<form action="" onSubmit={handleSubmit}>
 					<Input name="email" placeholder="Enter your email address" handleChange={handleChange} value={loginData.email} handleFocus={handleFocus} />
+					<Link to="/resetpassword" className="forgotPassword link">
+						Forgot password
+					</Link>
 					<PasswordInput type="password" placeholder="************" handleChange={handleChange} value={loginData.password} handleFocus={handleFocus} />
 					{error.display !== "none" && <Error text={error.text} />}
 					<button>{waiting ? "Waiting..." : "Log in"}</button>

@@ -139,7 +139,6 @@ const Profile = () => {
 						<section id="articles">
 							{profileData.blogs.length > 0 &&
 								profileData.blogs.map((e) => {
-									console.log(e);
 									return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
 								})}
 						</section>

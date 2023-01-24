@@ -1,5 +1,17 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential, deleteUser } from "firebase/auth";
+import {
+	getAuth,
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	signOut,
+	updatePassword,
+	EmailAuthProvider,
+	reauthenticateWithCredential,
+	deleteUser,
+	onAuthStateChanged,
+	sendPasswordResetEmail,
+	confirmPasswordReset,
+} from "firebase/auth";
 import { getFirestore, runTransaction, doc, setDoc, getDocs, getDoc, serverTimestamp, onSnapshot, updateDoc, addDoc, orderBy, deleteDoc } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { collection, query, where } from "firebase/firestore";
@@ -661,11 +673,13 @@ export class Firebase {
 	}
 
 	getUserObject(callback) {
-		if (this.auth) {
-			callback(this.auth?.currentUser);
-			return;
-		}
-		callback({ error: true });
+		onAuthStateChanged(this.auth, (res) => {
+			if (res.auth?.currentUser) {
+				callback(res.auth.currentUser);
+			} else {
+				callback({ error: true });
+			}
+		});
 	}
 
 	sendVerification(user, callback) {
@@ -900,5 +914,30 @@ export class Firebase {
 		} catch (e) {
 			callback({ error: true });
 		}
+	}
+	sendPasswordResetMail(email, callback) {
+		try {
+			sendPasswordResetEmail(this.auth, email, {
+				url: "http://localhost:3000/login",
+				handleCodeInApp: true,
+			}).then((res) => {
+				callback(res);
+			});
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
+
+	updatePassword(oob, newPassword, callback) {
+		confirmPasswordReset(this.auth, oob, newPassword)
+			.then((res) => {
+				callback("success");
+			})
+			.catch((error) => {
+				if (error.code === "auth/invalid-action-code") {
+					callback({ error: true, payload: "Invalid password reset link." });
+				}
+				callback({ error: true });
+			});
 	}
 }

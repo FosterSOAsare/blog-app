@@ -17,6 +17,17 @@ main {
 			width: 400px;
 			height: 40px;
 		}
+		.forgotPassword {
+			text-align: right;
+			width: 400px;
+			margin-bottom: 5px;
+			font-size: 14px;
+			color: $text1;
+			font-family: "Lato", sans-serif;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
 	}
 }
 
@@ -24,6 +35,11 @@ main {
 	main {
 		h3 {
 			color: $darkText1;
+		}
+		form {
+			.forgotPassword {
+				color: $darkText1;
+			}
 		}
 	}
 }

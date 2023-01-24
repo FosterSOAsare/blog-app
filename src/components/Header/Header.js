@@ -4,7 +4,7 @@ import { useGlobalContext } from "../../context/AppContext";
 import Button2 from "../buttons/Button2";
 import DesktopMenu from "./DesktopMenu";
 import { useDarkContext } from "../../context/DarkContext";
-import topics from "../../assets/Topics";
+import topics from "../../assets/scss/Topics";
 
 const Header = () => {
 	const { credentials, firebase, notFound } = useGlobalContext();

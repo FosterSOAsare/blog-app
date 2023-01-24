@@ -2,7 +2,6 @@ import React from "react";
 import { useGlobalContext } from "../../../context/AppContext";
 import { useEffect } from "react";
 import { useViewsContext } from "../../../context/ViewsContext";
-import { useState } from "react";
 
 const BlogControls = ({ commentsLen, viewers, bookmarks = [], blog_id }) => {
 	const { firebase, credentials } = useGlobalContext();

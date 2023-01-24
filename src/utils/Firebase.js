@@ -980,4 +980,15 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
+	storeReport(user_id, report, callback) {
+		try {
+			addDoc(collection(this.db, "reports"), {
+				user_id,
+				report,
+			});
+			callback("success");
+		} catch (e) {
+			callback({ error: true });
+		}
+	}
 }

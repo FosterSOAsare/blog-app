@@ -17,11 +17,11 @@ import NewSponsorship from "./Pages/Sponsorships/NewSponsorship/NewSponsorship";
 import Requests from "./Pages/Sponsorships/Requests/Requests";
 import Request from "./Pages/Sponsorships/Requests/Request/Request";
 import Notifications from "./Pages/Notifications/Notifications";
-import ComingSoon from "./Pages/ComingSoon/ComingSoon";
 import { useDarkContext } from "./context/DarkContext";
 import NotFound from "./Pages/NotFound/NotFound";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
 import Block from "./Pages/Block/Block";
+import Report from "./Pages/Report/Report";
 
 function LoginRequired({ children }) {
 	const { credentials } = useGlobalContext();
@@ -52,7 +52,7 @@ function App() {
 						<Route index element={<Search />}></Route>
 						<Route path=":topic" element={<Search />}></Route>
 					</Route>
-					<Route path="report" element={<ComingSoon />}></Route>
+					
 					<Route path="sponsorships" >
 						<Route index element={<LoginRequired><Sponsorships /></LoginRequired>}></Route>
 						<Route path="new/:userId" element={<LoginRequired><NewSponsorship /></LoginRequired>}></Route>
@@ -69,6 +69,7 @@ function App() {
 				<Route path="/resetpassword" element={<ResetPassword/>}></Route>
 				<Route path="/block/:userId" element={<LoginRequired><Block /></LoginRequired> }></Route>
 				<Route path="*" element={<NotFound/>}></Route>
+				<Route path="/report" element={<Report />}></Route>
 			</Routes>
 		</div>
 	);

@@ -111,7 +111,7 @@
 	}
 }
 
-.waiting {
+.waiting.notifications {
 	@include flex(center, center);
 	height: 80vh;
 	img {

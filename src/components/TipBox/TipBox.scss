@@ -46,6 +46,10 @@
 			}
 			.waiting {
 				opacity: 0.5;
+				height: 35px;
+				border: none;
+				border-radius: 0;
+				@include flex(center, center);
 			}
 		}
 	}

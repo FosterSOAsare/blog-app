@@ -66,7 +66,8 @@ const TipBox = ({ type, upvotes, author_id, id, blog_id }) => {
 				onClick={() => {
 					if (credentials?.userId === author_id) return;
 					setShowForm(true);
-				}}>
+				}}
+			>
 				<i className="fa-solid fa-arrow-up"></i>
 				<p>{totalTips.toFixed(2)}</p>
 			</div>
@@ -87,12 +88,13 @@ const TipBox = ({ type, upvotes, author_id, id, blog_id }) => {
 										onClick={(e) => {
 											e.preventDefault(e);
 											setShowForm(false);
-										}}>
+										}}
+									>
 										Cancel
 									</button>
 								</>
 							)}
-							{waitingTip && <button className="waiting">Waiting...</button>}
+							{waitingTip && <button className="waiting upvote">Waiting...</button>}
 						</div>
 					</div>
 				</form>

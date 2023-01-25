@@ -5,7 +5,7 @@ import { useReducer, useEffect } from "react";
 import { checkSubscribed } from "../../../utils/Subscriptions.util";
 import { useSubscriptionContext } from "../../../context/SubscriptionContext";
 
-const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp, editTime, topics }) => {
+const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp, editTime, topics, userId }) => {
 	const [subs, subsDispatchFunc] = useReducer(reducerFunc, { subscribed: false, subscribers: [], data: {} });
 	const [showDrop, setShowDrop] = useState(false);
 	let { credentials, firebase, calculateTime } = useGlobalContext();
@@ -104,7 +104,11 @@ const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp, editTime,
 								<NavLink to="/report" className="drop_elem link">
 									Report this
 								</NavLink>
-								<div className="drop_elem">Block this user</div>
+								{username === credentials.user?.username && (
+									<NavLink to={`/block/${userId}`} className="drop_elem">
+										Block this user
+									</NavLink>
+								)}
 							</div>
 						)}
 					</div>

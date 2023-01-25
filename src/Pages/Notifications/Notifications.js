@@ -127,7 +127,7 @@ const Notifications = () => {
 					)}
 					{/* If notifications is not empty but is  waiting for mark all as read functionality */}
 					{waiting && (
-						<div className="waiting">
+						<div className="waiting notifications">
 							<img className="" src={Waiting} alt="Waiting" />
 						</div>
 					)}

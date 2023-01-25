@@ -9,20 +9,22 @@ const HomePage = () => {
 	useEffect(() => {
 		// Fetch all blogs
 		firebase.fetchBlogs(null, (res) => {
+			if (res.error) return;
 			setBlogs(res);
 		});
 	}, [firebase]);
 	return (
 		<section className="homepage">
 			<div className="container">
-				{blogs.length > 0 && (
+				{!blogs.empty && blogs.length > 0 && (
 					<div className="blogs">
 						{blogs?.map((e) => {
 							return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
 						})}
 					</div>
 				)}
-				{blogs.length === 0 && <Loading />}
+				{!blogs.empty && blogs?.length === 0 && <Loading />}
+				{blogs.empty && <p className="nothingHere">Nothing here...</p>}
 			</div>
 		</section>
 	);

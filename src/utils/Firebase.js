@@ -380,6 +380,10 @@ export class Firebase {
 				result = result.map((e, index) => {
 					return { ...e, comments: comments[index].docs.map((e) => e.data()) };
 				});
+				if (result.length === 0) {
+					callback({ empty: true });
+					return;
+				}
 				callback(result);
 			});
 		} catch (e) {
@@ -431,7 +435,7 @@ export class Firebase {
 		try {
 			// Store lead Image first
 			let path = "blogs/" + data.name;
-			data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", viewers: [], savedCount: 0, upvotes: JSON.stringify([]) };
+			data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", viewers: [], savedCount: 0, upvotes: [] };
 			this.storeImg(data?.file, path, async (res) => {
 				if (res.error) {
 					callback(res);
@@ -445,10 +449,13 @@ export class Firebase {
 				await runTransaction(this.db, async (transaction) => {
 					let q = query(collection(this.db, "subscriptions"), where("username", "==", data.author));
 					let subscriptions = await getDocs(q);
-					subscriptions = subscriptions.docs[0].data();
-					let subscribers = subscriptions.followers.split(" ");
 
 					addDoc(collection(this.db, "blogs"), data).then((res) => {
+						let subscribers = "";
+						if (!subscriptions.empty) {
+							subscriptions = subscriptions.docs[0].data();
+							subscribers = subscriptions.followers.split(" ");
+						}
 						let notif = {
 							desc: `@${data.author} has posted a new article, "${removeHTML(data.heading)}"`,
 							link: createLink(data.author, removeHTML(data.heading), res.id),
@@ -632,7 +639,7 @@ export class Firebase {
 					};
 				}
 
-				data = { ...data, timestamp: serverTimestamp(), likes: "", dislikes: "", upvotes: JSON.stringify([]) };
+				data = { ...data, timestamp: serverTimestamp(), likes: "", dislikes: "", upvotes: [] };
 				addDoc(collection(this.db, type), data);
 				this.insertNotification(notif);
 				callback("success");

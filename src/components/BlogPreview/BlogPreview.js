@@ -13,7 +13,7 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 	heading = removeHTML(heading);
 	const subButton = useRef(null);
 
-	let tips = JSON.parse(upvotes);
+	let tips = upvotes;
 
 	let total = 0;
 	if (tips?.length) {

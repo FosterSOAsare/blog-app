@@ -19,14 +19,10 @@ const TipBox = ({ type, upvotes, author_id, id, blog_id }) => {
 	}, [tips]);
 
 	useEffect(() => {
-		// Amount , username , profile picture
-		let tips = upvotes && upvotes !== "" ? JSON.parse(upvotes) : [];
-		// Sort to get the highest tip
-		if (tips.length) {
-			tips = tips.sort((a, b) => b.amount - a.amount);
+		if (Array.isArray(upvotes) && upvotes.length) {
+			setTips(upvotes);
 		}
-		setTips(tips);
-	}, [upvotes]);
+	}, [tips, upvotes]);
 
 	function sendTip(e) {
 		e.preventDefault();
@@ -41,7 +37,7 @@ const TipBox = ({ type, upvotes, author_id, id, blog_id }) => {
 			return;
 		}
 
-		// Check if user has already upvoted and update
+		// // Check if user has already upvoted and update
 		let newData = tips.find((e) => e.username === credentials?.user?.username);
 
 		if (newData) {
@@ -49,11 +45,11 @@ const TipBox = ({ type, upvotes, author_id, id, blog_id }) => {
 				return e.username === credentials?.user?.username ? { ...e, amount: (parseFloat(e.amount) + parseFloat(value)).toFixed(2) } : e;
 			});
 		} else {
-			newData = [{ amount: parseFloat(value).toFixed(2), username: credentials?.user?.username, profile_img: credentials?.user?.img_src || "" }];
+			newData = [...tips, { amount: parseFloat(value).toFixed(2), username: credentials?.user?.username, profile_img: credentials?.user?.img_src || "" }];
 		}
 
 		setWaitingTip(true);
-		firebase.storeUpvote({ type, id, upvotes: JSON.stringify(newData), receiver_id: author_id, sender_id: credentials?.userId, value: parseFloat(value).toFixed(2), blog_id }, (res) => {
+		firebase.storeUpvote({ type, id, upvotes: newData, receiver_id: author_id, sender_id: credentials?.userId, value: parseFloat(value).toFixed(2), blog_id }, (res) => {
 			if (res.error) return;
 			setShowForm(false);
 			setWaitingTip(false);
@@ -66,8 +62,7 @@ const TipBox = ({ type, upvotes, author_id, id, blog_id }) => {
 				onClick={() => {
 					if (credentials?.userId === author_id) return;
 					setShowForm(true);
-				}}
-			>
+				}}>
 				<i className="fa-solid fa-arrow-up"></i>
 				<p>{totalTips.toFixed(2)}</p>
 			</div>
@@ -88,8 +83,7 @@ const TipBox = ({ type, upvotes, author_id, id, blog_id }) => {
 										onClick={(e) => {
 											e.preventDefault(e);
 											setShowForm(false);
-										}}
-									>
+										}}>
 										Cancel
 									</button>
 								</>

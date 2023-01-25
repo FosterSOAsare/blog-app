@@ -955,7 +955,7 @@ export class Firebase {
 						});
 					}
 				});
-				// console.log(profileUserDoc);
+
 				// 		// Unsubscribe from the user
 				// 		// Store blocked
 			}

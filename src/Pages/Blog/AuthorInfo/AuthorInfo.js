@@ -58,7 +58,7 @@ const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp, editTime,
 					} else {
 						subsDispatchFunc({ type: "setSubscribed", payload: false });
 					}
-					subsDispatchFunc({ type: "setSubscribers", payload: res.followers !== "" ? res.followers.split(" ") : [] });
+					subsDispatchFunc({ type: "setSubscribers", payload: res.followers });
 				}
 				subsDispatchFunc({ type: "setData", payload: res });
 			});

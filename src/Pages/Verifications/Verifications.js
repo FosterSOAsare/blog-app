@@ -12,7 +12,6 @@ const Verifications = () => {
 		setVerificationObject(Object.fromEntries(params));
 	}, [location]);
 
-	console.log(verificationObject);
 	return <div>Verifications</div>;
 };
 

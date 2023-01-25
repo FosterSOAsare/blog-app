@@ -38,7 +38,7 @@ const UserInfo = ({ setShowEditForm, setDeleteUserActive, data, checkBlockedByLo
 					} else {
 						subsDispatchFunc({ type: "setSubscribed", payload: false });
 					}
-					subsDispatchFunc({ type: "setSubscribers", payload: res.followers !== "" ? res.followers.split(" ") : [] });
+					subsDispatchFunc({ type: "setSubscribers", payload: res.followers });
 				}
 				subsDispatchFunc({ type: "setData", payload: res });
 			});

@@ -139,6 +139,25 @@
 	}
 }
 
+@media screen and (max-width: 520px) {
+	.userInfo {
+		@include flex(flex-start, flex-start);
+		gap: 10px;
+		.section__image {
+			width: 100px;
+			height: 70px;
+			margin-right: 0px;
+		}
+		.section__text {
+			margin-left: 10px;
+			h3 {
+				margin-bottom: 3px;
+			}
+
+			width: auto;
+		}
+	}
+}
 .dark {
 	.userInfo {
 		.section__text {

@@ -16,7 +16,7 @@ const Profile = () => {
 	let { firebase, credentials, credentialsDispatchFunc, notFound, setNotFound, blocked } = useGlobalContext();
 	let { loggedInUserBlocked, checkBlockedByAuthor } = useBlockedContext();
 	const [showEditForm, setShowEditForm] = useState(false);
-	const [deleteUserActive, setDeleteUserActive] = useState(false);
+	const [deleteUserActive, setDeleteUserActive] = useState(true);
 
 	let username = useParams().username;
 	username = username.split("@")[1];

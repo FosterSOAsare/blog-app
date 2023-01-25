@@ -149,7 +149,6 @@ button.cancel {
 
 body {
 	padding-top: 98px;
-	padding-bottom: 100vh;
 }
 body:has(.dark) {
 	background-color: $darkBg;
@@ -166,5 +165,11 @@ body:has(.dark) {
 	}
 	.error {
 		color: $error;
+	}
+}
+
+@media screen and (max-width: 420px) {
+	body {
+		padding-top: 68px;
 	}
 }

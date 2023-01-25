@@ -9,138 +9,131 @@
 	padding: 10px 20px 10px 20px;
 	margin-bottom: 20px;
 	background-color: white;
+
 	.content {
 		width: 100%;
 		height: auto;
-		@include flex(space-between, center);
 		.leadImage {
 			height: 70px;
-			width: 100px;
-			display: block;
+			width: 140px;
+			float: right;
+			margin: 10px 0 10px 10px;
 			img {
 				width: 100%;
 				height: 100%;
 			}
 		}
-		.left {
-			width: 88%;
-			height: auto;
-			h3.preview__heading {
-				font-size: 20px;
-				margin-bottom: 10px;
-				font-family: "Lato", sans-serif;
+		h3.preview__heading {
+			font-size: 20px;
+			margin-bottom: 10px;
+			font-family: "Lato", sans-serif;
+		}
+		p {
+			font-family: "Lato", sans-serif;
+		}
+		.actions {
+			width: 100%;
+			height: 20px;
+			margin-top: 10px;
+			@include flex(flex-start, center);
+			gap: 20px;
+			.action {
+				width: auto;
+				height: 100%;
+				@include flex(flex-start, center);
+				.icon {
+					width: 20px;
+					height: 100%;
+					@include flex(center, center);
+					font-size: 13px;
+					margin-right: 10px;
+					opacity: 0.3;
+					&:hover {
+						cursor: pointer;
+					}
+					i {
+						font-size: 13px;
+					}
+				}
+				.active,
+				.dislike {
+					opacity: 0.9;
+					i {
+						color: $liked;
+					}
+				}
+				.dislike {
+					i {
+						color: red;
+					}
+				}
+			}
+			.rating {
+				i.up {
+					margin: 0 !important;
+				}
+				p {
+					padding: 0;
+					margin: 0 10px 0 0;
+				}
 			}
 			p {
-				font-family: "Lato", sans-serif;
-			}
-		}
-	}
-
-	.actions {
-		width: 100%;
-		height: 20px;
-		margin-top: 10px;
-		@include flex(flex-start, center);
-
-		gap: 20px;
-
-		.action {
-			width: auto;
-			height: 100%;
-			@include flex(flex-start, center);
-
-			.icon {
-				width: 20px;
-				height: 100%;
-				@include flex(center, center);
-				font-size: 13px;
 				margin-right: 10px;
-				opacity: 0.3;
+				font-size: 12px;
+				font-family: "Cabin", sans-serif;
+				font-weight: 400;
+				opacity: 0.8;
+			}
+			.username.link {
+				font-size: 14px;
+			}
+			.blog_controls {
+				background-color: $grey;
+				@include flex(center, center);
+				width: 30px;
+				height: 20px;
+				margin-left: auto;
+				position: relative;
+
+				i {
+					font-size: 12px;
+				}
 				&:hover {
 					cursor: pointer;
 				}
-				i {
-					font-size: 13px;
-				}
-			}
-			.active,
-			.dislike {
-				opacity: 0.9;
-				i {
-					color: $liked;
-				}
-			}
-			.dislike {
-				i {
-					color: red;
-				}
-			}
-		}
-		.rating {
-			i.up {
-				margin: 0 !important;
-			}
-			p {
-				padding: 0;
-				margin: 0 10px 0 0;
-			}
-		}
-		p {
-			margin-right: 10px;
-			font-size: 12px;
-			font-family: "Cabin", sans-serif;
-			font-weight: 400;
-			opacity: 0.8;
-		}
-		.username.link {
-			font-size: 14px;
-		}
-		.blog_controls {
-			background-color: $grey;
-			@include flex(center, center);
-			width: 30px;
-			height: 20px;
-			margin-left: auto;
-			position: relative;
+				.controls_sub {
+					width: 200px;
+					height: auto;
+					position: absolute;
+					top: 20px;
+					right: -100px;
+					background-color: $white;
+					border-radius: 2px;
+					border: 1px solid $grey;
+					.elem {
+						width: 100%;
+						height: 45px;
+						border-bottom: 1px solid $grey;
+						font-size: 14px;
+						font-weight: bold;
+						@include flex(center, center);
+						opacity: 0.8;
+						text-decoration: none;
+						color: $text1;
 
-			i {
-				font-size: 12px;
-			}
-			&:hover {
-				cursor: pointer;
-			}
-			.controls_sub {
-				width: 200px;
-				height: auto;
-				position: absolute;
-				top: 20px;
-				right: -100px;
-				background-color: $white;
-				border-radius: 5px;
-				border: 1px solid $grey;
-				.elem {
-					width: 100%;
-					height: 45px;
-					border-bottom: 1px solid $grey;
-					font-size: 14px;
-					font-weight: bold;
-					@include flex(center, center);
-					opacity: 0.8;
-					text-decoration: none;
-					color: $text1;
-
-					&:hover {
-						background-color: $grey;
-					}
-					&:last-child {
-						border: none;
+						&:hover {
+							background-color: $grey;
+						}
+						&:last-child {
+							border: none;
+						}
 					}
 				}
 			}
-		}
-		.comments {
-			text-decoration: none;
-			color: black;
+			.comments {
+				text-decoration: none;
+				color: black;
+			}
 		}
 	}
 }
@@ -163,6 +156,9 @@
 
 			.blog_controls {
 				background-color: $grey;
+				i {
+					color: $text1;
+				}
 				.controls_sub {
 					background-color: #293448;
 					border: 1px solid $darkBg;
@@ -174,6 +170,61 @@
 						}
 						&:last-child {
 							border: none;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 760px) {
+	.blogPreview {
+		.content {
+			.leadImage {
+				width: 100px;
+				height: 55px;
+				margin-bottom: 3px;
+			}
+
+			.link {
+				h3 {
+					font-size: 16px;
+					margin-bottom: 5px;
+				}
+			}
+			.actions {
+				gap: 12px;
+				p {
+					font-size: 12px;
+				}
+				.action {
+					margin-right: 0px;
+					width: auto;
+					.icon {
+						margin-right: 0;
+						i {
+							font-size: 12px;
+						}
+					}
+					p {
+						font-size: 12px;
+						margin-left: 4px;
+						margin-right: 4px;
+					}
+				}
+				p {
+					font-size: 12px;
+				}
+				.username.link {
+					font-size: 12px;
+				}
+				.blog_controls {
+					.controls_sub {
+						width: 120px;
+						right: -33px;
+						.elem {
+							font-size: 12px;
 						}
 					}
 				}

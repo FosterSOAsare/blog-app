@@ -33,7 +33,6 @@ header {
 				}
 				.profile__menu {
 					width: auto;
-					margin-left: 50px;
 					margin-right: 10px;
 					height: auto;
 					@include flex(space-between, center);
@@ -204,7 +203,7 @@ header {
 	}
 	.topics {
 		height: auto;
-		min-height: 120px;
+		min-height: 80px;
 		background-color: $white;
 		display: inline;
 		position: absolute;
@@ -216,14 +215,13 @@ header {
 		text-transform: capitalize;
 		@include container;
 		width: auto;
-		padding: 20px 40px;
-		background-color: red;
+		padding: 10px 10px;
 		border: 1px solid $grey;
 		border-radius: 2px;
 		.link {
 			display: inline-block;
 			margin-right: 20px;
-			margin-bottom: 10px;
+			margin-bottom: 0;
 			font-family: "Lato", sans-serif;
 			color: $text1;
 			font-size: 14px;
@@ -234,6 +232,51 @@ header {
 	}
 }
 
+@media screen and (max-width: 520px) {
+	header {
+		height: 70px;
+		.header__container {
+			.left__side {
+				width: auto;
+				.content {
+					padding: 0;
+					margin: 0;
+					.profile__menu {
+						p,
+						.link {
+							font-size: 13px;
+						}
+					}
+					.controls,
+					.user__notices {
+						margin-top: -3px;
+						margin-left: -5px;
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 420px) {
+	header {
+		.header__container {
+			.left__side {
+				width: auto;
+				width: auto;
+				.content {
+					.profile__menu {
+						display: none;
+					}
+					.controls,
+					.user__notices {
+						margin-top: 10px;
+					}
+				}
+			}
+		}
+	}
+}
 .dark {
 	header {
 		background-color: $darkBg2;

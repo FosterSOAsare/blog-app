@@ -17,3 +17,12 @@
 		background-color: $darkBg;
 	}
 }
+
+@media screen and (max-width: 420px) {
+	.homepage {
+		padding-inline: 0;
+		.container {
+			padding: 0 10px;
+		}
+	}
+}

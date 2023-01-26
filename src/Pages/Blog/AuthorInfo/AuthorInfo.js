@@ -71,7 +71,7 @@ const AuthorInfo = ({ username, blog_id, img_src, bio, blog_timestamp, editTime,
 			<div className="desc">
 				<div className="actions">
 					<p>
-						Written by{" "}
+						Written by
 						<NavLink className="link user" to={`/@${username}`}>
 							{username}
 						</NavLink>

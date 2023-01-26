@@ -1,7 +1,6 @@
 .comment {
 	width: 98%;
 	min-height: 90px;
-	// background-color: green;
 	position: relative;
 	margin-bottom: 30px;
 	border-left: 2px solid $text1;
@@ -147,6 +146,14 @@
 	background-color: #aa73b4;
 }
 
+@media screen and (max-width: 860px) {
+	.comment {
+		padding-left: 10px;
+		.reply_info {
+			background-color: grey;
+		}
+	}
+}
 .dark {
 	.comment {
 		.reply_info {

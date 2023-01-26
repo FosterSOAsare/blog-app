@@ -14,7 +14,6 @@ main.blog {
 		&::before {
 			content: attr(data-heading);
 			color: $white;
-			filter: none;
 			font-family: "Cabin", sans-serif;
 			font-weight: bold;
 			font-size: 36px;
@@ -22,6 +21,9 @@ main.blog {
 			text-shadow: 2px 2px 3px black;
 			opacity: 1;
 			z-index: 3;
+			width: auto;
+			max-width: 80%;
+			text-align: center;
 		}
 	}
 	.blog__content {
@@ -87,7 +89,6 @@ main.blog {
 	opacity: 0.5;
 }
 #comments {
-	// @include container;
 	background-color: $background2;
 	border-top: 1px solid $grey;
 	margin-top: 10px;
@@ -127,6 +128,17 @@ main.blog {
 			margin-top: 30px;
 			min-height: 200px;
 			padding: 0;
+		}
+	}
+}
+
+@media screen and (max-width: 860px) {
+	#comments {
+		.comments__container {
+			padding-inline: 20px;
+			h3 {
+				margin-left: 10px;
+			}
 		}
 	}
 }

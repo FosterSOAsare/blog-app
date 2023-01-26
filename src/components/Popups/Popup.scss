@@ -10,13 +10,21 @@ section.popup {
 	flex-direction: column;
 	opacity: 1;
 	z-index: 3;
-	p {
-		font-size: 15px;
+	.container {
+		max-width: 500px;
+		width: 100%;
+		height: auto;
+	}
+	h3 {
+		font-size: 13px;
 		font-weight: bold;
-		margin-bottom: 20px;
+		margin-bottom: 40px;
+		width: 100%;
+		text-align: center;
 	}
 	.actions {
-		width: 40%;
+		width: 90%;
+		max-width: 540px;
 		@include flex(space-between, center);
 		gap: 20px;
 		button {
@@ -24,11 +32,20 @@ section.popup {
 			font-weight: bold;
 		}
 	}
+	form {
+		width: 100%;
+		input {
+			height: 40px;
+			width: 90%;
+		}
+	}
 }
 
 .formPopUp {
 	textarea {
 		margin-bottom: 20px;
+		width: 95%;
+		min-height: 200px;
 	}
 }
 section.confirmPopUp {
@@ -48,6 +65,29 @@ section.confirmPopUp {
 	}
 }
 
+@media screen and (max-width: 560px) {
+	section.popup {
+		.container {
+			h3 {
+				width: 90%;
+				margin: 10px auto;
+				margin-bottom: 30px;
+			}
+
+			.actions {
+				flex-direction: column;
+				align-items: flex-start;
+				button {
+					width: 70%;
+				}
+				// width: 100%;
+			}
+		}
+	}
+	section.confirmpopUp {
+		background-color: red;
+	}
+}
 .dark {
 	section.popup {
 		background-color: $darkBg;

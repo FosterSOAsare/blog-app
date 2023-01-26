@@ -1,6 +1,5 @@
 .account {
 	@include container;
-	// background-color: red;
 	height: auto;
 	h3 {
 		font-size: 18px;
@@ -110,6 +109,23 @@
 	}
 	.waiting {
 		opacity: 0.6;
+	}
+}
+
+@media screen and (max-width: 660px) {
+	.account {
+		h3 {
+			text-align: center;
+		}
+		.details {
+			flex-direction: column;
+			.password,
+			.email {
+				width: 100%;
+				max-width: 540px;
+				margin: 0 auto;
+			}
+		}
 	}
 }
 

@@ -3,6 +3,7 @@ body:has(section.block) {
 	@include flex(center, center);
 
 	.actions {
+		margin-top: 30px;
 		.block {
 			border: 2px solid $error;
 			color: $error;

@@ -61,6 +61,7 @@ const Profile = () => {
 				//
 				return;
 			}
+			if (blogs.empty) blogs = [];
 			// sorts drafts and published articles
 			blogs = [...blogs.filter((e) => e.type === "draft"), ...blogs.filter((e) => e.type === "publish")];
 			setProfileData({ type: "storeBlogs", payload: blogs });

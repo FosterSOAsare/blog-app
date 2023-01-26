@@ -16,6 +16,7 @@ const CreateBlog = () => {
 	let { credentials, firebase, notFound, setNotFound } = useGlobalContext();
 	const [stored, setStored] = useReducer(storedFunc, { stored: false, published: false });
 	const [confirmDeleteBlog, setConfirmDeleteBlog] = useState(false);
+	const [waiting, setWaiting] = useState(false);
 	const [selectedTopics, selectedTopicsDispatchFunc] = useReducer(selectedTopicsFunc, {
 		displayForm: false,
 		selectedTopics: [],
@@ -69,6 +70,11 @@ const CreateBlog = () => {
 		// blogId && "";
 	}, [blogId, firebase, setNotFound]);
 
+	useEffect(() => {
+		if (error.display !== "none") {
+			setWaiting(false);
+		}
+	}, [error]);
 	function storedFunc(stored, action) {
 		switch (action.type) {
 			case "saveDraft":
@@ -80,11 +86,13 @@ const CreateBlog = () => {
 		}
 	}
 
-	function updateArticle(e) {
+	function updateArticle() {
 		let message = article.current.editor.getData();
 		let heading = header.current.editor.getData();
 		let image = leadImage.current;
 
+		if (waiting) return;
+		setWaiting(true);
 		let data = {};
 		if (image.files?.length) {
 			let ext = image.files[0].name.split(".");
@@ -97,12 +105,15 @@ const CreateBlog = () => {
 		firebase.updateBlog({ ...data, heading, message, blog_id: blogId }, (res) => {
 			if (res.error) return;
 			setStored({ type: "publish" });
+			setWaiting(false);
 		});
 	}
-	function publishArticle(e) {
+	function publishArticle() {
 		let message = article.current.editor.getData();
 		let heading = header.current.editor.getData();
 		let image = leadImage.current;
+		if (waiting) return;
+		// setWaiting(true);
 
 		if (!image.files?.length) {
 			errorFunc({ type: "displayError", payload: "Lead Image not set. Please add a lead image " });
@@ -117,15 +128,25 @@ const CreateBlog = () => {
 			return;
 		}
 		let ext = image.files[0].name.split(".");
+		let data = {
+			type: "publish",
+			topics: selectedTopics.selectedTopics,
+			heading,
+			message,
+			author_id: credentials?.userId,
+			author: credentials?.user?.username,
+		};
+
 		ext = ext[ext.length - 1];
 		let name = removeSpaces(removeSpecialChars(removeHTML(heading))).toLowerCase() + "-" + new Date().getTime() + "." + ext.toLowerCase();
-		firebase.storeBlog(
-			{ type: "publish", topics: selectedTopics.selectedTopics, heading, message, author_id: credentials?.userId, author: credentials?.user?.username, name, file: image.files[0] },
-			(res) => {
-				if (res.error) return;
-				setStored({ type: "publish" });
-			}
-		);
+		data.name = name;
+		data.file = image.files[0];
+
+		firebase.storeBlog(data, (res) => {
+			if (res.error) return;
+			setStored({ type: "publish" });
+			// setWaiting(false);
+		});
 	}
 	function deleteArticle(e) {
 		firebase.deleteArticle(blogId, (res) => {
@@ -133,6 +154,28 @@ const CreateBlog = () => {
 			setNotFound(false);
 			if (res.error) return;
 		});
+	}
+
+	function saveDraft() {
+		// let message = article.current.editor.getData();
+		// let heading = header.current.editor.getData();
+		// let image = leadImage.current;
+		// // if (waiting) return;
+		// // setWaiting(true);
+		// let data = {};
+		// if (image.files?.length) {
+		// 	let ext = image.files[0].name.split(".");
+		// 	ext = ext[ext.length - 1];
+		// 	data.name = removeSpaces(removeSpecialChars(removeHTML(heading))).toLowerCase() + "-" + new Date().getTime() + "." + ext.toLowerCase();
+		// 	data.file = image.files[0];
+		// }
+		// if (selectedTopics.selectedTopics.length > 0) data.topics = selectedTopics.selectedTopics;
+		// firebase.storeBlog({ ...data, heading, message, type: "draft", author: credentials?.user?.username, author_id: credentials?.userId }, (res) => {
+		// 	console.log(res);
+		// 	// if (res.error) return;
+		// 	// setStored({ type: "publish" });
+		// 	// setWaiting(false);
+		// });
 	}
 
 	function setTopic(text) {
@@ -158,8 +201,23 @@ const CreateBlog = () => {
 							<a href="https://read.cash/@Read.Cash/how-to-use-the-editor-at-readcash-e2df60aa" target="_blank" rel="noreferrer">
 								Editor help
 							</a>
-							<button className="draft">Save as Draft</button>
-							<button onClick={(e) => (blogId ? updateArticle(e) : publishArticle(e))}>{blogId ? "Update" : "Publish"}</button>
+							{edit?.data?.type !== "draft" && (
+								<button className="draft" onClick={saveDraft}>
+									Save as Draft
+								</button>
+							)}
+							{!waiting && (
+								<>
+									{blogId && <button onClick={() => updateArticle()}>Update </button>}
+									{(edit?.data?.type === "draft" || !blogId) && (
+										<button className="publish" onClick={() => publishArticle()}>
+											Publish
+										</button>
+									)}
+								</>
+								// This is to check whether the article was saved as draft , published and is been edited or it is been newly created .
+							)}
+							{waiting && <button className="waiting">{blogId ? "Updating..." : "Publishing..."}</button>}
 							{edit?.data && (
 								<button className="cancel delete" onClick={() => setConfirmDeleteBlog(true)}>
 									Delete

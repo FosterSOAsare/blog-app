@@ -86,6 +86,7 @@
 		}
 		.topics {
 			font-family: "Lato", sans-serif;
+			text-transform: capitalize;
 		}
 		.userTime {
 			@include flex(flex-start, center);

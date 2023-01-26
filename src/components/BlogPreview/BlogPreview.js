@@ -50,9 +50,7 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 	return (
 		<article className="blogPreview">
 			<div className="content">
-				<div className="leadImage">
-					<img src={lead_image_src} alt="Lead" />
-				</div>
+				<div className="leadImage">{lead_image_src && <img src={lead_image_src} alt="Lead" />}</div>
 				<NavLink to={link} className="link">
 					<h3 className="preview__heading">{truncateText(removeHTML(heading), 100)}</h3>
 				</NavLink>

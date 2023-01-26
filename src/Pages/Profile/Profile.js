@@ -61,6 +61,9 @@ const Profile = () => {
 				//
 				return;
 			}
+			// sorts drafts and published articles
+			blogs = [...blogs.filter((e) => e.type === "draft"), ...blogs.filter((e) => e.type === "publish")];
+			console.log(blogs);
 			setProfileData({ type: "storeBlogs", payload: blogs });
 		});
 	}, [firebase, username, notFound, setNotFound, credentials?.userId]);
@@ -145,10 +148,23 @@ const Profile = () => {
 					{!profileData?.blogs && <Loading className="profileLoading" errorStatus={false} />}
 					{profileData?.blogs && profileData?.blogs.length > 0 && !loggedInUserBlocked && (
 						<section id="articles">
-							{profileData.blogs.length > 0 &&
-								profileData.blogs.map((e) => {
-									return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
-								})}
+							{profileData.blogs.length > 0 && (
+								<>
+									{/* drafts */}
+									{credentials?.user?.username === profileData.user.username &&
+										profileData.blogs
+											.filter((e) => e.type === "draft")
+											.map((e) => {
+												return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
+											})}
+									{/* Published articles */}
+									{profileData.blogs
+										.filter((e) => e.type === "publish")
+										.map((e) => {
+											return e ? <BlogPreview {...e} key={e.blog_id} /> : "";
+										})}
+								</>
+							)}
 						</section>
 					)}
 					{profileData?.blogs && profileData?.blogs.length === 0 && loggedInUserBlocked && <p className="noblogs">Nothing here...</p>}

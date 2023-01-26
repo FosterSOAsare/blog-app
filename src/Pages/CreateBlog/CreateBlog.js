@@ -148,7 +148,9 @@ const CreateBlog = () => {
 		} else {
 			data.lead_image_src = edit.data.lead_image_src;
 		}
-		data.draft_id = edit.data.blog_id;
+		if (edit?.data?.blog_id && edit.data?.type === "draft") {
+			data.draft_id = edit.data.blog_id;
+		}
 		// Send article for publishing
 		firebase.storeBlog(data, (res) => {
 			if (res.error) return;
@@ -183,7 +185,7 @@ const CreateBlog = () => {
 		if (selectedTopics.selectedTopics.length > 0) data.topics = selectedTopics.selectedTopics;
 		firebase.storeBlog({ ...data, heading, message, type: "draft", author: credentials?.user?.username, author_id: credentials?.userId }, (res) => {
 			if (res.error) return;
-			setStored({ type: "draft" });
+			setStored({ type: "publish" });
 			setWaiting(false);
 		});
 	}
@@ -242,11 +244,17 @@ const CreateBlog = () => {
 									Topics :{" "}
 									<span>
 										{selectedTopics.selectedTopics.join(", ")}
-										{!selectedTopics.displayForm && <button onClick={() => selectedTopicsDispatchFunc({ type: "displaySelect", payload: true })}>[click to edit]</button>}
+										{!selectedTopics.displayForm && (
+											<button onClick={() => selectedTopicsDispatchFunc({ type: "displaySelect", payload: true })} className="edit_topics">
+												[click to edit]
+											</button>
+										)}
 									</span>
 								</p>
 							)}
-							<label htmlFor="lead__image">Add lead image</label>
+							<label htmlFor="lead__image" className="lead_image">
+								Add lead image
+							</label>
 							<input type="file" accept="image/*" name="lead__image" id="lead__image" ref={leadImage} />
 						</div>
 						<div className="editors">

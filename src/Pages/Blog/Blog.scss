@@ -133,6 +133,18 @@ main.blog {
 }
 
 @media screen and (max-width: 860px) {
+	main.blog {
+		.article__image {
+			height: 230px;
+		}
+		.blog__content {
+			.content {
+				p {
+					font-size: 14px;
+				}
+			}
+		}
+	}
 	#comments {
 		padding-inline: 5px;
 		.comments__container {

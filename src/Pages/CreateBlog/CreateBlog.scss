@@ -90,6 +90,7 @@ section.createBlog {
 				cursor: pointer;
 			}
 		}
+
 		.blogSelectedTopics {
 			width: auto;
 			max-width: 80%;
@@ -225,6 +226,24 @@ section.createBlog {
 	}
 }
 
+@media screen and (max-width: 860px) {
+	section.createBlog {
+		.adds {
+			margin-top: 20px;
+			label {
+				min-width: 120px;
+				font-size: 13px;
+			}
+			button.edit_topics {
+				font-size: 13px;
+			}
+		}
+	}
+	.blogError {
+		min-height: calc(100vh - 60px);
+		top: 60px;
+	}
+}
 .dark {
 	section.createBlog {
 		p,

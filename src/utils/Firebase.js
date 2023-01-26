@@ -486,8 +486,7 @@ export class Firebase {
 
 			let subscribers = [];
 			if (!subscriptions.empty) {
-				subscriptions = subscriptions.docs[0].data();
-				subscribers = subscriptions.followers.split(" ");
+				subscribers = subscriptions.docs[0].data();
 			}
 			let notif = {
 				desc: `@${author} has posted a new article, "${removeHTML(heading)}"`,
@@ -526,7 +525,9 @@ export class Firebase {
 				return;
 			}
 
-			updateDoc(doc(this.db, "blogs", data.blog_id), data).then(() => {});
+			let blog_id = data.blog_id;
+			delete data.blog_id;
+			updateDoc(doc(this.db, "blogs", blog_id), data).then(() => {});
 			callback("success");
 		} catch (error) {
 			callback({ error: "An error occurred " });

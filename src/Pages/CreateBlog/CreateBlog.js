@@ -104,18 +104,22 @@ const CreateBlog = () => {
 
 		firebase.updateBlog({ ...data, heading, message, blog_id: blogId }, (res) => {
 			if (res.error) return;
-			setStored({ type: "publish" });
-			setWaiting(false);
+			setTimeout(() => {
+				setStored({ type: "publish" });
+				setWaiting(false);
+			}, 2000);
 		});
 	}
+	// This function is called when a drafted article is being published and when an article that was never drafted is being published
 	function publishArticle() {
 		let message = article.current.editor.getData();
 		let heading = header.current.editor.getData();
 		let image = leadImage.current;
 		if (waiting) return;
-		// setWaiting(true);
 
-		if (!image.files?.length) {
+		setWaiting(true);
+		// Check to see if no lead image is set
+		if (!image.files?.length && !edit?.data?.lead_image_src) {
 			errorFunc({ type: "displayError", payload: "Lead Image not set. Please add a lead image " });
 			return;
 		}
@@ -127,7 +131,6 @@ const CreateBlog = () => {
 			errorFunc({ type: "displayError", payload: "Post must be more than 25 characters long" });
 			return;
 		}
-		let ext = image.files[0].name.split(".");
 		let data = {
 			type: "publish",
 			topics: selectedTopics.selectedTopics,
@@ -136,16 +139,23 @@ const CreateBlog = () => {
 			author_id: credentials?.userId,
 			author: credentials?.user?.username,
 		};
-
-		ext = ext[ext.length - 1];
-		let name = removeSpaces(removeSpecialChars(removeHTML(heading))).toLowerCase() + "-" + new Date().getTime() + "." + ext.toLowerCase();
-		data.name = name;
-		data.file = image.files[0];
-
+		if (image.files.length > 0) {
+			let ext = image.files[0].name.split(".");
+			ext = ext[ext.length - 1];
+			let name = removeSpaces(removeSpecialChars(removeHTML(heading))).toLowerCase() + "-" + new Date().getTime() + "." + ext.toLowerCase();
+			data.name = name;
+			data.file = image.files[0];
+		} else {
+			data.lead_image_src = edit.data.lead_image_src;
+		}
+		data.draft_id = edit.data.blog_id;
+		// Send article for publishing
 		firebase.storeBlog(data, (res) => {
 			if (res.error) return;
-			setStored({ type: "publish" });
-			// setWaiting(false);
+			setTimeout(() => {
+				setStored({ type: "publish" });
+				setWaiting(false);
+			}, 2000);
 		});
 	}
 	function deleteArticle(e) {
@@ -157,25 +167,26 @@ const CreateBlog = () => {
 	}
 
 	function saveDraft() {
-		// let message = article.current.editor.getData();
-		// let heading = header.current.editor.getData();
-		// let image = leadImage.current;
-		// // if (waiting) return;
-		// // setWaiting(true);
-		// let data = {};
-		// if (image.files?.length) {
-		// 	let ext = image.files[0].name.split(".");
-		// 	ext = ext[ext.length - 1];
-		// 	data.name = removeSpaces(removeSpecialChars(removeHTML(heading))).toLowerCase() + "-" + new Date().getTime() + "." + ext.toLowerCase();
-		// 	data.file = image.files[0];
-		// }
-		// if (selectedTopics.selectedTopics.length > 0) data.topics = selectedTopics.selectedTopics;
-		// firebase.storeBlog({ ...data, heading, message, type: "draft", author: credentials?.user?.username, author_id: credentials?.userId }, (res) => {
-		// 	console.log(res);
-		// 	// if (res.error) return;
-		// 	// setStored({ type: "publish" });
-		// 	// setWaiting(false);
-		// });
+		let message = article.current.editor.getData();
+		let heading = header.current.editor.getData();
+		let image = leadImage.current;
+		// if (waiting) return;
+		// setWaiting(true);
+		// In drafts, it is not compulsory to have a lead image
+		let data = {};
+		if (image.files?.length) {
+			let ext = image.files[0].name.split(".");
+			ext = ext[ext.length - 1];
+			data.name = removeSpaces(removeSpecialChars(removeHTML(heading))).toLowerCase() + "-" + new Date().getTime() + "." + ext.toLowerCase();
+			data.file = image.files[0];
+		}
+		if (selectedTopics.selectedTopics.length > 0) data.topics = selectedTopics.selectedTopics;
+		firebase.storeBlog({ ...data, heading, message, type: "draft", author: credentials?.user?.username, author_id: credentials?.userId }, (res) => {
+			console.log(res);
+			if (res.error) return;
+			setStored({ type: "draft" });
+			setWaiting(false);
+		});
 	}
 
 	function setTopic(text) {
@@ -299,6 +310,11 @@ const CreateBlog = () => {
 					</section>
 					{stored.published && <Navigate to={`/@${credentials?.user?.username}`} />}
 					{navigate && <Navigate to={`/@${credentials?.user?.username}`} />}
+					{waiting && (
+						<div className="blogWaiting">
+							<p>Waiting for command execution...</p>
+						</div>
+					)}
 				</>
 			)}
 			{!notFound && error.display !== "none" && (

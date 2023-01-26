@@ -436,43 +436,73 @@ export class Firebase {
 			// Store lead Image first
 			let path = "blogs/" + data.name;
 			data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", viewers: [], savedCount: 0, upvotes: [] };
-			this.storeImg(data?.file, path, async (res) => {
-				if (res.error) {
-					callback(res);
-					return;
-				}
-				delete data.file;
-				delete data.name;
-				delete data.author_id;
-				data.lead_image_src = res;
-				if (!data.topics) delete data.topics;
-				await runTransaction(this.db, async (transaction) => {
-					let q = query(collection(this.db, "subscriptions"), where("username", "==", data.author));
-					let subscriptions = await getDocs(q);
 
-					addDoc(collection(this.db, "blogs"), data).then((res) => {
-						let subscribers = "";
-						if (!subscriptions.empty) {
-							subscriptions = subscriptions.docs[0].data();
-							subscribers = subscriptions.followers.split(" ");
-						}
-						let notif = {
-							desc: `@${data.author} has posted a new article, "${removeHTML(data.heading)}"`,
-							link: createLink(data.author, removeHTML(data.heading), res.id),
-							receivers: subscribers.map((e) => {
-								return { receiver_id: e, status: "unread" };
-							}),
-							type: "post",
-						};
-						this.insertNotification(notif);
-					});
+			// Check if there is a lead image file or an src was passed
+			if (data.file) {
+				// Store lead image
+				this.storeImg(data?.file, path, async (res) => {
+					if (res.error) {
+						return;
+					}
+					// Continue here
+					delete data.file;
+					delete data.name;
+					delete data.author_id;
+					data.lead_image_src = res;
+					if (!data.topics) delete data.topics;
+					// Storing draft_id as a variable so I can delete the property
+					let draft_id = data.draft_id;
+					let blog = "";
+					// Update if it was  a drafted post or add new Doc
+					if (data.draft_id) {
+						delete data.draft_id;
+						blog = await updateDoc(doc(this.db, "blogs", draft_id), data);
+					} else {
+						blog = await addDoc(collection(this.db, "blogs"), data);
+					}
+					let blog_id = blog ? blog.id : draft_id;
+					this.insertBlogNotification(data.author, data.heading, blog_id);
+					callback("success");
 				});
-				// Insert Blog
-				callback(data);
-			});
+			} else if (data.draft_id) {
+				// No file set means the article is a drafted article
+				let draft_id = data.draft_id;
+				delete data.draft_id;
+				await updateDoc(doc(this.db, "blogs", draft_id), data);
+				this.insertBlogNotification(data.author, data.heading, draft_id);
+				callback("success");
+			} else {
+				addDoc(collection(this.db, "blogs"), data);
+				callback("success");
+			}
 		} catch (e) {
 			callback({ error: true });
 		}
+	}
+
+	async insertBlogNotification(author, heading, blog_id) {
+		await runTransaction(this.db, async (transaction) => {
+			let q = query(collection(this.db, "subscriptions"), where("username", "==", author));
+			let subscriptions = await getDocs(q);
+
+			let subscribers = [];
+			if (!subscriptions.empty) {
+				subscriptions = subscriptions.docs[0].data();
+				subscribers = subscriptions.followers.split(" ");
+			}
+			let notif = {
+				desc: `@${author} has posted a new article, "${removeHTML(heading)}"`,
+				link: createLink(author, removeHTML(heading), blog_id),
+				receivers:
+					subscribers.length > 0
+						? subscribers.map((e) => {
+								return { receiver_id: e, status: "unread" };
+						  })
+						: [],
+				type: "post",
+			};
+			this.insertNotification(notif);
+		});
 	}
 
 	updateBlog(data, callback) {

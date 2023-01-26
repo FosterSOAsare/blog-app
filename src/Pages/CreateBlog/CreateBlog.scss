@@ -210,6 +210,21 @@ section.createBlog {
 		margin-top: 20px;
 	}
 }
+.blogWaiting {
+	width: 100%;
+	height: 100%;
+	background-color: $white;
+	position: fixed;
+	z-index: 2;
+	top: 0;
+	left: 0;
+	@include flex(center, center);
+	font-weight: bold;
+
+	p {
+		opacity: 0.6;
+	}
+}
 
 .dark {
 	section.createBlog {
@@ -259,5 +274,9 @@ section.createBlog {
 		p {
 			color: $error;
 		}
+	}
+	.blogWaiting {
+		background-color: $darkBg;
+		color: $darkText1;
 	}
 }

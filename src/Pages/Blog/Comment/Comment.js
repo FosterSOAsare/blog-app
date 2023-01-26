@@ -20,6 +20,7 @@ const Comment = ({ comment, likes, dislikes, timestamp, id, upvotes, author_id, 
 	// Fetch author and set author
 	useEffect(() => {
 		firebase.fetchCommentsOrReplies("replies", id, "asc", (res) => {
+			console.log(res);
 			if (res.error) return;
 			if (res.empty) {
 				setRepliesInfo({ type: "storeReplies", payload: [] });

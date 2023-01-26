@@ -22,7 +22,7 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 		// Type here specifies if the reply is a reply to either a comment or another reply
 		let data =
 			type === "replies"
-				? { message, author_id: credentials?.userId, base_comment_id: reply_to, reply_to: id, blog_id }
+				? { message, author_id: credentials?.userId, base_comment_id: base_id, reply_to: id, blog_id }
 				: { message, author_id: credentials?.userId, blog_id, base_comment_id: id };
 
 		firebase.storeCommentOrReply("replies", data, (res) => {

@@ -134,8 +134,9 @@ main.blog {
 
 @media screen and (max-width: 860px) {
 	#comments {
+		padding-inline: 5px;
 		.comments__container {
-			padding-inline: 20px;
+			padding-inline: 5px;
 			h3 {
 				margin-left: 10px;
 			}
@@ -156,5 +157,15 @@ main.blog {
 	}
 	#comments {
 		background-color: $darkBg2;
+	}
+}
+
+@media screen and (max-width: 860px) {
+	.dark {
+		main.blog {
+			.blog__content {
+				padding-inline: 0px;
+			}
+		}
 	}
 }

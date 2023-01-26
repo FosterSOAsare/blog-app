@@ -16,6 +16,11 @@
 		font-weight: bold;
 	}
 }
+@media screen and (max-width: 560px) {
+	.upvote {
+		min-width: 80px;
+	}
+}
 
 .tipForm {
 	@include container;

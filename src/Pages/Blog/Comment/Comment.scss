@@ -23,39 +23,53 @@
 		}
 	}
 	.interactions {
-		// background-color: red;
 		@include flex(flex-start, center);
 		margin-top: 10px;
-		.rating {
-			// background-color: red;
-			gap: 10px;
-			.icon {
-				margin: 0;
-				@include flex(center, center);
+		height: auto;
+		.left {
+			width: 60%;
+			@include flex(flex-start, center);
+
+			.rating {
+				gap: 10px;
+				.icon {
+					margin: 0;
+					@include flex(center, center);
+				}
+			}
+			img {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				margin-left: 10px;
+			}
+			.link {
+				margin-left: 10px;
+				color: $text1;
+				&:hover {
+					text-decoration: underline;
+				}
 			}
 		}
-		img {
-			width: 40px;
+		.left > div {
+			width: 120px;
 			height: 40px;
-			border-radius: 50%;
-			margin-left: 10px;
+			margin-right: 15px;
+			border: 1px solid $grey;
 		}
-		.link {
-			margin-left: 10px;
-			color: $text1;
-			&:hover {
-				text-decoration: underline;
+		.right {
+			@include flex(flex-start, center);
+			width: 40%;
+			.time {
+				opacity: 0.7;
+				margin-left: 10px;
 			}
-		}
-		.time {
-			opacity: 0.7;
-			margin-left: 10px;
-		}
-		.reply {
-			opacity: 1;
-			margin-left: 20px;
-			&:hover {
-				text-decoration: underline;
+			.reply {
+				opacity: 1;
+				margin-left: 20px;
+				&:hover {
+					text-decoration: underline;
+				}
 			}
 		}
 		.tipForm {
@@ -91,13 +105,7 @@
 			}
 		}
 	}
-	.interactions > div {
-		// background-color: yellow;
-		width: 120px;
-		height: 40px;
-		margin-right: 15px;
-		border: 1px solid $grey;
-	}
+
 	.showReplies {
 		margin-top: 10px;
 		text-decoration: underline;
@@ -148,10 +156,47 @@
 
 @media screen and (max-width: 860px) {
 	.comment {
-		padding-left: 10px;
-		.reply_info {
-			background-color: grey;
+		padding-left: 15px;
+		font-size: 13px;
+		.interactions {
+			flex-direction: column;
+			align-items: flex-start;
+			width: 100%;
+			height: auto;
+			.left,
+			.right {
+				width: 100%;
+				p {
+					font-size: 13px;
+				}
+			}
+			.left > div {
+				width: 70px;
+				padding: 0 10px;
+			}
+			.left {
+				.author_img,
+				.fa-user {
+					margin-left: -7px;
+				}
+				.author_img {
+					width: 25px;
+					height: 25px;
+				}
+			}
+			.right {
+				margin-top: 10px;
+				p {
+					min-width: 150px;
+					font-size: 13px;
+					font-weight: bold;
+				}
+			}
 		}
+	}
+	.replies {
+		width: 98%;
+		margin-left: 2%;
 	}
 }
 .dark {

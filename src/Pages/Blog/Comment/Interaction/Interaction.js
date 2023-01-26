@@ -52,16 +52,20 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 				)}
 				<p>{message}</p>
 				<div className="interactions">
-					<Ratings {...{ likes, dislikes, id, type }} />
-					<TipBox {...{ type, upvotes, author_id: author_id, id, blog_id }} />
-					{author?.img_src ? <img src={author?.img_src} alt="Author" /> : <i className="fa-solid fa-user"></i>}
-					<NavLink className="link" to={`/@${author?.username}`}>
-						{author?.username}
-					</NavLink>
-					<p className="time">{calculateTime(timestamp?.seconds)}</p>
-					<p className="reply" onClick={() => setShowReplyForm(true)}>
-						Add Reply
-					</p>
+					<div className="left">
+						<Ratings {...{ likes, dislikes, id, type }} />
+						<TipBox {...{ type, upvotes, author_id: author_id, id, blog_id }} />
+						{author?.img_src ? <img src={author?.img_src} alt="Author" className="author_img" /> : <i className="fa-solid fa-user"></i>}
+						<NavLink className="link" to={`/@${author?.username}`}>
+							{author?.username}
+						</NavLink>
+					</div>
+					<div className="right">
+						<p className="time">{calculateTime(timestamp?.seconds)}</p>
+						<p className="reply" onClick={() => setShowReplyForm(true)}>
+							Add Reply
+						</p>
+					</div>
 				</div>
 				{repliesInfo?.replies?.length > 0 && !repliesInfo?.showReplies && (
 					<div

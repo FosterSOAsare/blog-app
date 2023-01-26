@@ -10,7 +10,7 @@ const HomePage = () => {
 		// Fetch all blogs
 		firebase.fetchBlogs(null, (res) => {
 			if (res.error) return;
-			setBlogs(res);
+			setBlogs(res.filter((e) => e.type === "publish"));
 		});
 	}, [firebase]);
 	return (

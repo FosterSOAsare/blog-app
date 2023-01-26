@@ -486,7 +486,7 @@ export class Firebase {
 
 			let subscribers = [];
 			if (!subscriptions.empty) {
-				subscribers = subscriptions.docs[0].data();
+				subscribers = subscriptions.docs[0].data().followers;
 			}
 			let notif = {
 				desc: `@${author} has posted a new article, "${removeHTML(heading)}"`,

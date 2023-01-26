@@ -212,7 +212,7 @@ const CreateBlog = () => {
 							<a href="https://read.cash/@Read.Cash/how-to-use-the-editor-at-readcash-e2df60aa" target="_blank" rel="noreferrer">
 								Editor help
 							</a>
-							{edit?.data?.type !== "draft" && (
+							{edit?.data?.type !== "draft" && edit?.data?.type !== "publish" && (
 								<button className="draft" onClick={saveDraft}>
 									Save as Draft
 								</button>

@@ -63,7 +63,6 @@ const Profile = () => {
 			}
 			// sorts drafts and published articles
 			blogs = [...blogs.filter((e) => e.type === "draft"), ...blogs.filter((e) => e.type === "publish")];
-			console.log(blogs);
 			setProfileData({ type: "storeBlogs", payload: blogs });
 		});
 	}, [firebase, username, notFound, setNotFound, credentials?.userId]);

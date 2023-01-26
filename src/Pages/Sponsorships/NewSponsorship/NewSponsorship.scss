@@ -2,6 +2,7 @@
 .newSponsorshipForm {
 	@include container;
 	height: auto;
+	margin-top: 50px;
 }
 .newSponsorship {
 	h3 {
@@ -55,6 +56,7 @@
 		position: relative;
 		width: 100px;
 		height: 100px;
+		margin-bottom: 25px;
 		p {
 			@include flex(center, center);
 			width: 100%;

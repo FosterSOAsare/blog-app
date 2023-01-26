@@ -6,6 +6,7 @@
 	img {
 		width: 40%;
 		height: 250px;
+		border-radius: 50%;
 	}
 	a {
 		display: block;
@@ -26,6 +27,19 @@
 	}
 }
 
+@media screen and (max-width: 580px) {
+	.requestSponsorship {
+		img {
+			width: 250px;
+			height: 250px;
+			margin: 0 auto;
+			display: block;
+		}
+		button {
+			width: 300px;
+		}
+	}
+}
 .dark {
 	p {
 		color: $darkText1;

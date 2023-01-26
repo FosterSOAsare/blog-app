@@ -416,7 +416,6 @@ export class Firebase {
 			updateDoc(doc(this.db, "subscriptions", docId), { followers: data });
 			callback("success");
 		} catch (e) {
-			console.log(e);
 			callback({ error: "An error occurred" });
 		}
 	}

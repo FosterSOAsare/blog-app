@@ -28,7 +28,6 @@ const Forgotpassword = () => {
 			return;
 		}
 		firebase.sendPasswordResetMail(email, (res) => {
-			console.log(res);
 			if (res?.error) {
 				return;
 			}

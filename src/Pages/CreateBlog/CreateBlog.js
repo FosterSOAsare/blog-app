@@ -182,7 +182,6 @@ const CreateBlog = () => {
 		}
 		if (selectedTopics.selectedTopics.length > 0) data.topics = selectedTopics.selectedTopics;
 		firebase.storeBlog({ ...data, heading, message, type: "draft", author: credentials?.user?.username, author_id: credentials?.userId }, (res) => {
-			console.log(res);
 			if (res.error) return;
 			setStored({ type: "draft" });
 			setWaiting(false);

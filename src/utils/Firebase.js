@@ -976,12 +976,12 @@ export class Firebase {
 				let q = query(collection(this.db, "subscriptions"), where("username", "==", data.username));
 				getDocs(q).then((res) => {
 					let subscriptionsData = { ...res.docs[0].data(), id: res.docs[0].id };
-					let followersArray = subscriptionsData.followers.split(" ");
+					let followersArray = subscriptionsData.followers;
 					// Check if user is subscribed or not
 					if (followersArray.includes(data.user_id)) {
 						let newData = followersArray.filter((e) => e !== data.user_id);
 						updateDoc(doc(this.db, "subscriptions", subscriptionsData.id), {
-							followers: newData.join(" "),
+							followers: newData,
 						});
 					}
 				});

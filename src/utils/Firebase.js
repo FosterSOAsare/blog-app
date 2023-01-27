@@ -37,21 +37,30 @@ export class Firebase {
 		this.storage = getStorage(this.app);
 	}
 
+	/**
+
+	Create an authenticated user with email, password, and 
+	Store the data in the users database collection
+	@function
+	@async
+	@param {string} email - The email of the user.
+	@param {string} password - The password of the user.
+	@param {string} username - The username of the user.
+	*/
 	createAnAuth(email, password, username, callback) {
 		createUserWithEmailAndPassword(this.auth, email, password)
 			.then(async (userCredential) => {
+				// Store Data in db collection
 				await setDoc(doc(this.db, "users", userCredential.user.uid), {
 					email,
 					timestamp: serverTimestamp(),
 					balance: 0.0,
 					username,
 				});
-				// Store Data in db collection
 				sendEmailVerification(userCredential.user, {
 					url: "http://localhost:3000/login",
 					handleCodeInApp: true,
 				});
-				// send back response
 				callback(userCredential.user);
 			})
 			.catch((error) => {
@@ -63,6 +72,14 @@ export class Firebase {
 			});
 	}
 
+	/**
+
+	Retrieves user data by signing in with email and password
+	@function
+	@param {string} email - The email of the user.
+	@param {string} password - The password of the user.
+	@param {function} callback - Callback function that returns the user or error message.
+	*/
 	getUserData(email, password, callback) {
 		signInWithEmailAndPassword(this.auth, email, password)
 			.then((userCredential) => {
@@ -72,6 +89,13 @@ export class Firebase {
 				callback({ error: "An error occurred. Please check your login credentials" });
 			});
 	}
+	/**
+
+	Retrieves user data by uid
+	@function
+	@param {string} uid - The uid of the user.
+	@param {function} callback - Callback function that returns the user data or error message.
+	*/
 	fetchUserWithUid(uid, callback) {
 		try {
 			onSnapshot(doc(this.db, "users", uid), (doc) => {
@@ -81,13 +105,19 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
 
+	Check if a user exists in the database.
+	@function
+	@async
+	@param {string} username - The username to search for.
+	@param {function} callback - The callback function to execute after the query is complete.
+	@returns {Array} result - An array of user objects that match the provided username.
+	@throws {Error} An error occurred
+	*/
 	checkUserExists(username, callback) {
 		try {
-			// Create a reference to the cities collection
 			const usersRef = collection(this.db, "users");
-
-			// Create a query against the collection.
 			getDocs(query(usersRef, where("username", "==", username))).then((data) => {
 				let result = [];
 				data.forEach((e) => {
@@ -99,6 +129,15 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
+
+	Sign out a user from the authenticated state.
+	@function
+	@async
+	@param {function} callback - The callback function to execute after the sign out is complete.
+	@returns {boolean} true - If the sign out is successful.
+	@throws {Error} An error occurred
+	*/
 	signOutUser(callback) {
 		signOut(this.auth)
 			.then(() => {
@@ -679,12 +718,17 @@ export class Firebase {
 		}
 	}
 
+	/**
+	*
+
+	@param {string} type - The type of comments or replies to fetch. Should be either "comments" or "replies"
+	@param {string} base_id - The ID of the blog or comment that the comments or replies belong to
+	@param {string} sort - The sorting order of the comments or replies. Should be either "asc" or "desc"
+	@param {function} callback - A callback function that takes an object as an argument. 
+	The object will contain either an array of comments or replies, or an error object.
+	*/
 	async fetchCommentsOrReplies(type, base_id, sort, callback) {
 		let field = type === "comments" ? "blog_id" : "base_comment_id";
-		// // Fetch comment
-		// // Fetch comment author
-		// //  Fetch length of comment replies
-		// // Using getDocs
 		try {
 			// Create a query against the collection.
 			let q = query(collection(this.db, type), where(field, "==", base_id), orderBy("timestamp", sort));
@@ -703,6 +747,15 @@ export class Firebase {
 		}
 	}
 
+	/**
+*
+
+	@function
+	@async
+	@param {function} callback - callback function that takes in a user object as an argument
+	@returns {Object} - An object containing the user's information.
+	This function retrieves the current user's information from the Firebase authentication service. If the user is not logged in, it returns an error object.
+	*/
 	getUserObject(callback) {
 		onAuthStateChanged(this.auth, (res) => {
 			if (res.auth?.currentUser) {
@@ -713,6 +766,15 @@ export class Firebase {
 		});
 	}
 
+	/**
+
+	sendVerification is a function that sends a verification email to the user's email address
+	@function
+	@async
+	@param {Object} user - the user object
+	@param {function} callback - a callback function that will be called with the result of the operation
+	@returns {void}
+	*/
 	sendVerification(user, callback) {
 		callback(
 			sendEmailVerification(user, {
@@ -722,6 +784,14 @@ export class Firebase {
 		);
 	}
 
+	/**
+
+	@function validatePassword
+	@param {Object} user - The user object
+	@param {string} password - The current password
+	@param {Function} callback - The callback function that is called after the validation
+	The function validates the provided password against the user's email in the authentication system.
+	*/
 	validatePassword(user, password, callback) {
 		const credential = EmailAuthProvider.credential(user?.email, password);
 		reauthenticateWithCredential(user, credential)
@@ -732,6 +802,15 @@ export class Firebase {
 				callback({ error: true });
 			});
 	}
+
+	/**
+
+	@function updateUsersPassword
+	@param {Object} user - The user object
+	@param {string} newPassword - The new password
+	@param {Function} callback - The callback function that is called after the update
+	The function updates the user's password in the authentication system
+	*/
 	updateUsersPassword(user, newPassword, callback) {
 		updatePassword(user, newPassword)
 			.then(() => {
@@ -741,6 +820,19 @@ export class Firebase {
 				callback({ error: true });
 			});
 	}
+
+	/**
+
+	@function
+	@async
+	@param {string} user_id - The user_id of the user whose bookmarks are to be fetched.
+	@param {function} callback - The callback function to handle the response from the function.
+	@description This function fetches all the bookmarked blogs of a user from the "blogs" collection in the database and their comments from the "comments" collection. It is ordered by timestamp in descending order. It accepts a user_id and a callback function as its parameters.
+	The callback function takes in an object as its parameter. 
+	If the object contains a property 'empty' with a value of true, it means that no bookmarked blogs were found. 
+	If it contains a property 'error' with a value of 'An error occurred', it means that an error occurred while trying to fetch bookmarked blogs. 
+	Otherwise, it contains an array of bookmarked blogs with their comments.
+	*/
 
 	fetchBookMarks(user_id, callback) {
 		// Create a query against the collection.
@@ -767,6 +859,12 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
+	Inserts a new notification into the Firestore database.
+	@param {Object} data - The data for the new notification. Should contain properties such as 'title', 'body', and 'receiver_id'.
+	If 'receivers' is not provided, the status of the notification will be set as 'unread' for the 'receiver_id'
+	The data is automatically timestamped with the server timestamp
+	*/
 	insertNotification(data) {
 		data = { ...data, timestamp: serverTimestamp() };
 		if (!data.receivers) {
@@ -774,6 +872,15 @@ export class Firebase {
 		}
 		addDoc(collection(this.db, "notifications"), data);
 	}
+	/**
+
+	Fetches all the notifications for a user from the database.
+	@function
+	@async
+	@param {string} user_id - The id of the user to fetch notifications for.
+	@param {function} callback - The callback function to be called with the result of the query.
+	@returns {Array} - An array of objects, each object representing a notification. Each object has a notification_id property and properties from the Firestore document.
+	*/
 	fetchUserNotifications(user_id, callback) {
 		// Create a query against the collection.
 		try {
@@ -796,6 +903,16 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
+
+	Fetch complex notifications for a specific user.(Notifications that has receivers instead of a receiver)
+	@function
+	@async
+	@param {string} user_id - The user's id for which to fetch notifications.
+	@param {function} callback - The callback function to execute after the query is complete.
+	@returns {Array} result - An array of notifications with the status of each notification for the specified user.
+	@throws {Error} An error occurred
+	*/
 
 	async fetchComplexNotifications(user_id, callback) {
 		let q1 = query(collection(this.db, "notifications"), where("receivers", "array-contains", { receiver_id: user_id, status: "read" }));
@@ -823,6 +940,16 @@ export class Firebase {
 			});
 		});
 	}
+	/**
+
+	Fetch unread notifications for a specific user.
+	@function
+	@async
+	@param {string} user_id - The user's id for which to fetch unread notifications.
+	@param {function} callback - The callback function to execute after the query is complete.
+	@returns {number} totalUnread - The total number of unread notifications for the specified user.
+	@throws {Error} An error occurred
+	*/
 	fetchUnreadNotifications(user_id, callback) {
 		try {
 			let q = query(collection(this.db, "notifications"), where("receiver_id", "==", user_id), where("status", "==", "unread"));
@@ -838,6 +965,14 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
+
+	@function setReadNotification
+	@param {string} notification_id - The id of the notification to be updated
+	@param {string} receiver_id - The id of the receiver whose status is to be updated
+	@param {function} callback - A callback function to handle the result
+	This function updates the status of the notification to 'read' for a specific receiver
+*/
 	async setReadNotification(notification_id, receiver_id, callback) {
 		try {
 			await runTransaction(this.db, async (transaction) => {
@@ -858,9 +993,17 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
+	/**
 
+	@function fetchFilteredNotifications
+	@param {string} type - The type of notification to filter by. Can be "post", "all", "posts", or any other specific type of notification.
+	@param {string} receiver_id - The ID of the user who will receive the notifications.
+	@param {function} callback - The callback function to be executed once the notifications have been retrieved.
+	@description This function is used to fetch filtered notifications from the database, based on the specified type and receiver ID. The callback function passed in will be executed with the retrieved notifications as a parameter.
+	*/
 	fetchFilteredNotifications(type, receiver_id, callback) {
 		let q = "";
+		// Fetching all post notifcations (new Articles)
 		if (type === "post") {
 			this.fetchComplexNotifications(receiver_id, (res) => {
 				callback(res);
@@ -873,11 +1016,8 @@ export class Firebase {
 			});
 			return;
 		}
-		if (type === "posts") {
-			q = query(collection(this.db, "notifications"));
-		} else {
-			q = query(collection(this.db, "notifications"), where("type", "==", type));
-		}
+
+		q = query(collection(this.db, "notifications"), where("type", "==", type));
 		onSnapshot(q, (res) => {
 			callback(
 				res.docs.map((e) => {
@@ -886,7 +1026,12 @@ export class Firebase {
 			);
 		});
 	}
-
+	/**
+	*
+	@function
+	@param {object} userObject - The object containing information about the user to be deleted.
+	@param {function} callback - The function that is called after the deletion is complete. It is passed one argument, the response from the deletion function.
+	*/
 	deleteAUser(userObject, callback) {
 		deleteUser(userObject).then((res) => {
 			callback(res);
@@ -894,6 +1039,14 @@ export class Firebase {
 	}
 
 	// Using server side filtering since the workarounds are paid methods
+	/**
+*
+	@function
+	@param {string} queryString - The string to search for in the blog collection
+	@param {function} callback - Callback function to handle the response from the query
+	This function queries the "blogs" collection in the Firebase Firestore and filters the results based on the provided queryString.
+	The filtered results are passed to the callback function. If no results are found, the callback will be called with an object containing an "empty" property set to true.
+	*/
 	getQuery(queryString, callback) {
 		let q1 = collection(this.db, "blogs");
 		onSnapshot(q1, (querySnapshot) => {
@@ -918,6 +1071,14 @@ export class Firebase {
 		});
 	}
 
+	/**
+
+	@function
+	@async
+	@param {string} tag - The tag to be searched for in the blogs.
+	@param {function} callback - A callback function to handle the response.
+	@returns {(Object[]|{empty: boolean}|{error: boolean})} - Returns an array of objects containing blog data and the id of the blog if successful, or an object with a key of "empty" if no blogs were found with the specified tag, or an object with a key of "error" if an error occurs.
+	*/
 	searchBlogsWithATag(tag, callback) {
 		let q1 = query(collection(this.db, "blogs"), where("topics", "array-contains", tag.toLowerCase()), orderBy("timestamp"));
 		onSnapshot(q1, (querySnapshot) => {
@@ -934,6 +1095,13 @@ export class Firebase {
 		});
 	}
 
+	/**
+
+	@function updateViewers
+	@param {string} blog_id - ID of the blog to update the number of viewers.
+	@param {an array of ips} newData - update the viewers on the blog
+	@param {function} callback - Function to be called after the update is completed.
+	*/
 	updateViewers(blog_id, newData, callback) {
 		try {
 			updateDoc(doc(this.db, "blogs", blog_id), {
@@ -944,6 +1112,13 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
+	/**
+	 *
+	 * Send password reset email
+	 * @function
+	 * @param {string} email - The email of the user
+	 * @param {function} callback - The function that will be called after the email is sent
+	 */
 	sendPasswordResetMail(email, callback) {
 		try {
 			sendPasswordResetEmail(this.auth, email, {
@@ -957,6 +1132,13 @@ export class Firebase {
 		}
 	}
 
+	/**
+*
+	@function
+	@param {string} oob - The out-of-band email action code.
+	@param {string} newPassword - The new password for the user.
+	@param {function} callback - A callback function that will be called when the request is complete.
+	*/
 	updatePassword(oob, newPassword, callback) {
 		confirmPasswordReset(this.auth, oob, newPassword)
 			.then((res) => {
@@ -969,9 +1151,20 @@ export class Firebase {
 				callback({ error: true });
 			});
 	}
+	/**
+	 * Store blocked users list for a specific user in the "blocks" collection of the database, and also handle the unsubscription of the user from the blocked user's followers list.
+	 * @async
+	 * @function
+	 * @param {object} data - An object containing the data for the operation
+	 * @param {string} data.type - The type of operation, either "block" or "unblock"
+	 * @param {string} data.username - The username of the user to be blocked/unblocked
+	 * @param {string} data.user_id - The ID of the user performing the block/unblock operation
+	 * @param {array} data.newData - The updated array of blocked users for the user
+	 * @param {string} data.docId - The ID of the document of the blocked users list in the "blocks" collection, if it exists
+	 * @param {function} callback - The callback function to be called with the result of the operation
+	 */
 	async storeBlockedUsers(data, callback) {
 		try {
-			// 	//
 			if (data.type === "block") {
 				let q = query(collection(this.db, "subscriptions"), where("username", "==", data.username));
 				getDocs(q).then((res) => {
@@ -1002,6 +1195,12 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
+	/**
+	 * Fetch the blocked users list for a specific user from the "blocks" collection of the database
+	 * @function
+	 * @param {string} user_id - The ID of the user to fetch the blocked users list for
+	 * @param {function} callback - The callback function to be called with the result of the fetch operation
+	 */
 	fetchBlockedUsers(user_id, callback) {
 		try {
 			let q = query(collection(this.db, "blocks"), where("user_id", "==", user_id));
@@ -1017,10 +1216,17 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
+	/**
+	 * Store a report in the "reports" collection of the database
+	 * @function
+	 * @param {string} user_id - The ID of the user who submitted the report
+	 * @param {string} report - The content of the report
+	 * @param {function} callback - The callback function to be called with the result of the storage operation
+	 */
 	storeReport(user_id, report, callback) {
 		try {
 			addDoc(collection(this.db, "reports"), {
-				user_id,
+				user_id: user_id || "guest",
 				report,
 			});
 			callback("success");

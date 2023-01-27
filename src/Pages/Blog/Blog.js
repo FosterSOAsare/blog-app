@@ -47,6 +47,7 @@ const Blog = () => {
 
 		// Fetch username and blog
 		firebase.fetchBlog(blogId, (res) => {
+			document.title = removeHTML(res.heading);
 			if (res.error) return;
 			if (res.empty) {
 				setNotFound(true);

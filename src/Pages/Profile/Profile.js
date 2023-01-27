@@ -49,6 +49,7 @@ const Profile = () => {
 	// Fetch data about user
 	useEffect(() => {
 		firebase.fetchUserWithUsername(username, (res) => {
+			document.title = res.username;
 			if (res?.error) {
 				setNotFound(true);
 				return;

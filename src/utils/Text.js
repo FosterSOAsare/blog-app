@@ -30,3 +30,12 @@ export function countElements(text) {
 	}
 	return 0;
 }
+
+export const capitalize = (text) => {
+	const lowercaseText = text.toLowerCase();
+	const words = lowercaseText.split(" ");
+	for (let i = 0; i < words.length; i++) {
+		words[i] = `${words[i].charAt(0).toUpperCase()}${words[i].slice(1)}`;
+	}
+	return words.join(" ");
+};

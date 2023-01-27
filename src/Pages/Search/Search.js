@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useGlobalContext } from "../../context/AppContext";
 import BlogPreview from "../../components/BlogPreview/BlogPreview";
 import { useParams } from "react-router";
+import { capitalize } from "../../utils/Text";
 import { useEffect } from "react";
 
 const Search = () => {
@@ -25,6 +26,7 @@ const Search = () => {
 			firebase.searchBlogsWithATag(topic, (res) => {
 				if (res.error) return;
 				setSearchResult(res);
+				document.title = capitalize(topic);
 			});
 	}, [topic, firebase]);
 	return (

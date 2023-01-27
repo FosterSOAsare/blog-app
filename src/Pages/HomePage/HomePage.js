@@ -12,6 +12,8 @@ const HomePage = () => {
 			if (res.error) return;
 			setBlogs(res.filter((e) => e.type === "publish"));
 		});
+
+		document.title = "blog-site";
 	}, [firebase]);
 	return (
 		<section className="homepage">

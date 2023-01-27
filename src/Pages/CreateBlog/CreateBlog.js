@@ -26,6 +26,10 @@ const CreateBlog = () => {
 	useEffect(() => {
 		errorFunc({ type: "clearError" });
 	}, [errorFunc]);
+
+	useEffect(() => {
+		document.title = "blog-site";
+	}, []);
 	// Edit page also used the createBlogPage
 
 	let article = useRef(null);

@@ -32,6 +32,8 @@ const Notifications = () => {
 			setNotifications(res.length === 0 ? { empty: true } : res);
 			setLoading(false);
 		});
+
+		document.title = "blog-site";
 	}, [firebase, credentials?.userId]);
 
 	useEffect(() => {

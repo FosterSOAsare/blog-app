@@ -147,6 +147,14 @@ export class Firebase {
 				callback({ error: "An error occurred" });
 			});
 	}
+	/**
+	@function storeBio
+	@param {string} bio - The bio to be stored
+	@param {string} userId - The id of the user whose bio is being stored
+	@param {function} callback - The callback function to handle the response of the function
+	@throws {object} callback - An error object with a message 'An error occurred' if an error is caught
+	@returns {string} callback - 'success' if the bio is stored successfully
+	*/
 	storeBio(bio, userId, callback) {
 		try {
 			updateDoc(doc(this.db, "users", userId), {
@@ -158,6 +166,17 @@ export class Firebase {
 		}
 	}
 
+	/**
+	 *
+	 * @function
+	 * @param {string} username - The username of the user to fetch
+	 * @param {function} callback - The callback function that is called when the operation is complete
+	 *
+	 * The function attempts to fetch a user with the given username from the database.
+	 * If a user is found, the callback function will be called with an object containing the user's data as well as their userId.
+	 * If no user is found, the callback function will be called with an object containing an error message.
+	 * In case of an error, the callback function will be called with an object containing an error message.
+	 */
 	fetchUserWithUsername(username, callback) {
 		try {
 			// Create a query against the collection.
@@ -173,11 +192,29 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
+
+	Fetches the user document with the provided user ID from the "users" collection in the database.
+	@function
+	@async
+	@param {string} user_id - The ID of the user to fetch.
+	@param {function} callback - A callback function that will be called with the fetched user data.
+	@returns {Object} An object containing the user's data and their unique ID.
+*/
 	fetchUserWithId(user_id, callback) {
 		onSnapshot(doc(this.db, "users", user_id), (res) => {
 			callback({ ...res.data(), user_id: res.id });
 		});
 	}
+	/**
+
+	Function to update a user's profile image in the database
+	@function
+	@async
+	@param {File} image - The image file to be stored
+	@param {string} userId - The user's ID
+	@param {function} callback - The callback function to handle the result of the update
+	*/
 	updateProfileImage(image, userId, callback) {
 		// Get ext
 		let ext = image.name.split(".");
@@ -199,6 +236,13 @@ export class Firebase {
 			}
 		});
 	}
+	/**
+	@function storeImg
+	@param {File} image - The image file to be uploaded
+	@param {string} path - The path where the image will be stored in the storage bucket
+	@param {function} callback - A callback function that is called with the result of the function
+	This function is used to upload an image file to a Firebase storage bucket. It takes in an image file, a path where the image will be stored, and a callback function. It uses the Firebase storage API's uploadBytesResumable method to upload the image and the getDownloadURL method to get the download URL of the image. The callback function is called with the download URL of the image or an error message if an error occurs during the upload.
+	*/
 	storeImg(image, path, callback) {
 		path = path.replace(/\s-/gi, "");
 		let storageRef = ref(this.storage, path);
@@ -218,6 +262,19 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
+	Store a sponsorship request
+	@function
+	@async
+	@param {Object} data - The sponsorship data.
+	@param {File} data.image - The image associated with the sponsorship.
+	@param {string} data.promo_text - The promotional text for the sponsorship.
+	@param {string} data.promo_link - The link associated with the sponsorship.
+	@param {string} data.sponsor_id - The id of the sponsor.
+	@param {string} data.author_id - The id of the author.
+	@param {function} callback - The callback function which returns the error or success.
+	@returns {string} success - If the sponsorship is stored successfully.
+`*/
 	storeSponsorship(data, callback) {
 		let ext = data.image.name.split(".");
 		let name = ext[0] + new Date().getTime();
@@ -250,6 +307,15 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
+	/** 
+	@function
+	@async
+	@param {string} userId - The id of the user whose sponsors are being fetched.
+	@param {function} callback - A callback function that is called with the sponsors as an argument.
+	@returns {void}
+	@throws {Error} - If there is an error while fetching the sponsors.
+	This function fetches the sponsors of the user with the specified ID and returns them through the callback function.
+	*/
 	fetchSponsors(userId, callback) {
 		try {
 			// Create a query against the collection.
@@ -270,6 +336,19 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
+	 * *	
+	@function
+	@async
+	@param {string} userId - The ID of the user for whom to fetch sponsored authors.
+	@param {Function} callback - The callback function to handle the response.
+	@description
+	This function is used to fetch all the authors that are sponsored by a particular user.
+	It performs a query on the 'sponsorships' collection, where the 'sponsor_id' field matches the provided userId.
+	For each document returned by the query, it also fetches the user details of the corresponding author using the author_id field.
+	Finally, it calls the provided callback function with the array of sponsorships along with the author details.
+	@throws {Error} If an error occurs while fetching the sponsored authors.
+*/
 	fetchSponsoredAuthors(userId, callback) {
 		try {
 			// Create a query against the collection.
@@ -298,6 +377,16 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
+*
+	@function payForSponsorship
+	@async
+	@param {string} sponsorship_id - The id of the sponsorship to be settled
+	@param {string} sponsor_id - The id of the sponsor
+	@param {string} author_id - The id of the author being sponsored
+	@param {function} callback - Callback function to handle the response
+	@description This function is used to make a payment for a sponsorship and update the balance of both sponsor and author. It also updates the status of the sponsorship to settled and sends a notification to the author.
+*/
 	async payForSponsporship(sponsorship_id, sponsor_id, author_id, callback) {
 		try {
 			await runTransaction(this.db, async (transaction) => {
@@ -328,6 +417,15 @@ export class Firebase {
 		}
 	}
 
+	/**
+	@function
+	@async
+	@param {string} sponsorship_id - The ID of the sponsorship to be deleted.
+	@param {string} author_id - The ID of the author associated with the sponsorship.
+	@param {string} sponsor_id - The ID of the sponsor associated with the sponsorship.
+	@param {function} callback - The callback function to handle the response.
+	The function takes in the necessary parameters for identifying the sponsorship to be deleted, including the IDs of the author and sponsor associated with the sponsorship. It also takes in a callback function to handle the response. The function uses a Firestore transaction to delete the sponsorship document and insert a notification to the author that the sponsorship has been terminated.
+	*/
 	async deleteSponsorship(sponsorship_id, author_id, sponsor_id, callback) {
 		try {
 			await runTransaction(this.db, async (transaction) => {
@@ -346,6 +444,15 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
+	/**
+
+	Fetches all pending sponsorship requests for a specific author.
+	@async
+	@function
+	@param {string} author_id - The ID of the author whose pending sponsorship requests are being fetched.
+	@param {function} callback - The callback function to be executed once the requests have been fetched.
+	@returns {Object[]|{empty: boolean}|{error: boolean}} - An array of objects representing the pending sponsorship requests or an object indicating that no requests were found or an object indicating that an error occurred.
+*/
 	fetchAllRequests(author_id, callback) {
 		try {
 			let q = query(collection(this.db, "sponsorships"), where("author_id", "==", author_id), where("status", "==", "pending"));
@@ -363,6 +470,13 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
+	/**
+	@function
+	@async
+	@param {string} request_id - The id of the sponsorship request to be fetched.
+	@param {function} callback - The callback function to handle the response.
+	@returns {Object} request - An object containing the details of the sponsorship request, including the request id. If request does not exist, returns an object with key "empty" and value true. If an error occurs, returns an object with key "error" and value true.
+	*/
 	fetchRequest(request_id, callback) {
 		try {
 			let q = doc(this.db, "sponsorships", request_id);
@@ -378,6 +492,17 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
+	/**
+
+	@function moderateRequest
+	@async
+	@param {string} status - The status of the sponsorship request.
+	@param {string} receiver_id - The user id of the person who receive the notification.
+	@param {string} author_id - The user id of the author who created the sponsorship request.
+	@param {string} request_id - The id of the sponsorship request.
+	@param {function} callback - The callback function that will be called after the execution of the function.
+	This function is used to moderate a sponsorship request. It runs a transaction that updates the status of the request and creates a notification for the receiver.
+	*/
 	async moderateRequest(status, receiver_id, author_id, request_id, callback) {
 		try {
 			await runTransaction(this.db, async (transaction) => {
@@ -397,14 +522,21 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
-	fetchBlogs(username, callback) {
-		// 	Logic with sub-collections
-		// 	create a sub-collection in a document under a collection . Then use the line below to grab it
-		// 	getDocs(collection(this.db, `${blog.ref.path}/comments`)));
+	/**
 
+	Retrieves all the blogs from the "blogs" collection in the database. 
+	If a username is provided, it filters the blogs by the author's username.
+	@function
+	@async
+	@param {string} [username] - The username of the author whose blogs you want to retrieve.
+	@param {function} callback - The callback function that is called with the retrieved blogs or an error object.
+
+	When the blogs are received, the blogs are iterated and in each iteration , comments of the particular blog are fetched but
+	being fetched means pushing the Promise that is yet to be resolved into a promises array.
+	This is later resolved and the result passed to the callback function
+*/
+	fetchBlogs(username, callback) {
 		try {
-			// Create a query against the collection.
-			// If username is set, query with username else fetch all
 			let q = username ? query(collection(this.db, "blogs"), where("author", "==", username), orderBy("timestamp", "desc")) : query(collection(this.db, "blogs"), orderBy("timestamp", "desc"));
 			onSnapshot(q, async (res) => {
 				const promises = [];
@@ -428,9 +560,16 @@ export class Firebase {
 		} catch (e) {
 			callback({ error: "An error occurred" });
 		}
-		// Using a different collection with relations
 	}
 
+	/**
+	 * Fethc subscriberrs of a particular user from the subscriptions collection where username feild === username (param)
+	 *
+	 * @param   {string}  username  The username of the author whose subscribers we are fecthing
+	 * @param   {function}  callback  Receives the response after operration is successful or not
+	 *
+	 * @return  {void}
+	 */
 	fetchSubscribers(username, callback) {
 		try {
 			// Create a query against the collection.
@@ -450,6 +589,14 @@ export class Firebase {
 		}
 	}
 
+	/**
+	 * Update the subscription document of an author when a user subscribes or unsubscribes
+	 *
+	 * @param   {An array containing new subscription data (followers)}
+	 * @param   {string}  docId     The Id of the subscription document to be updated
+	 * @param   {function}  callback  Receives the response from the operrtaion
+	 *
+	 */
 	updateSubscription(data, docId, callback) {
 		try {
 			updateDoc(doc(this.db, "subscriptions", docId), { followers: data });
@@ -459,6 +606,16 @@ export class Firebase {
 		}
 	}
 
+	/**
+	 * Adds a new subscription document for first time users. When a user registers a new document fpor subscriptions is not created but done only when the user gets a first subscriber
+	 * During this period , a new subscription is created
+	 *
+	 * @param   {array}  data       Followers array
+	 * @param   {string}  username  Username of the author
+	 * @param   {function}  callback  Receives response from the operation
+	 *
+	 * @return  {[type]}            [return description]
+	 */
 	addSubscription(data, username, callback) {
 		try {
 			addDoc(collection(this.db, "subscriptions"), { followers: data, username }).then((res) => {
@@ -469,29 +626,48 @@ export class Firebase {
 		}
 	}
 
+	/**
+	 * Stores a new blog , stores a drafted article or for publishing a drafted article
+	 *
+	 * For new blogs , File is compulsory
+	 * For drafts , Lead image is not compuslory but can be available
+	 * For publishing a draft , lead image is not compulsory but can be available
+	 *
+	 * @param   {Object containing blog data}  data
+	 * @param   {function}  callback Receives response from operation
+	 *
+	 * @description
+	 * This is in two folds ,
+	 *	Checks to see if data contains a file ,(drafts and publishing drafts)
+	 * if yes, It stores the file , receives the res and stores the blog in the blogs document
+	 * 			It stores the notifications (new blog , publishing a draft)
+	 *
+	 *  If no, it stores the data in the blogs document . And inserts a notification (publishing a draft)
+	 *
+	 */
 	async storeBlog(data, callback) {
 		try {
 			// Store lead Image first
 			let path = "blogs/" + data.name;
+			// Valuable properties are been added to the data passed
 			data = { ...data, timestamp: serverTimestamp(), likes: data.author_id, dislikes: "", viewers: [], savedCount: 0, upvotes: [] };
 
-			// Check if there is a lead image file or an src was passed
 			if (data.file) {
-				// Store lead image
 				this.storeImg(data?.file, path, async (res) => {
 					if (res.error) {
 						return;
 					}
-					// Continue here
+					// Deleteion of some properties
 					delete data.file;
 					delete data.name;
 					delete data.author_id;
 					data.lead_image_src = res;
 					if (!data.topics) delete data.topics;
-					// Storing draft_id as a variable so I can delete the property
+
 					let draft_id = data.draft_id;
 					let blog = "";
-					// Update if it was  a drafted post or add new Doc
+
+					// Checks if the article is a draft that is been published or a newly created article
 					if (data.draft_id) {
 						delete data.draft_id;
 						blog = await updateDoc(doc(this.db, "blogs", draft_id), data);
@@ -499,7 +675,10 @@ export class Firebase {
 						blog = await addDoc(collection(this.db, "blogs"), data);
 					}
 					let blog_id = blog ? blog.id : draft_id;
-					this.insertBlogNotification(data.author, data.heading, blog_id);
+
+					if (data.draft_id || data.type === "publish") {
+						this.insertBlogNotification(data.author, data.heading, blog_id);
+					}
 					callback("success");
 				});
 			} else if (data.draft_id) {
@@ -510,6 +689,7 @@ export class Firebase {
 				this.insertBlogNotification(data.author, data.heading, draft_id);
 				callback("success");
 			} else {
+				// Means we are saving a draft
 				addDoc(collection(this.db, "blogs"), data);
 				callback("success");
 			}
@@ -518,6 +698,17 @@ export class Firebase {
 		}
 	}
 
+	/**
+	 * This is used to store blog notifcatiosn > an extract from the above function
+	 *
+	 * @param   {string}  author   The name of the author of the published blog
+	 * @param   {string}  heading  Heading of the new blog
+	 * @param   {blog_id}  blog_id  Blog_id of the blog
+	 *
+	 * @description
+	 * The function receives all the params and creates a notif object which fetches all the subscribers of the author and as well creates a link to the blog-page
+	 * It adds an unread status to each subscriber to be updated when a user reads the blog
+	 */
 	async insertBlogNotification(author, heading, blog_id) {
 		await runTransaction(this.db, async (transaction) => {
 			let q = query(collection(this.db, "subscriptions"), where("username", "==", author));
@@ -541,7 +732,17 @@ export class Firebase {
 			this.insertNotification(notif);
 		});
 	}
-
+	/**
+	 * Edit or update a blog
+	 *
+	 * @param   {Object}  data - Data contains all the updated parts of the post , heading , message , lead Image
+	 * @param   {[type]}  callback  [receives the response after the opertaion has or hasn't completed successfully]
+	 *
+	 * @desc
+	 * Update checks to see if an image is present in the file .
+	 * If yes, Image is stored, the URL of the imgae is received , added to the data object and the blog updated with it
+	 * Else , the blog is updated based on blog_id
+	 */
 	updateBlog(data, callback) {
 		try {
 			data.editTime = serverTimestamp();
@@ -573,6 +774,13 @@ export class Firebase {
 		}
 	}
 
+	/**
+	 * Delete an article. (Action by author)
+	 *
+	 * @param   {string}  blog_id - the blog_id of the article that is been deleted
+	 * @param   {function }  callback - receives the response from the deletedDoc()
+	 *
+	 */
 	deleteArticle(blog_id, callback) {
 		try {
 			deleteDoc(doc(this.db, "blogs", blog_id));
@@ -581,13 +789,25 @@ export class Firebase {
 			callback({ error: true });
 		}
 	}
-
+	/**
+	 * Updates the ratings on either a blog, comment or reply
+	 * @param {string} type - The type (comments, blogs , replies ) matches the collection thatbholds the document
+	 * @param {string} likes - The likes on the particular document
+	 * @param {string} dislikes - The dislikes on the particular document
+	 * @param {string} id - The id of the document
+	 */
 	updateRatings(type, likes, dislikes, id) {
 		try {
 			updateDoc(doc(this.db, type, id), { likes, dislikes }).then((res) => {});
 		} catch (e) {}
 	}
 
+	/**
+	 * Updates the bookmarkers of  a blog .
+	 * Whanever a user bookmarks or unbookmarks the blog, this is called to update the bookmarks
+	 * @param {string} blog_id - The ID of the blog to fetch.
+	 * @param {function} callback - The callback function to call with the results. The callback will be passed an object containing either the blog data, an "empty" property, or an "error" property.
+	 */
 	updateBookmarks(blog_id, bookmarks, callback) {
 		try {
 			updateDoc(doc(this.db, "blogs", blog_id), { bookmarks }).then((res) => {});
@@ -596,6 +816,12 @@ export class Firebase {
 		}
 	}
 
+	/**
+	 * Fetches a blog from the database with the given ID.
+	 * @param {string} blog_id - The ID of the blog to fetch.
+	 * @param {function} callback - The callback function to call with the results.
+	 * The callback will be passed an object containing either the blog data, an "empty" property, or an "error" property.
+	 */
 	fetchBlog(blog_id, callback) {
 		try {
 			// Create a query against the collection.
@@ -612,6 +838,28 @@ export class Firebase {
 			callback({ error: "An error occurred" });
 		}
 	}
+	/**
+	 * Stores an upvote on either a blog, comment or reply
+	 *
+	 * @param   {string}  type         Either comments , replies , blogs
+	 * @param   {string}  id           The id of the related document
+	 * @param   {array}  upvotes      An array of objects containing upvotes information like user , amount and author image
+	 * @param   {string}  receiver_id  the id of the author of the related document
+	 * @param   {string}  sender_id    The id of the upvote sender
+	 * @param   {number}  value        The amount of tip being sent
+	 * @param   {string}  blog_id      The id of the related blog , (used in comments and replies)
+	 * @param   {function}  callback     Receives details from operation
+	 *
+	 * @description
+	 * A transaction is used for this
+	 * The receiver Doc, senderDoc and post(blog) are fetched with the params provided
+	 * If any of the documents are empty , An error is thrown
+	 * the new balance of both the sender and receiver are calculated
+	 *
+	 * A notif object is created with the link to the blog-post and the reciver as well as other relevant ones
+	 *
+	 * A notification is inserted after the new user balances (receiver , sender) are updated
+	 */
 	async storeUpvote({ type, id, upvotes, receiver_id, sender_id, value, blog_id }, callback) {
 		// Transaction
 		// Store new upvotes data
@@ -670,6 +918,17 @@ export class Firebase {
 			callback("Transaction failed: ", e);
 		}
 	}
+	/**
+	 * Store comments or replies
+	 *
+	 * @param   {string}  type      Type should be either comments or replies
+	 * @param   {Object to be stored as comment or reply}  data      This contauns the data to be stored as a comment or reply
+	 * @param   {function }  callback  Function that receives the response from gtthe opertaion
+	 *
+	 *  @description
+	 * The type matches the collection name and using that a new document is created in the collection with the data provided
+	 * It also stores a notification within which the author of the blog, comment or reply is used as the receiver id and a link generated
+	 */
 	async storeCommentOrReply(type, data, callback) {
 		try {
 			await runTransaction(this.db, async (transaction) => {
@@ -911,7 +1170,12 @@ export class Firebase {
 	@param {string} user_id - The user's id for which to fetch notifications.
 	@param {function} callback - The callback function to execute after the query is complete.
 	@returns {Array} result - An array of notifications with the status of each notification for the specified user.
-	@throws {Error} An error occurred
+	@throws {Error} An error 
+	
+	@desc 
+	This fetches notifications that has receivers instead of a receiver . Since the receivers field is  an array of objects and the limitatiuons on firebase
+	Twio different queries are made to fetch both read and unread notifcations . 
+	These are then merged into each other at the end and passed to the callback function
 	*/
 
 	async fetchComplexNotifications(user_id, callback) {
@@ -949,6 +1213,10 @@ export class Firebase {
 	@param {function} callback - The callback function to execute after the query is complete.
 	@returns {number} totalUnread - The total number of unread notifications for the specified user.
 	@throws {Error} An error occurred
+
+	@description
+	This makes two queries , one for complex notifcations and the other for normal notifications
+	Results are merged and passed to the callback
 	*/
 	fetchUnreadNotifications(user_id, callback) {
 		try {

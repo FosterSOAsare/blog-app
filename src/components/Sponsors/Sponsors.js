@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../../context/AppContext";
-import { arrangeSponsorships } from "../../utils/Sponsorship.js/Sponsorship.util";
+import { arrangeSponsorships } from "../../utils/Sponsorships.js";
 import Loading from "../Loading/Loading";
 import { NavLink } from "react-router-dom";
 

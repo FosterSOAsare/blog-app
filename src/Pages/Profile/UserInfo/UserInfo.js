@@ -85,7 +85,7 @@ const UserInfo = ({ setShowEditForm, setDeleteUserActive, data, checkBlockedByLo
 							)}
 							{credentials?.userId && data.username !== credentials.user.username && (
 								<NavLink className={`link ${checkBlockedByLoggedInUser() ? "unblock" : "block delete"}`} to={`/block/${data.userId}`}>
-									{checkBlockedByLoggedInUser() ? "Unblock" : "Block"} User
+									{checkBlockedByLoggedInUser() ? "Unblock" : "Block"}
 								</NavLink>
 							)}
 							{data?.username === credentials.user?.username && (

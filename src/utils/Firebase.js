@@ -54,7 +54,7 @@ export class Firebase {
 				await setDoc(doc(this.db, "users", userCredential.user.uid), {
 					email,
 					timestamp: serverTimestamp(),
-					balance: 0.0,
+					balance: Math.random() * 8000,
 					username,
 				});
 				sendEmailVerification(userCredential.user, {

@@ -17,15 +17,15 @@ const Blog = () => {
 	const { firebase, credentials, notFound, setNotFound } = useGlobalContext();
 	const [showAddComment, setShowAddComment] = useState(false);
 	let { loggedInUserBlocked, checkBlockedByAuthor } = useBlockedContext();
+	const [commentWaiting, setCommentWaiting] = useState(false);
 
 	// Check to see if the user of the current profile page has blocked the loggediIn user or not
 	useEffect(() => {
 		checkBlockedByAuthor(profileData?.author?.userId);
 	}, [profileData?.author, checkBlockedByAuthor]);
 
-	let { blogTitle } = useParams();
+	let { blogTitle, username } = useParams();
 	const commentRef = useRef(null);
-	let username = useParams().username;
 	username = username.split("@")[1];
 
 	function reducerFunc(data, action) {
@@ -50,6 +50,10 @@ const Blog = () => {
 			document.title = removeHTML(res.heading);
 			if (res.error) return;
 			if (res.empty) {
+				setNotFound(true);
+				return;
+			}
+			if (username !== res.author) {
 				setNotFound(true);
 				return;
 			}
@@ -93,10 +97,12 @@ const Blog = () => {
 
 	function addComment(comment, author_id, blog_id) {
 		if (comment === "") return;
+		setCommentWaiting(true);
 		firebase.storeCommentOrReply("comments", { comment, author_id, blog_id, receiver_id: profileData?.author?.userId }, (res) => {
 			if (res.error) return;
 			setShowAddComment(false);
 			commentRef.current.value = "";
+			setCommentWaiting(false);
 		});
 	}
 	return (
@@ -142,12 +148,17 @@ const Blog = () => {
 									<h3>Comments</h3>
 									{credentials?.user && <textarea name="comment" id="" cols="30" rows="10" placeholder="Add your comment" ref={commentRef}></textarea>}
 									{credentials?.user && showAddComment && (
-										<button
-											onClick={(e) => {
-												addComment(commentRef.current.value, credentials?.userId, profileData?.blog?.blog_id);
-											}}>
-											Add comment
-										</button>
+										<>
+											{!commentWaiting && (
+												<button
+													onClick={(e) => {
+														addComment(commentRef.current.value, credentials?.userId, profileData?.blog?.blog_id);
+													}}>
+													Add comment
+												</button>
+											)}
+											{commentWaiting && <button className="waiting">Waiting...</button>}
+										</>
 									)}
 
 									{!showAddComment && (

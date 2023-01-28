@@ -16,30 +16,30 @@
 		font-weight: bold;
 	}
 }
-@media screen and (max-width: 560px) {
-	.upvote {
-		min-width: 80px;
-	}
-}
 
 .tipForm {
 	@include container;
-
-	// flex-direction: row;
 	position: absolute;
 	background-color: $white;
 	z-index: 2;
 	top: -5px;
 	padding: 20px 0;
+	width: 100%;
+	margin: 0 auto;
 	.container {
 		@include flex(flex-start, flex-start);
 		flex-direction: column;
+		width: 100%;
+		max-width: 480px;
 		label {
 			margin-bottom: 20px;
 			span {
 				font-weight: bold;
 				opacity: 0.7;
 			}
+		}
+		input {
+			width: 100%;
 		}
 		.actions {
 			@include flex(flex-start, center);
@@ -59,9 +59,13 @@
 		}
 	}
 }
-
+@media screen and (max-width: 560px) {
+	.upvote {
+		min-width: 100px;
+	}
+}
 .dark {
 	.tipForm {
-		background-color: $darkBg;
+		background-color: #374151;
 	}
 }

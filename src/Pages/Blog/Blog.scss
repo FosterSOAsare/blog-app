@@ -124,6 +124,9 @@ main.blog {
 			height: 40px;
 			border-radius: 0;
 		}
+		button.waiting {
+			opacity: 0.6;
+		}
 		.content {
 			margin-top: 30px;
 			min-height: 200px;

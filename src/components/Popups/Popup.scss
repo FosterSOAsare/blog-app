@@ -51,6 +51,7 @@ section.popup {
 section.confirmPopUp {
 	.actions {
 		@include flex(center, center);
+		margin-top: 20px;
 		.opt1 {
 			background-color: red;
 			border: none;

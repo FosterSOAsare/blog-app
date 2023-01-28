@@ -9,7 +9,25 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 	const [author, setAuthor] = useState("");
 	const replyRef = useRef(null);
 	const [showReplyForm, setShowReplyForm] = useState(false);
+	const [subActions, showSubActions] = useState(false);
+	const showSubButton = useRef(null);
 
+	useEffect(() => {
+		let parent = showSubButton.current;
+
+		let current = undefined;
+		credentials.user &&
+			document.addEventListener("mousemove", (e) => {
+				current = e.target;
+				if (parent.contains(e.target)) {
+					showSubActions(true);
+				} else {
+					setTimeout(() => {
+						!parent.contains(current) && showSubActions(false);
+					}, 200);
+				}
+			});
+	}, [credentials.user]);
 	useEffect(() => {
 		author_id &&
 			firebase.fetchUserWithId(author_id, (res) => {
@@ -35,8 +53,20 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 	return (
 		<>
 			<div className={`reply comment${activeReply === id ? " activeReply" : ""}`} id={id}>
-				<div className="actions">
+				<div className="actions" ref={showSubButton}>
 					<i className="fa-solid fa-ellipsis-vertical"></i>
+					{subActions && (
+						<div className="controls_sub">
+							<NavLink className="elem" to="/report">
+								Report this
+							</NavLink>
+							{credentials?.user?.username !== author.username && (
+								<NavLink className="elem" to={`/block/${author_id}`}>
+									Block this user
+								</NavLink>
+							)}
+						</div>
+					)}
 				</div>
 				{type === "replies" && reply_to && (
 					<p

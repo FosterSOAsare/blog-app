@@ -122,6 +122,7 @@ const Profile = () => {
 							<FormPopup
 								desc="Edit your bio"
 								placeholder="Enter your new bio here"
+								value={profileData?.user?.bio}
 								type="textarea"
 								setShow={setShowEditForm}
 								proceed={saveBio}

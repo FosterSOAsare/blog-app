@@ -7,7 +7,7 @@ import Ratings from "../Ratings/Ratings";
 
 const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, likes, upvotes, viewers, comments, author }) => {
 	const { credentials, firebase } = useGlobalContext();
-	const [sub, showSub] = useState(false);
+	const [subActions, showSubActions] = useState(false);
 
 	const [userInfo, setUserInfo] = useState({});
 	heading = removeHTML(heading);
@@ -31,10 +31,10 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 			document.addEventListener("mousemove", (e) => {
 				current = e.target;
 				if (parent.contains(e.target)) {
-					showSub(true);
+					showSubActions(true);
 				} else {
 					setTimeout(() => {
-						!parent.contains(current) && showSub(false);
+						!parent.contains(current) && showSubActions(false);
 					}, 200);
 				}
 			});
@@ -80,7 +80,7 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 
 					<article ref={subButton} className="blog_controls">
 						<i className="fa-solid fa-ellipsis-vertical"></i>
-						{sub && (
+						{subActions && (
 							<div className="controls_sub">
 								{credentials?.user?.username === author && (
 									<NavLink className="elem" to={editLink}>

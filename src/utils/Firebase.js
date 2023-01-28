@@ -679,7 +679,7 @@ export class Firebase {
 				if (type === "comments") {
 					notif = {
 						desc: `@${author.data().username} commented on your post, "${removeHTML(document.data().heading)}"`,
-						link: createLink(author.data().username, removeHTML(document.data()?.heading), data?.blog_id) + "#comments",
+						link: createLink(document.data().author, removeHTML(document.data()?.heading), data?.blog_id) + "#comments",
 						message: data?.comment,
 						type: "comment",
 						receiver_id: data.receiver_id,
@@ -702,7 +702,7 @@ export class Firebase {
 					}
 					notif = {
 						...notif,
-						link: createLink(author.data().username, removeHTML(document.data()?.heading), data?.blog_id) + "#comments",
+						link: createLink(document.data().author, removeHTML(document.data()?.heading), data?.blog_id) + "#comments",
 						message: data?.message,
 						type: "reply",
 					};
@@ -1060,7 +1060,8 @@ export class Firebase {
 				return (
 					e.heading.toLowerCase().includes(queryString.toLowerCase()) ||
 					e.message.toLowerCase().includes(queryString.toLowerCase()) ||
-					e.author.toLowerCase().includes(queryString.toLowerCase())
+					e.author.toLowerCase().includes(queryString.toLowerCase()) ||
+					e?.topics?.includes(queryString.toLowerCase())
 				);
 			});
 			if (blogs.length === 0) {

@@ -28,6 +28,9 @@ const PhoneMenu = ({ logOut, setPhoneMenuDisplay }) => {
 				<NavLink className="link" to="/">
 					Homepage
 				</NavLink>
+				<NavLink className="link" to={`/@${credentials?.user?.username}`}>
+					Profile
+				</NavLink>
 				{credentials?.user && (
 					<NavLink className="link" to="/notifications">
 						Notifications

@@ -5,10 +5,12 @@ import Button2 from "../buttons/Button2";
 import DesktopMenu from "./DesktopMenu";
 import { useDarkContext } from "../../context/DarkContext";
 import topics from "../../assets/scss/Topics";
+import PhoneMenu from "./PhoneMenu";
 
 const Header = () => {
-	const { credentials, firebase, notFound } = useGlobalContext();
+	const { credentials, firebase, notFound, credentialsDispatchFunc } = useGlobalContext();
 	const [menuDisplay, setMenuDisplay] = useState(false);
+	const [phoneMenuDisplay, setPhoneMenuDisplay] = useState(false);
 	const [topicsDisplay, setTopicsDisplay] = useState(false);
 
 	const menuBtn = useRef(null);
@@ -52,73 +54,89 @@ const Header = () => {
 			setUnreadNotifications(res);
 		});
 	}, [firebase, credentials?.userId]);
+
+	function logOut(e) {
+		e.preventDefault();
+		firebase.signOutUser((res) => {
+			if (res.error) {
+				//
+				return;
+			}
+			credentialsDispatchFunc({ type: "logout" });
+		});
+	}
 	return (
 		<>
 			{!notFound && (
-				<header>
-					<div className="header__container">
-						<h3 className="logo">
-							<Link className="link" to="/">
-								Blog
-							</Link>
-						</h3>
+				<>
+					<header>
+						<div className="header__container">
+							<h3 className="logo">
+								<Link className="link" to="/">
+									Blog
+								</Link>
+							</h3>
 
-						<div className="left__side">
-							<div className="content">
-								{!credentials.userId && (
-									<div className="ctas">
-										<Button2 text="register" link="/register" />
-										<Button2 text="login" link="/login" />
-									</div>
-								)}
-
-								{credentials.userId && (
-									<div className="profile__menu">
-										<div ref={topicsBtn}>
-											<p>Topics</p>
-											{topicsDisplay && (
-												<aside className="topics">
-													{topics.map((e, index) => {
-														return (
-															<NavLink key={index} to={`/search/${e.toLowerCase()}`} className="link">
-																{e}
-															</NavLink>
-														);
-													})}
-												</aside>
-											)}
+							<div className="left__side">
+								<div className="content">
+									{!credentials.userId && (
+										<div className="ctas">
+											<Button2 text="register" link="/register" />
+											<Button2 text="login" link="/login" />
 										</div>
+									)}
 
-										<Link to="/write" className="link">
-											Write
-										</Link>
-									</div>
-								)}
-								<article className="controls">
-									<Link className="search" to="/search">
-										<i className="fa-solid fa-magnifying-glass"></i>
-									</Link>
-									<div className="theme">
-										<i className={`fa-${theme === "light" ? "solid" : "regular"} fa-moon`} onClick={toggleTheme}></i>
-									</div>
-								</article>
+									{credentials.userId && (
+										<div className="profile__menu">
+											<div ref={topicsBtn}>
+												<p>Topics</p>
+												{topicsDisplay && (
+													<aside className="topics">
+														{topics.map((e, index) => {
+															return (
+																<NavLink key={index} to={`/search/${e.toLowerCase()}`} className="link">
+																	{e}
+																</NavLink>
+															);
+														})}
+													</aside>
+												)}
+											</div>
 
-								{credentials.userId && (
-									<article className="user__notices">
-										<Link className="notification" to="/notifications">
-											<i className={`fa-solid fa-bell${unreadNotifications > 0 ? " unread" : ""}`}></i>
+											<Link to="/write" className="link">
+												Write
+											</Link>
+										</div>
+									)}
+									<article className="controls">
+										<Link className="search" to="/search">
+											<i className="fa-solid fa-magnifying-glass"></i>
 										</Link>
-										<article ref={menuBtn}>
-											<p className="balance">{balance}</p>
-											{menuDisplay && <DesktopMenu {...credentials?.user} />}
-										</article>
+										<div className="theme">
+											<i className={`fa-${theme === "light" ? "solid" : "regular"} fa-moon`} onClick={toggleTheme}></i>
+										</div>
 									</article>
-								)}
+
+									{credentials.userId && (
+										<article className="user__notices">
+											<Link className="notification" to="/notifications">
+												<i className={`fa-solid fa-bell${unreadNotifications > 0 ? " unread" : ""}`}></i>
+											</Link>
+											<article ref={menuBtn}>
+												<p className="balance">{balance}</p>
+												{menuDisplay && <DesktopMenu {...credentials?.user} logOut={logOut} />}
+											</article>
+										</article>
+									)}
+
+									<i className="fa-solid fa-bars phoneMenuBtn" onClick={() => setPhoneMenuDisplay(true)}></i>
+								</div>
+								<p className="username">{credentials?.user?.username}</p>
 							</div>
-							<p className="username">{credentials?.user?.username}</p>
 						</div>
-					</div>
-				</header>
+					</header>
+					{phoneMenuDisplay && <PhoneMenu logOut={logOut} setPhoneMenuDisplay={setPhoneMenuDisplay} />}
+				</>
 			)}
 		</>
 	);

@@ -1,21 +1,9 @@
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
-import { useGlobalContext } from "../../context/AppContext";
 
-const DesktopMenu = ({ username, img_src, balance }) => {
-	const { firebase, credentialsDispatchFunc } = useGlobalContext();
-	function logOut(e) {
-		e.preventDefault();
-		firebase.signOutUser((res) => {
-			if (res.error) {
-				//
-				return;
-			}
-			credentialsDispatchFunc({ type: "logout" });
-		});
-	}
+const DesktopMenu = ({ username, img_src, balance, logOut }) => {
 	return (
-		<aside className="menu">
+		<aside className="desktop__menu">
 			<p className="menuItem link">
 				${balance ? balance.toFixed(2) : 0.0} <span>Credit</span>
 			</p>

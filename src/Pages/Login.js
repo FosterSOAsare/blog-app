@@ -38,6 +38,7 @@ const Login = () => {
 				errorFunc({ type: "displayError", payload: user.error });
 				return;
 			}
+			setWaiting(false);
 			credentialsDispatchFunc({ type: "login", payload: user.uid });
 		});
 	}

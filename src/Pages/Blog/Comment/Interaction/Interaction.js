@@ -34,6 +34,14 @@ const Interaction = ({ type, message, likes, dislikes, timestamp, id, upvotes, a
 				setAuthor(res);
 			});
 	}, [firebase, author_id]);
+	/**
+
+	Adds a new reply to a comment or sub-reply.
+	@function
+	@param {string} message - The message of the reply.
+	@param {string} [reply_to=id] - The ID of the comment or sub-reply that the reply is being added to.
+	@returns {void}
+	*/
 	function addReply(message, reply_to = id) {
 		setWaiting(true);
 		if (message === "") return;

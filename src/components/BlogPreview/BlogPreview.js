@@ -23,6 +23,7 @@ const BlogPreview = ({ heading, message, blog_id, lead_image_src, dislikes, like
 
 	let link = createLink(author, heading, blog_id);
 	let editLink = `/@${author}/edit/${blog_id}`;
+
 	useEffect(() => {
 		let parent = subButton.current;
 

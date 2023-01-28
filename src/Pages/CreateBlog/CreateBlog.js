@@ -16,27 +16,29 @@ const CreateBlog = () => {
 	let { credentials, firebase, notFound, setNotFound } = useGlobalContext();
 	const [stored, setStored] = useReducer(storedFunc, { stored: false, published: false });
 	const [confirmDeleteBlog, setConfirmDeleteBlog] = useState(false);
+	const [leadImageAdded, setLeadImageAdded] = useState(false);
 	const [waiting, setWaiting] = useState(false);
 	const [selectedTopics, selectedTopicsDispatchFunc] = useReducer(selectedTopicsFunc, {
 		displayForm: false,
 		selectedTopics: [],
 	});
 
+	// Check params
+	let { blogId } = useParams();
+	let article = useRef(null);
+	let leadImage = useRef(null);
+	let header = useRef(null);
+
 	// Clear error on start up
 	useEffect(() => {
 		errorFunc({ type: "clearError" });
 	}, [errorFunc]);
 
+	// Setting page title
 	useEffect(() => {
 		document.title = "blog-site";
 	}, []);
 	// Edit page also used the createBlogPage
-
-	let article = useRef(null);
-	let leadImage = useRef(null);
-	let header = useRef(null);
-	// Check params
-	let { blogId } = useParams();
 
 	function reducerFunc(edit, action) {
 		switch (action.type) {
@@ -59,7 +61,7 @@ const CreateBlog = () => {
 	}
 
 	useEffect(() => {
-		// Fetch blog data
+		// Fetch the data about the blog using the blog's ID
 		blogId &&
 			firebase.fetchBlog(blogId, (res) => {
 				if (res.error) return;
@@ -67,6 +69,11 @@ const CreateBlog = () => {
 					setNotFound(true);
 					return;
 				}
+				// Show that a lead_image is available and provide an option to change it
+				if (res.lead_image_src) {
+					setLeadImageAdded(true);
+				}
+				// Set Data
 				setEdit({ type: "setData", payload: res });
 				if (res.topics) selectedTopicsDispatchFunc({ type: "setSelectedTopics", payload: res.topics });
 				setNotFound(false);
@@ -245,7 +252,7 @@ const CreateBlog = () => {
 							{selectedTopics.selectedTopics.length === 0 && <button onClick={() => selectedTopicsDispatchFunc({ type: "displaySelect", payload: true })}>Add Topics</button>}
 							{selectedTopics.selectedTopics.length > 0 && (
 								<p className="blogSelectedTopics">
-									Topics :{" "}
+									Topics :
 									<span>
 										{selectedTopics.selectedTopics.join(", ")}
 										{!selectedTopics.displayForm && (
@@ -257,9 +264,20 @@ const CreateBlog = () => {
 								</p>
 							)}
 							<label htmlFor="lead__image" className="lead_image">
-								Add lead image
+								{leadImageAdded ? "Change lead image" : "Add lead image"}
 							</label>
-							<input type="file" accept="image/*" name="lead__image" id="lead__image" ref={leadImage} />
+							<input
+								type="file"
+								accept="image/*"
+								name="lead__image"
+								id="lead__image"
+								ref={leadImage}
+								onChange={(e) => {
+									if (e.currentTarget.files) {
+										setLeadImageAdded(true);
+									}
+								}}
+							/>
 						</div>
 						<div className="editors">
 							{selectedTopics.displayForm && (

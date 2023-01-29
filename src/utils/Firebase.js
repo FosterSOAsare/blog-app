@@ -244,7 +244,8 @@ export class Firebase {
 	This function is used to upload an image file to a Firebase storage bucket. It takes in an image file, a path where the image will be stored, and a callback function. It uses the Firebase storage API's uploadBytesResumable method to upload the image and the getDownloadURL method to get the download URL of the image. The callback function is called with the download URL of the image or an error message if an error occurs during the upload.
 	*/
 	storeImg(image, path, callback) {
-		path = path.replace(/\s-/gi, "");
+		path = path.split("/");
+		path = path[0] + path[1].replace(/[^a-zA-Z0-9.-]/g, "");
 		let storageRef = ref(this.storage, path);
 		try {
 			let uploadTask = uploadBytesResumable(storageRef, image);
